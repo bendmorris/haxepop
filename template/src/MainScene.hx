@@ -1,4 +1,4 @@
-import com.haxepunk.Scene;
+import haxepop.Scene;
 
 class MainScene extends Scene
 {

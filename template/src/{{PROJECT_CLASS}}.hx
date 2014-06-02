@@ -1,5 +1,5 @@
-import com.haxepunk.Engine;
-import com.haxepunk.HXP;
+import haxepop.Engine;
+import haxepop.HXP;
 
 class {{PROJECT_CLASS}} extends Engine
 {

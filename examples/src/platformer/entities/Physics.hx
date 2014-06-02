@@ -1,8 +1,8 @@
 package platformer.entities;
 
 import flash.geom.Point;
-import com.haxepunk.HXP;
-import com.haxepunk.Entity;
+import haxepop.HXP;
+import haxepop.Entity;
 
 class Physics extends Entity
 {

@@ -1,19 +1,15 @@
 {
-	"name": "HaxePunk",
-	"url" : "http://haxepunk.com",
+	"name": "haxepop",
+	"url" : "http://haxepop.com",
 	"license": "MIT",
 	"tags": ["flash", "game", "cpp", "openfl"],
-	"description": "A Haxe port of the FlashPunk AS3 engine.",
-	"version": "2.6.0-dev",
+	"description": "A 2D game engine for browser, desktop, mobile, and console.",
+	"version": "0.1.0",
 	"releasenote": "See CHANGELOG",
-	"contributors": ["heardtheword", "ibilon"],
-	"dependencies": { },
-	"install": {
-		"lime": "0.9.7",
-		"lime-tools": "1.4.0",
-		"openfl": "1.4.0",
-		"openfl-native": "1.4.0",
-		"openfl-html5": "1.4.2-beta",
-		"openfl-ouya": "1.0.2"
+	"contributors": ["bendmorris"],
+	"dependencies": {
+		"lime": "",
+		"lime-tools": "",
+		"openfl": ""
 	}
 }

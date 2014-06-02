@@ -1,7 +1,7 @@
 package masks;
 
-import com.haxepunk.*;
-import com.haxepunk.masks.*;
+import haxepop.*;
+import haxepop.masks.*;
 
 class TestSlopedGrid extends haxe.unit.TestCase
 {
@@ -109,14 +109,14 @@ class TestSlopedGrid extends haxe.unit.TestCase
 		assertFalse(collideBox(box, 107, 274));
 	}
 
-	@:access(com.haxepunk.masks.Hitbox)
+	@:access(haxepop.masks.Hitbox)
 	private inline function collideBox(box:Hitbox, x:Int, y:Int):Bool
 	{
 		box._x = x; box._y = y;
 		return grid.collideHitbox(box);
 	}
 
-	@:access(com.haxepunk.masks.Circle)
+	@:access(haxepop.masks.Circle)
 	private inline function collideCircle(circle:Circle, x:Int, y:Int):Bool
 	{
 		circle._x = x; circle._y = y;

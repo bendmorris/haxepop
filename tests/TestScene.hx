@@ -1,7 +1,7 @@
-import com.haxepunk.Engine;
-import com.haxepunk.Entity;
-import com.haxepunk.HXP;
-import com.haxepunk.Scene;
+import haxepop.Engine;
+import haxepop.Entity;
+import haxepop.HXP;
+import haxepop.Scene;
 
 // dummy entity for testing class types
 class TestEntity extends Entity
@@ -57,7 +57,7 @@ class TestScene extends haxe.unit.TestCase
 		assertEquals(0, scene.typeCount("bar"));
 		assertEquals(1, scene.uniqueTypes);
 
-		assertEquals(1, scene.classCount("com.haxepunk.Entity"));
+		assertEquals(1, scene.classCount("haxepop.Entity"));
 
 		e.type = "bar";
 		assertEquals(0, scene.typeCount("foo"));
@@ -116,7 +116,7 @@ class TestScene extends haxe.unit.TestCase
 		assertEquals(null, scene.getInstance("foo"));
 	}
 
-	@:access(com.haxepunk.Scene)
+	@:access(haxepop.Scene)
 	private function countRecycled(scene:Scene)
 	{
 		var i:Int = 0;

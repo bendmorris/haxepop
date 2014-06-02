@@ -1,9 +1,9 @@
-import com.haxepunk.HXP;
-import com.haxepunk.Scene;
-import com.haxepunk.Entity;
-import com.haxepunk.graphics.Text;
-import com.haxepunk.utils.Input;
-import com.haxepunk.utils.Key;
+import haxepop.HXP;
+import haxepop.Scene;
+import haxepop.Entity;
+import haxepop.graphics.Text;
+import haxepop.utils.Input;
+import haxepop.utils.Key;
 
 // have to import scenes for compilation
 import platformer.GameScene;

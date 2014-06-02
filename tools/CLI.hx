@@ -2,7 +2,7 @@ import neko.Lib;
 import Terminal;
 import sys.io.Process;
 
-import com.haxepunk.utils.HaxelibInfo;
+import haxepop.utils.HaxelibInfo;
 
 class CLI
 {
@@ -62,10 +62,10 @@ class CLI
 
 	public function usage()
 	{
-		var tool = "haxelib run HaxePunk";
+		var tool = "haxelib run haxepop";
 		var version = HaxelibInfo.version;
 
-		print('/green/bold-- HaxePunk $version --/reset\n');
+		print('/green/bold-- HaxePop $version --/reset\n');
 		print('/blueUSAGE: /green$tool/reset setup');
 		print('/blueUSAGE: /green$tool/reset update');
 		print('/blueUSAGE: /green$tool/reset new [options] [PROJECT_NAME]');
