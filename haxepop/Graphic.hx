@@ -24,19 +24,21 @@ abstract TileType(Either<BitmapData, TileAtlas>)
 	@:to inline function get_type() return this;
 
 	@:from public static inline function fromString(tileset:String) {
-		if (HXP.renderMode == RenderMode.HARDWARE)
+#if hardware
 			return new TileType(Right(new TileAtlas(tileset)));
-		else
+#else
 			return new TileType(Left(HXP.getBitmap(tileset)));
+#end
 	}
 	@:from public static inline function fromTileAtlas(atlas:TileAtlas) {
 		return new TileType(Right(atlas));
 	}
 	@:from public static inline function fromBitmapData(bd:BitmapData) {
-		if (HXP.renderMode == RenderMode.HARDWARE)
+#if hardware
 			return new TileType(Right(new TileAtlas(bd)));
-		else
+#else
 			return new TileType(Left(bd));
+#end
 	}
 }
 
@@ -47,10 +49,11 @@ abstract ImageType(Either<BitmapData, AtlasRegion>)
 	@:to inline function get_type() return this;
 
 	@:from public static inline function fromString(s:String) {
-		if (HXP.renderMode == RenderMode.HARDWARE)
+#if hardware
 			return new ImageType(Right(Atlas.loadImageAsRegion(s)));
-		else
+#else
 			return new ImageType(Left(HXP.getBitmap(s)));
+#end
 	}
 	@:from public static inline function fromTileAtlas(atlas:TileAtlas) {
 		return new ImageType(Right(atlas.getRegion(0)));
@@ -59,10 +62,11 @@ abstract ImageType(Either<BitmapData, AtlasRegion>)
 		return new ImageType(Right(region));
 	}
 	@:from public static inline function fromBitmapData(bd:BitmapData) {
-		if (HXP.renderMode == RenderMode.HARDWARE)
+#if hardware
 			return new ImageType(Right(Atlas.loadImageAsRegion(bd)));
-		else
+#else
 			return new ImageType(Left(bd));
+#end
 	}
 }
 

@@ -48,9 +48,8 @@ class Engine extends Sprite
 	 * @param	height			The height of your game.
 	 * @param	frameRate		The game framerate, in frames per second.
 	 * @param	fixed			If a fixed-framerate should be used.
-	 * @param   renderMode      Overrides the default render mode for this target
 	 */
-	public function new(width:Int = 0, height:Int = 0, frameRate:Float = 60, fixed:Bool = false, ?renderMode:RenderMode)
+	public function new(width:Int = 0, height:Int = 0, frameRate:Float = 60, fixed:Bool = false)
 	{
 		super();
 
@@ -63,15 +62,7 @@ class Engine extends Sprite
 		HXP.engine = this;
 		HXP.width = width;
 		HXP.height = height;
-
-		if (renderMode != null)
-		{
-			HXP.renderMode = renderMode;
-		}
-		else
-		{
-			HXP.renderMode = #if (flash || js) RenderMode.BUFFER #else RenderMode.HARDWARE #end;
-		}
+		HXP.screen = new Screen();
 
 		// miscellaneous startup stuff
 		if (HXP.randomSeed == 0) HXP.randomizeSeed();
@@ -141,19 +132,17 @@ class Engine extends Sprite
 		if (_frameLast == 0) _frameLast = Std.int(t);
 
 		// render loop
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			HXP.screen.swap();
-			HXP.screen.refresh();
-		}
+#if buffer
+		HXP.screen.swap();
+		HXP.screen.refresh();
+#end
 		Draw.resetTarget();
 
 		if (_scene.visible) _scene.render();
 
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			HXP.screen.redraw();
-		}
+#if buffer
+		HXP.screen.redraw();
+#end
 
 		// more timing stuff
 		t = Lib.getTimer();
@@ -264,24 +253,16 @@ class Engine extends Sprite
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 
-		// Warnings when forcing RenderMode
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
+#if buffer
 			#if (!(flash || js) && debug)
-			HXP.console.log(["Warning: Using RenderMode.BUFFER on native target may result in bad performance"]);
+			HXP.console.log(["Warning: Using #buffer on native target may result in bad performance"]);
 			#end
-		}
-		else
-		{
+#end
+#if hardware
 			#if ((flash || js) && debug)
-			HXP.console.log(["Warning: Using RenderMode.HARDWARE on flash/html5 target may result in corrupt graphics"]);
+			HXP.console.log(["Warning: Using #hardware on flash/html5 target may result in corrupt graphics"]);
 			#end
-		}
-
-		// HTML 5 warning
-		#if (js && debug)
-		HXP.console.log(["Warning: the HTML 5 target is currently experimental"]);
-		#end
+#end
 	}
 
 	/** @private Framerate independent game loop. */

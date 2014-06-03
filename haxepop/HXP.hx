@@ -178,21 +178,9 @@ class HXP
 	public static var orientations:Array<Int> = [];
 
 	/**
-	 * Defines how to render the scene
+	 * Defines how to rende the scene (deprecated; use #if buffer or #if hardware instead.)
 	 */
-	public static var renderMode(default, set):RenderMode;
-	private static inline function set_renderMode(value:RenderMode):RenderMode
-	{
-		renderMode = value;
-
-		// recreate screen for buffer rendering
-		if (HXP.screen == null)
-			HXP.screen = new Screen();
-		else
-			HXP.screen.init();
-
-		return value;
-	}
+	public static var renderMode(default, never):RenderMode = #if buffer RenderMode.BUFFER #else RenderMode.HARDWARE #end;
 
 	/**
 	 * The choose function randomly chooses and returns one of the provided values.
@@ -245,12 +233,10 @@ class HXP
 	public static function resize(width:Int, height:Int)
 	{
 		// resize scene to scale
-		width = Std.int(width / HXP.screen.fullScaleX);
-		height = Std.int(height / HXP.screen.fullScaleY);
-		HXP.width = width;
-		HXP.height = height;
-		HXP.halfWidth = width / 2;
-		HXP.halfHeight = height / 2;
+		HXP.width = Std.int(width / HXP.screen.fullScaleX);
+		HXP.height = Std.int(height / HXP.screen.fullScaleY);
+		HXP.halfWidth = HXP.width / 2;
+		HXP.halfHeight = HXP.height / 2;
 		HXP.bounds.width = width;
 		HXP.bounds.height = height;
 		HXP.screen.resize();

@@ -38,10 +38,9 @@ class Screen
 		{
 			HXP.engine.removeChild(_sprite);
 		}
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			HXP.engine.addChild(_sprite);
-		}
+#if buffer
+		HXP.engine.addChild(_sprite);
+#end
 	}
 
 	private inline function disposeBitmap(bd:Bitmap)
@@ -58,21 +57,19 @@ class Screen
 	 */
 	public function resize()
 	{
-		width = HXP.width;
-		height = HXP.height;
+		width = Math.ceil(HXP.bounds.width);
+		height = Math.ceil(HXP.bounds.height);
+#if buffer
+		disposeBitmap(_bitmap[0]);
+		disposeBitmap(_bitmap[1]);
 
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			disposeBitmap(_bitmap[0]);
-			disposeBitmap(_bitmap[1]);
+		_bitmap[0] = new Bitmap(HXP.createBitmap(width, height, true), PixelSnapping.NEVER);
+		_bitmap[1] = new Bitmap(HXP.createBitmap(width, height, true), PixelSnapping.NEVER);
 
-			_bitmap[0] = new Bitmap(HXP.createBitmap(width, height, true), PixelSnapping.NEVER);
-			_bitmap[1] = new Bitmap(HXP.createBitmap(width, height, true), PixelSnapping.NEVER);
-
-			_sprite.addChild(_bitmap[0]).visible = true;
-			_sprite.addChild(_bitmap[1]).visible = false;
-			HXP.buffer = _bitmap[0].bitmapData;
-		}
+		_sprite.addChild(_bitmap[0]).visible = true;
+		_sprite.addChild(_bitmap[1]).visible = false;
+		HXP.buffer = _bitmap[0].bitmapData;
+#end
 
 		_current = 0;
 		needsResize = false;
@@ -83,11 +80,10 @@ class Screen
 	 */
 	public function swap()
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			#if !bitfive _current = 1 - _current; #end
-			HXP.buffer = _bitmap[_current].bitmapData;
-		}
+#if buffer
+		_current = 1 - _current;
+		HXP.buffer = _bitmap[_current].bitmapData;
+#end
 	}
 
 	/**
@@ -114,12 +110,11 @@ class Screen
 	 */
 	public function redraw()
 	{
+#if buffer
 		// refresh the buffers
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			_bitmap[_current].visible = true;
-			_bitmap[1 - _current].visible = false;
-		}
+		_bitmap[_current].visible = true;
+		_bitmap[1 - _current].visible = false;
+#end
 	}
 
 	/** @private Re-applies transformation matrix. */
@@ -130,8 +125,8 @@ class Screen
 			_matrix = new Matrix();
 		}
 		_matrix.b = _matrix.c = 0;
-		_matrix.a = fullScaleX;
-		_matrix.d = fullScaleY;
+		_matrix.a = 1;
+		_matrix.d = 1;
 		_matrix.tx = -originX * _matrix.a;
 		_matrix.ty = -originY * _matrix.d;
 		if (_angle != 0) _matrix.rotate(_angle);
@@ -303,25 +298,19 @@ class Screen
 	public var smoothing(get, set):Bool;
 	private function get_smoothing():Bool
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			return _bitmap[0].smoothing;
-		}
-		else
-		{
-			return Atlas.smooth;
-		}
+#if buffer
+		return _bitmap[0].smoothing;
+#else
+		return Atlas.smooth;
+#end
 	}
 	private function set_smoothing(value:Bool):Bool
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			_bitmap[0].smoothing = _bitmap[1].smoothing = value;
-		}
-		else
-		{
-			Atlas.smooth = value;
-		}
+#if buffer
+		_bitmap[0].smoothing = _bitmap[1].smoothing = value;
+#else
+		Atlas.smooth = value;
+#end
 		return value;
 	}
 
@@ -339,13 +328,13 @@ class Screen
 	 * X position of the mouse on the screen.
 	 */
 	public var mouseX(get, null):Int;
-	private function get_mouseX():Int { return Std.int(_sprite.mouseX); }
+	private function get_mouseX():Int { return Std.int(_sprite.mouseX / fullScaleX); }
 
 	/**
 	 * Y position of the mouse on the screen.
 	 */
 	public var mouseY(get, null):Int;
-	private function get_mouseY():Int { return Std.int(_sprite.mouseY); }
+	private function get_mouseY():Int { return Std.int(_sprite.mouseY / fullScaleY); }
 
 	/**
 	 * Captures the current screen as an Image object.
@@ -353,14 +342,11 @@ class Screen
 	 */
 	public function capture():Image
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			return new Image(_bitmap[_current].bitmapData.clone());
-		}
-		else
-		{
-			throw "Screen.capture only supported with buffer rendering";
-		}
+#if buffer
+		return new Image(_bitmap[_current].bitmapData.clone());
+#else
+		throw "Screen.capture only supported with buffer rendering";
+#end
 	}
 
 	/**

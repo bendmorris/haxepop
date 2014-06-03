@@ -131,20 +131,17 @@ class Text extends Image
 		_height = (height == 0 ? Std.int(_field.textHeight + 4) : height);
 
 		var source = HXP.createBitmap(_width, _height, true);
-		if (HXP.renderMode == RenderMode.HARDWARE)
-		{
-			_source = source;
-			_sourceRect = source.rect;
-			_region = Atlas.loadImageAsRegion(_source);
-			blit = true;
-			super();
-		}
-		else
-		{
-			super(source);
-		}
+#if hardware
+		_source = source;
+		_sourceRect = source.rect;
+		_region = Atlas.loadImageAsRegion(_source);
+		blit = true;
+		super();
+#else
+		blit = false;
+		super(source);
+#end
 
-		blit = HXP.renderMode == RenderMode.BUFFER;
 		updateTextBuffer();
 
 		this.size = options.size;

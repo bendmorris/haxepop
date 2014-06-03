@@ -29,16 +29,13 @@ class Draw
 
 	public static function init()
 	{
-		if (HXP.renderMode == RenderMode.HARDWARE)
-		{
-			var sprite = new Sprite();
-			HXP.stage.addChild(sprite);
-			_graphics = sprite.graphics;
-		}
-		else
-		{
-			_graphics = HXP.sprite.graphics;
-		}
+#if hardware
+		var sprite = new Sprite();
+		HXP.stage.addChild(sprite);
+		_graphics = sprite.graphics;
+#else
+		_graphics = HXP.sprite.graphics;
+#end
 		_rect = HXP.rect;
 	}
 
@@ -88,99 +85,96 @@ class Draw
 	 */
 	public static function line(x1:Int, y1:Int, x2:Int, y2:Int, color:Int = 0xFFFFFF)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
+#if hardware
+		color = 0xFF000000 | (0xFFFFFF & color);
+
+		// get the drawing difference
+		var screen:BitmapData = _target,
+			X:Float = Math.abs(x2 - x1),
+			Y:Float = Math.abs(y2 - y1),
+			xx:Int,
+			yy:Int;
+
+		// get drawing positions
+		x1 -= Std.int(_camera.x);
+		y1 -= Std.int(_camera.y);
+		x2 -= Std.int(_camera.x);
+		y2 -= Std.int(_camera.y);
+
+		// draw a single pixel
+		if (X == 0)
 		{
-			color = 0xFF000000 | (0xFFFFFF & color);
-
-			// get the drawing difference
-			var screen:BitmapData = _target,
-				X:Float = Math.abs(x2 - x1),
-				Y:Float = Math.abs(y2 - y1),
-				xx:Int,
-				yy:Int;
-
-			// get drawing positions
-			x1 -= Std.int(_camera.x);
-			y1 -= Std.int(_camera.y);
-			x2 -= Std.int(_camera.x);
-			y2 -= Std.int(_camera.y);
-
-			// draw a single pixel
-			if (X == 0)
-			{
-				if (Y == 0)
-				{
-					screen.setPixel32(x1, y1, color);
-					return;
-				}
-				// draw a straight vertical line
-				yy = y2 > y1 ? 1 : -1;
-				while (y1 != y2)
-				{
-					screen.setPixel32(x1, y1, color);
-					y1 += yy;
-				}
-				screen.setPixel32(x2, y2, color);
-				return;
-			}
-
 			if (Y == 0)
 			{
-				// draw a straight horizontal line
-				xx = x2 > x1 ? 1 : -1;
-				while (x1 != x2)
-				{
-					screen.setPixel32(x1, y1, color);
-					x1 += xx;
-				}
-				screen.setPixel32(x2, y2, color);
+				screen.setPixel32(x1, y1, color);
 				return;
 			}
-
-			xx = x2 > x1 ? 1 : -1;
+			// draw a straight vertical line
 			yy = y2 > y1 ? 1 : -1;
-			var c:Float = 0,
-				slope:Float;
+			while (y1 != y2)
+			{
+				screen.setPixel32(x1, y1, color);
+				y1 += yy;
+			}
+			screen.setPixel32(x2, y2, color);
+			return;
+		}
 
-			if (X > Y)
+		if (Y == 0)
+		{
+			// draw a straight horizontal line
+			xx = x2 > x1 ? 1 : -1;
+			while (x1 != x2)
 			{
-				slope = Y / X;
-				c = .5;
-				while (x1 != x2)
-				{
-					screen.setPixel32(x1, y1, color);
-					x1 += xx;
-					c += slope;
-					if (c >= 1)
-					{
-						y1 += yy;
-						c -= 1;
-					}
-				}
-				screen.setPixel32(x2, y2, color);
+				screen.setPixel32(x1, y1, color);
+				x1 += xx;
 			}
-			else
+			screen.setPixel32(x2, y2, color);
+			return;
+		}
+
+		xx = x2 > x1 ? 1 : -1;
+		yy = y2 > y1 ? 1 : -1;
+		var c:Float = 0,
+			slope:Float;
+
+		if (X > Y)
+		{
+			slope = Y / X;
+			c = .5;
+			while (x1 != x2)
 			{
-				slope = X / Y;
-				c = .5;
-				while (y1 != y2)
+				screen.setPixel32(x1, y1, color);
+				x1 += xx;
+				c += slope;
+				if (c >= 1)
 				{
-					screen.setPixel32(x1, y1, color);
 					y1 += yy;
-					c += slope;
-					if (c >= 1)
-					{
-						x1 += xx;
-						c -= 1;
-					}
+					c -= 1;
 				}
-				screen.setPixel32(x2, y2, color);
 			}
+			screen.setPixel32(x2, y2, color);
 		}
 		else
 		{
-			linePlus(x1, y1, x2, y2, color);
+			slope = X / Y;
+			c = .5;
+			while (y1 != y2)
+			{
+				screen.setPixel32(x1, y1, color);
+				y1 += yy;
+				c += slope;
+				if (c >= 1)
+				{
+					x1 += xx;
+					c -= 1;
+				}
+			}
+			screen.setPixel32(x2, y2, color);
 		}
+#else
+		linePlus(x1, y1, x2, y2, color);
+#end
 	}
 
 	/**
@@ -195,21 +189,18 @@ class Draw
 	 */
 	public static function linePlus(x1:Int, y1:Int, x2:Int, y2:Int, color:Int = 0xFF000000, alpha:Float = 1, thick:Float = 1)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			_graphics.clear();
-			_graphics.lineStyle(thick, color, alpha, false, LineScaleMode.NONE);
-			_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
-			_graphics.lineTo(x2 - _camera.x, y2 - _camera.y);
-			drawToScreen();
-		}
-		else
-		{
-			_graphics.lineStyle(thick, color, alpha, false, LineScaleMode.NONE);
-			_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
-			_graphics.lineTo(x2 - _camera.x, y2 - _camera.y);
-			_graphics.lineStyle(0);
-		}
+#if buffer
+		_graphics.clear();
+		_graphics.lineStyle(thick, color, alpha, false, LineScaleMode.NONE);
+		_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
+		_graphics.lineTo(x2 - _camera.x, y2 - _camera.y);
+		drawToScreen();
+#else
+		_graphics.lineStyle(thick, color, alpha, false, LineScaleMode.NONE);
+		_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
+		_graphics.lineTo(x2 - _camera.x, y2 - _camera.y);
+		_graphics.lineStyle(0);
+#end
 	}
 
 	/**
@@ -223,29 +214,26 @@ class Draw
 	 */
 	public static function rect(x:Int, y:Int, width:Int, height:Int, color:Int = 0xFFFFFF, alpha:Float = 1)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
+#if buffer
+		if (alpha >= 1 && blend == null)
 		{
-			if (alpha >= 1 && blend == null)
-			{
-				color = 0xFF000000 | (0xFFFFFF & color);
-				_rect.x = x - _camera.x;
-				_rect.y = y - _camera.y;
-				_rect.width = width;
-				_rect.height = height;
-				_target.fillRect(_rect, color);
-				return;
-			}
-			_graphics.clear();
-			_graphics.beginFill(color, alpha);
-			_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
-			drawToScreen();
+			color = 0xFF000000 | (0xFFFFFF & color);
+			_rect.x = x - _camera.x;
+			_rect.y = y - _camera.y;
+			_rect.width = width;
+			_rect.height = height;
+			_target.fillRect(_rect, color);
+			return;
 		}
-		else
-		{
-			_graphics.beginFill(color, alpha);
-			_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
-			_graphics.endFill();
-		}
+		_graphics.clear();
+		_graphics.beginFill(color, alpha);
+		_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
+		drawToScreen();
+#else
+		_graphics.beginFill(color, alpha);
+		_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
+		_graphics.endFill();
+#end
 	}
 
 	/**
@@ -263,7 +251,9 @@ class Draw
 	{
 		color = 0xFFFFFF & color;
 		
-		if (HXP.renderMode == RenderMode.BUFFER) _graphics.clear();
+#if buffer
+		_graphics.clear();
+#end
 		
 		if (fill) 
 		{
@@ -277,7 +267,11 @@ class Draw
 		_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
 		_graphics.endFill();
 		
-		HXP.renderMode == RenderMode.BUFFER ? drawToScreen() : _graphics.lineStyle(0);
+#if buffer
+		drawToScreen();
+#else
+		_graphics.lineStyle(0);
+#end
 	}
 		
 	/**
@@ -289,45 +283,42 @@ class Draw
 	 */
 	public static function circle(x:Int, y:Int, radius:Int, color:Int = 0xFFFFFF)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
+#if buffer
+		color = 0xFF000000 | (0xFFFFFF & color);
+		x -= Std.int(_camera.x);
+		y -= Std.int(_camera.y);
+		var f:Int = 1 - radius,
+			fx:Int = 1,
+			fy:Int = -2 * radius,
+			xx:Int = 0,
+			yy:Int = radius;
+		_target.setPixel32(x, y + radius, color);
+		_target.setPixel32(x, y - radius, color);
+		_target.setPixel32(x + radius, y, color);
+		_target.setPixel32(x - radius, y, color);
+		while (xx < yy)
 		{
-			color = 0xFF000000 | (0xFFFFFF & color);
-			x -= Std.int(_camera.x);
-			y -= Std.int(_camera.y);
-			var f:Int = 1 - radius,
-				fx:Int = 1,
-				fy:Int = -2 * radius,
-				xx:Int = 0,
-				yy:Int = radius;
-			_target.setPixel32(x, y + radius, color);
-			_target.setPixel32(x, y - radius, color);
-			_target.setPixel32(x + radius, y, color);
-			_target.setPixel32(x - radius, y, color);
-			while (xx < yy)
+			if (f >= 0)
 			{
-				if (f >= 0)
-				{
-					yy --;
-					fy += 2;
-					f += fy;
-				}
-				xx ++;
-				fx += 2;
-				f += fx;
-				_target.setPixel32(x + xx, y + yy, color);
-				_target.setPixel32(x - xx, y + yy, color);
-				_target.setPixel32(x + xx, y - yy, color);
-				_target.setPixel32(x - xx, y - yy, color);
-				_target.setPixel32(x + yy, y + xx, color);
-				_target.setPixel32(x - yy, y + xx, color);
-				_target.setPixel32(x + yy, y - xx, color);
-				_target.setPixel32(x - yy, y - xx, color);
+				yy --;
+				fy += 2;
+				f += fy;
 			}
+			xx ++;
+			fx += 2;
+			f += fx;
+			_target.setPixel32(x + xx, y + yy, color);
+			_target.setPixel32(x - xx, y + yy, color);
+			_target.setPixel32(x + xx, y - yy, color);
+			_target.setPixel32(x - xx, y - yy, color);
+			_target.setPixel32(x + yy, y + xx, color);
+			_target.setPixel32(x - yy, y + xx, color);
+			_target.setPixel32(x + yy, y - xx, color);
+			_target.setPixel32(x - yy, y - xx, color);
 		}
-		else
-		{
-			circlePlus(x, y, radius, color, 1.0, false);
-		}
+#else
+		circlePlus(x, y, radius, color, 1.0, false);
+#end
 	}
 
 	/**
@@ -342,37 +333,34 @@ class Draw
 	 */
 	public static function circlePlus(x:Int, y:Int, radius:Float, color:Int = 0xFFFFFF, alpha:Float = 1, fill:Bool = true, thick:Int = 1)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
+#if buffer
+		_graphics.clear();
+		if (fill)
 		{
-			_graphics.clear();
-			if (fill)
-			{
-				_graphics.beginFill(color & 0xFFFFFF, alpha);
-				_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
-				_graphics.endFill();
-			}
-			else
-			{
-				_graphics.lineStyle(thick, color & 0xFFFFFF, alpha);
-				_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
-			}
-			drawToScreen();
+			_graphics.beginFill(color & 0xFFFFFF, alpha);
+			_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
+			_graphics.endFill();
 		}
 		else
 		{
-			if (fill)
-			{
-				_graphics.beginFill(color & 0xFFFFFF, alpha);
-				_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
-				_graphics.endFill();
-			}
-			else
-			{
-				_graphics.lineStyle(thick, color & 0xFFFFFF, alpha);
-				_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
-				_graphics.lineStyle(0);
-			}
+			_graphics.lineStyle(thick, color & 0xFFFFFF, alpha);
+			_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
 		}
+		drawToScreen();
+#else
+		if (fill)
+		{
+			_graphics.beginFill(color & 0xFFFFFF, alpha);
+			_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
+			_graphics.endFill();
+		}
+		else
+		{
+			_graphics.lineStyle(thick, color & 0xFFFFFF, alpha);
+			_graphics.drawCircle(x - _camera.x, y - _camera.y, radius);
+			_graphics.lineStyle(0);
+		}
+#end
 	}
 
 	/**
@@ -384,50 +372,47 @@ class Draw
 	 */
 	public static function hitbox(e:Entity, outline:Bool = true, color:Int = 0xFFFFFF, alpha:Float = 1)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
+#if buffer
+		if (outline)
 		{
-			if (outline)
-			{
-				color = 0xFF000000 | (0xFFFFFF & color);
-				var x:Int = Std.int(e.x - e.originX - _camera.x),
-					y:Int = Std.int(e.y - e.originY - _camera.y);
-				_rect.x = x;
-				_rect.y = y;
-				_rect.width = e.width;
-				_rect.height = 1;
-				_target.fillRect(_rect, color);
-				_rect.y += e.height - 1;
-				_target.fillRect(_rect, color);
-				_rect.y = y;
-				_rect.width = 1;
-				_rect.height = e.height;
-				_target.fillRect(_rect, color);
-				_rect.x += e.width - 1;
-				_target.fillRect(_rect, color);
-				return;
-			}
-			if (alpha >= 1 && blend == null)
-			{
-				color = 0xFF000000 | (0xFFFFFF & color);
-				_rect.x = e.x - e.originX - _camera.x;
-				_rect.y = e.y - e.originY - _camera.y;
-				_rect.width = e.width;
-				_rect.height = e.height;
-				_target.fillRect(_rect, color);
-				return;
-			}
+			color = 0xFF000000 | (0xFFFFFF & color);
+			var x:Int = Std.int(e.x - e.originX - _camera.x),
+				y:Int = Std.int(e.y - e.originY - _camera.y);
+			_rect.x = x;
+			_rect.y = y;
+			_rect.width = e.width;
+			_rect.height = 1;
+			_target.fillRect(_rect, color);
+			_rect.y += e.height - 1;
+			_target.fillRect(_rect, color);
+			_rect.y = y;
+			_rect.width = 1;
+			_rect.height = e.height;
+			_target.fillRect(_rect, color);
+			_rect.x += e.width - 1;
+			_target.fillRect(_rect, color);
+			return;
+		}
+		if (alpha >= 1 && blend == null)
+		{
+			color = 0xFF000000 | (0xFFFFFF & color);
+			_rect.x = e.x - e.originX - _camera.x;
+			_rect.y = e.y - e.originY - _camera.y;
+			_rect.width = e.width;
+			_rect.height = e.height;
+			_target.fillRect(_rect, color);
+			return;
+		}
 
-			_graphics.clear();
-			_graphics.beginFill(color, alpha);
-			_graphics.drawRect(e.x - e.originX - _camera.x, e.y - e.originY - _camera.y, e.width, e.height);
-			drawToScreen();
-		}
-		else
-		{
-			_graphics.beginFill(color, alpha);
-			_graphics.drawRect(e.x - e.originX - _camera.x, e.y - e.originY - _camera.y, e.width, e.height);
-			_graphics.endFill();
-		}
+		_graphics.clear();
+		_graphics.beginFill(color, alpha);
+		_graphics.drawRect(e.x - e.originX - _camera.x, e.y - e.originY - _camera.y, e.width, e.height);
+		drawToScreen();
+#else
+		_graphics.beginFill(color, alpha);
+		_graphics.drawRect(e.x - e.originX - _camera.x, e.y - e.originY - _camera.y, e.width, e.height);
+		_graphics.endFill();
+#end
 	}
 
 	/**
@@ -444,21 +429,18 @@ class Draw
 	 */
 	public static function curve(x1:Int, y1:Int, x2:Int, y2:Int, x3:Int, y3:Int, thick:Float = 1, color:Int = 0, alpha:Float = 1)
 	{
-		if (HXP.renderMode == RenderMode.BUFFER)
-		{
-			_graphics.clear();
-			_graphics.lineStyle(thick, color, alpha);
-			_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
-			_graphics.curveTo(x2 - _camera.x, y2 - _camera.y, x3 - _camera.x, y3 - _camera.y);
-			drawToScreen();
-		}
-		else
-		{
-			_graphics.lineStyle(thick, color, alpha);
-			_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
-			_graphics.curveTo(x2 - _camera.x, y2 - _camera.y, x3 - _camera.x, y3 - _camera.y);
-			_graphics.lineStyle(0);
-		}
+#if buffer
+		_graphics.clear();
+		_graphics.lineStyle(thick, color, alpha);
+		_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
+		_graphics.curveTo(x2 - _camera.x, y2 - _camera.y, x3 - _camera.x, y3 - _camera.y);
+		drawToScreen();
+#else
+		_graphics.lineStyle(thick, color, alpha);
+		_graphics.moveTo(x1 - _camera.x, y1 - _camera.y);
+		_graphics.curveTo(x2 - _camera.x, y2 - _camera.y, x3 - _camera.x, y3 - _camera.y);
+		_graphics.lineStyle(0);
+#end
 	}
 
 	/**
@@ -479,14 +461,11 @@ class Draw
 			else HXP.point.x = HXP.point.y = 0;
 			HXP.point2.x = HXP.camera.x;
 			HXP.point2.y = HXP.camera.y;
-			if (HXP.renderMode == RenderMode.BUFFER) 
-			{
-				g.render(_target, HXP.point, HXP.point2);	
-			} 
-			else 
-			{
-				g.renderAtlas(layer, HXP.point, HXP.point2);
-			}
+#if buffer
+			g.render(_target, HXP.point, HXP.point2);	
+#else
+			g.renderAtlas(layer, HXP.point, HXP.point2);
+#end
 		}
 	}
 

@@ -63,40 +63,41 @@ class Canvas extends Graphic
 		_width = width;
 		_height = height;
 
-		if (HXP.renderMode == RenderMode.BUFFER)
+#if buffer
+		_refWidth = Math.ceil(width / _maxWidth);
+		_refHeight = Math.ceil(height / _maxHeight);
+		_ref = HXP.createBitmap(_refWidth, _refHeight);
+		var x:Int = 0, y:Int = 0, w:Int, h:Int, i:Int = 0,
+			ww:Int = _width % _maxWidth,
+			hh:Int = _height % _maxHeight;
+		if (ww == 0) ww = _maxWidth;
+		if (hh == 0) hh = _maxHeight;
+		while (y < _refHeight)
 		{
-			_refWidth = Math.ceil(width / _maxWidth);
-			_refHeight = Math.ceil(height / _maxHeight);
-			_ref = HXP.createBitmap(_refWidth, _refHeight);
-			var x:Int = 0, y:Int = 0, w:Int, h:Int, i:Int = 0,
-				ww:Int = _width % _maxWidth,
-				hh:Int = _height % _maxHeight;
-			if (ww == 0) ww = _maxWidth;
-			if (hh == 0) hh = _maxHeight;
-			while (y < _refHeight)
+			h = y < _refHeight - 1 ? _maxHeight : hh;
+			while (x < _refWidth)
 			{
-				h = y < _refHeight - 1 ? _maxHeight : hh;
-				while (x < _refWidth)
-				{
-					w = x < _refWidth - 1 ? _maxWidth : ww;
-					_ref.setPixel(x, y, i);
-					_buffers[i] = HXP.createBitmap(w, h, true);
-					i ++; x ++;
-				}
-				x = 0; y ++;
+				w = x < _refWidth - 1 ? _maxWidth : ww;
+				_ref.setPixel(x, y, i);
+				_buffers[i] = HXP.createBitmap(w, h, true);
+				i ++; x ++;
 			}
+			x = 0; y ++;
 		}
+#end
 	}
 
 	/** @private Renders the canvas. */
 	override public function render(target:BitmapData, point:Point, camera:Point)
 	{
 		var sx = scale * scaleX,
-			sy = scale * scaleY;
+			sy = scale * scaleY,
+			fsx = HXP.screen.fullScaleX,
+			fsy = HXP.screen.fullScaleY;
 
 		// determine drawing location
-		_point.x = point.x + x - camera.x * scrollX;
-		_point.y = point.y + y - camera.y * scrollY;
+		_point.x = (point.x + x - camera.x * scrollX) * fsx;
+		_point.y = (point.y + y - camera.y * scrollY) * fsy;
 
 		_rect.x = _rect.y = 0;
 		_rect.width = _maxWidth*sx;
@@ -113,7 +114,7 @@ class Canvas extends Graphic
 
 				if (angle == 0 && blend == null)
 				{
-					if (sx == 1 && sy == 1 && _tint == null)
+					if (sx*fsx == 1 && sy*fsy == 1 && _tint == null)
 					{
 						// copy the pixels directly onto the buffer
 						_rect.width = buffer.width;
@@ -124,8 +125,8 @@ class Canvas extends Graphic
 					{
 						// rescale first onto an intermediate buffer, then copy
 						var i = Std.int(_ref.getPixel(xx, yy));
-						var w = Std.int(buffer.width * sx);
-						var h = Std.int(buffer.height * sy);
+						var w = Std.int(buffer.width * sx * fsx);
+						var h = Std.int(buffer.height * sy * fsy);
 						var wrongSize = i >= _midBuffers.length ||
 							_midBuffers[i].width != w ||
 							_midBuffers[i].height != h;
@@ -144,8 +145,8 @@ class Canvas extends Graphic
 								_midBuffers[i].fillRect(_midBuffers[i].rect, 0);
 							}
 							_matrix.b = _matrix.c = 0;
-							_matrix.a = sx;
-							_matrix.d = sy;
+							_matrix.a = sx * fsx;
+							_matrix.d = sy * fsy;
 							_matrix.tx = _matrix.ty = 0;
 							if (angle != 0) _matrix.rotate(angle * HXP.RAD);
 
@@ -159,8 +160,8 @@ class Canvas extends Graphic
 				{
 					// render with transformation
 					_matrix.b = _matrix.c = 0;
-					_matrix.a = sx;
-					_matrix.d = sy;
+					_matrix.a = sx * fsx;
+					_matrix.d = sy * fsy;
 					_matrix.tx = _matrix.ty = 0;
 					if (angle != 0) _matrix.rotate(angle * HXP.RAD);
 					_matrix.tx += _point.x;
@@ -169,11 +170,11 @@ class Canvas extends Graphic
 					target.draw(buffer, _matrix, _tint, blend);
 				}
 
-				_point.x += _maxWidth * sx;
+				_point.x += _maxWidth * sx * fsx;
 				xx ++;
 			}
 			_point.x = px;
-			_point.y += _maxHeight * sy;
+			_point.y += _maxHeight * sy * fsy;
 			xx = 0;
 			yy ++;
 		}

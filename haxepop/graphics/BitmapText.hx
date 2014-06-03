@@ -6,7 +6,6 @@ import flash.geom.Rectangle;
 import flash.geom.Matrix;
 import flash.geom.ColorTransform;
 import haxepop.HXP;
-import haxepop.RenderMode;
 import haxepop.Graphic;
 import haxepop.graphics.Canvas;
 import haxepop.graphics.Text;
@@ -75,7 +74,7 @@ class BitmapText extends Graphic
 		// load the font as a BitmapFontAtlas
 		var font = BitmapFontAtlas.getFont(options.font, options.format, options.extraParams);
 
-		blit = HXP.renderMode != RenderMode.HARDWARE;
+		blit = #if buffer true #else false #end ;
 		_font = cast(font, BitmapFontAtlas);
 
 		// failure to load
@@ -378,6 +377,8 @@ class BitmapText extends Graphic
 	{
 		// determine drawing location
 		var fontScale = size / _font.fontSize;
+		var fsx = HXP.screen.fullScaleX,
+			fsy = HXP.screen.fullScaleY;
 
 		var sx = scale * scaleX * fontScale,
 			sy = scale * scaleY * fontScale;
@@ -387,12 +388,11 @@ class BitmapText extends Graphic
 
 		// blit the buffer to the screen
 		_matrix.b = _matrix.c = 0;
-		_matrix.a = sx;
-		_matrix.d = sy;
-		_matrix.tx = _point.x;
-		_matrix.ty = _point.y;
+		_matrix.a = sx * fsx;
+		_matrix.d = sy * fsy;
+		_matrix.tx = _point.x * fsx;
+		_matrix.ty = _point.y * fsy;
 		target.draw(_buffer, _matrix, _colorTransform, null, null, smooth);
-		//target.copyPixels(_buffer, _buffer.rect, _point, null, null, true);
 	}
 
 	override public function renderAtlas(layer:Int, point:Point, camera:Point)

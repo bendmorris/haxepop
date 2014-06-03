@@ -8,7 +8,6 @@ import haxepop.masks.Polygon;
 import haxepop.math.Vector;
 import haxepop.Graphic;
 import haxepop.HXP;
-import haxepop.RenderMode;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -140,7 +139,9 @@ class Image extends Graphic
 	override public function render(target:BitmapData, point:Point, camera:Point)
 	{
 		var sx = scale * scaleX,
-			sy = scale * scaleY;
+			sy = scale * scaleY,
+			fsx = HXP.screen.fullScaleX,
+			fsy = HXP.screen.fullScaleY;
 
 		// determine drawing location
 		_point.x = point.x + x - originX - camera.x * scrollX;
@@ -149,7 +150,7 @@ class Image extends Graphic
 		// only draw if buffer exists
 		if (_buffer != null)
 		{
-			if (angle == 0 && sx == 1 && sy == 1 && blend == null)
+			if (angle == 0 && sx * fsx == 1 && sy * fsy == 1 && blend == null)
 			{
 				// render without transformation
 				target.copyPixels(_buffer, _bufferRect, _point, null, null, true);
@@ -158,13 +159,13 @@ class Image extends Graphic
 			{
 				// render with transformation
 				_matrix.b = _matrix.c = 0;
-				_matrix.a = sx;
-				_matrix.d = sy;
-				_matrix.tx = -originX * sx;
-				_matrix.ty = -originY * sy;
+				_matrix.a = sx * fsx;
+				_matrix.d = sy * fsy;
+				_matrix.tx = -originX * sx * fsx;
+				_matrix.ty = -originY * sy * fsy;
 				if (angle != 0) _matrix.rotate(angle * HXP.RAD);
-				_matrix.tx += originX + _point.x;
-				_matrix.ty += originY + _point.y;
+				_matrix.tx += (originX + _point.x) * fsx;
+				_matrix.ty += (originY + _point.y) * fsy;
 				target.draw(_bitmap, _matrix, null, blend, null, _bitmap.smoothing);
 			}
 		}
@@ -240,14 +241,11 @@ class Image extends Graphic
 
 		var source:BitmapData = HXP.createBitmap(width, height, true, 0xFFFFFFFF);
 		var image:Image;
-		if (HXP.renderMode == RenderMode.HARDWARE)
-		{
-			image = new Image(Atlas.loadImageAsRegion(source));
-		}
-		else
-		{
-			image = new Image(source);
-		}
+#if hardware
+		image = new Image(Atlas.loadImageAsRegion(source));
+#else
+		image = new Image(source);
+#end
 
 		image.color = color;
 		image.alpha = alpha;
@@ -274,14 +272,11 @@ class Image extends Graphic
 		data.draw(HXP.sprite);
 
 		var image:Image;
-		if (HXP.renderMode == RenderMode.HARDWARE)
-		{
-			image = new Image(Atlas.loadImageAsRegion(data));
-		}
-		else
-		{
-			image = new Image(data);
-		}
+#if hardware
+		image = new Image(Atlas.loadImageAsRegion(data));
+#else
+		image = new Image(data);
+#end
 
 		image.color = color;
 		image.alpha = alpha;
@@ -351,14 +346,11 @@ class Image extends Graphic
 		data.draw(HXP.sprite, HXP.matrix);
 		
 		var image:Image;
-		if (HXP.renderMode == RenderMode.HARDWARE)
-		{
-			image = new Image(Atlas.loadImageAsRegion(data));
-		}
-		else
-		{
-			image = new Image(data);
-		}
+#if hardware
+		image = new Image(Atlas.loadImageAsRegion(data));
+#else
+		image = new Image(data);
+#end
 		
 		// adjust position, origin and angle
 		image.x = polygon.x + polygon.origin.x;

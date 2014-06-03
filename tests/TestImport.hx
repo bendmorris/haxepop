@@ -3,7 +3,6 @@ import haxepop.Entity;
 import haxepop.Graphic;
 import haxepop.HXP;
 import haxepop.Mask;
-import haxepop.RenderMode;
 import haxepop.Scene;
 import haxepop.Screen;
 import haxepop.Sfx;

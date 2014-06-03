@@ -4,7 +4,6 @@ import haxepop.Graphic;
 import haxepop.graphics.atlas.Atlas;
 import haxepop.graphics.atlas.AtlasRegion;
 import haxepop.HXP;
-import haxepop.RenderMode;
 import haxepop.utils.Input;
 import haxepop.utils.Key;
 import haxepop.utils.Ease;
@@ -190,6 +189,8 @@ class Emitter extends Graphic
 	/** @private Renders the particles. */
 	override public function render(target:BitmapData, point:Point, camera:Point)
 	{
+		var fsx:Float = HXP.screen.fullScaleX,
+			fsy:Float = HXP.screen.fullScaleY;
 		var rect:Rectangle;
 		renderParticle(function(type:ParticleType, t:Float, td:Float) {
 			rect = type._frame;

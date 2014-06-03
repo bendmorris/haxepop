@@ -122,8 +122,9 @@ class Scene extends Tweener
 	 */
 	public function render()
 	{
-		if (HXP.renderMode == RenderMode.HARDWARE)
-			AtlasData.startScene(this);
+#if hardware
+		AtlasData.startScene(this);
+#end
 
 		// render the entities in order of depth
 		for (layer in _layerList)
@@ -135,8 +136,9 @@ class Scene extends Tweener
 			}
 		}
 
-		if (HXP.renderMode == RenderMode.HARDWARE)
-			AtlasData.active = null; // forces the last active atlas to flush
+#if hardware
+		AtlasData.active = null; // forces the last active atlas to flush
+#end
 	}
 
 	/**
@@ -158,7 +160,7 @@ class Scene extends Tweener
 	}
 
 	/**
-	 * Sprite used to store layer sprites when RenderMode.HARDWARE is set.
+	 * Sprite used to store layer sprites when #hardware is set.
 	 */
 	public var sprite(default, null):Sprite;
 

@@ -160,14 +160,11 @@ class Entity extends Tweener
 			else _point.x = _point.y = 0;
 			_camera.x = _scene == null ? HXP.camera.x : _scene.camera.x;
 			_camera.y = _scene == null ? HXP.camera.y : _scene.camera.y;
-			if (_graphic.blit)
-			{
-				_graphic.render((renderTarget != null) ? renderTarget : HXP.buffer, _point, _camera);
-			}
-			else
-			{
-				_graphic.renderAtlas(layer, _point, _camera);
-			}
+#if buffer
+			_graphic.render((renderTarget != null) ? renderTarget : HXP.buffer, _point, _camera);
+#else
+			_graphic.renderAtlas(layer, _point, _camera);
+#end
 		}
 	}
 
