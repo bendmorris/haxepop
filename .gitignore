@@ -5,6 +5,9 @@
 *.build
 *.hash
 *.docset/
+*.eot
+*.svg
+*.woff
 build-test/
 
 # OS specific files
