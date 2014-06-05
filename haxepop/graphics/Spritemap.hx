@@ -206,7 +206,7 @@ class Spritemap extends Image
 	{
 		if(frames == null || frames.length == 0)
 		{
-			stop(reset);		
+			stop(reset);
 			return null;
 		}
 

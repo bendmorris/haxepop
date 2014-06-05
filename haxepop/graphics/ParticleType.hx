@@ -23,8 +23,8 @@ class ParticleType
 	 */
 	public function new(name:String, frames:Array<Int>, width:Int, frameWidth:Int, frameHeight:Int)
 	{
-		_red = _green = _blue = _alpha = 1;
-		_redRange = _greenRange = _blueRange = _alphaRange = 0;
+		_red = _green = _blue = _alpha = _scale = _trailLength = 1;
+		_redRange = _greenRange = _blueRange = _alphaRange = _scaleRange = _trailDelay = 0;
 
 		_name = name;
 		_frame = new Rectangle(0, 0, frameWidth, frameHeight);
@@ -32,10 +32,10 @@ class ParticleType
 		if (frames.length == 0) frames.push(0);
 		_frames = frames;
 
-        _angle    = _angleRange    = 0;
-        _gravity  = _gravityRange  = 0;
-        _duration = _durationRange = 0;
-        _distance = _distanceRange = 0;
+		_angle    = _angleRange    = 0;
+		_gravity  = _gravityRange  = 0;
+		_duration = _durationRange = 0;
+		_distance = _distanceRange = 0;
 	}
 
 	/**
@@ -109,7 +109,21 @@ class ParticleType
 		_alpha = start;
 		_alphaRange = finish - start;
 		_alphaEase = ease;
-		createBuffer();
+		return this;
+	}
+
+	/**
+	 * Sets the scale range of this particle type.
+	 * @param	start		The starting scale.
+	 * @param	finish		The finish sale.
+	 * @param	ease		Optional easer function.
+	 * @return	This ParticleType object.
+	 */
+	public function setScale(start:Float = 1, finish:Float = 0, ease:EaseFunction = null):ParticleType
+	{
+		_scale = start;
+		_scaleRange = finish - start;
+		_scaleEase = ease;
 		return this;
 	}
 
@@ -131,16 +145,20 @@ class ParticleType
 		_greenRange = (finish >> 8 & 0xFF) / 255 - _green;
 		_blueRange = (finish & 0xFF) / 255 - _blue;
 		_colorEase = ease;
-		createBuffer();
 		return this;
 	}
 
-	/** @private Creates the buffer if it doesn't exist. */
-	private function createBuffer()
+	/**
+	 * Sets the trail of this particle type.
+	 * @param	length		Number of trailing particles to draw.
+	 * @param	delay		Time to delay each trailing particle, in seconds.
+	 * @return	This ParticleType object.
+	 */
+	public function setTrail(length:Int = 1, delay:Float = 0.1):ParticleType
 	{
-		if (_buffer != null) return;
-		_buffer = HXP.createBitmap(Std.int(_frame.width), Std.int(_frame.height), true);
-		_bufferRect = _buffer.rect;
+		_trailLength = length;
+		_trailDelay = delay;
+		return this;
 	}
 
 	// Particle information.
@@ -167,6 +185,11 @@ class ParticleType
 	private var _alphaRange:Float;
 	private var _alphaEase:EaseFunction;
 
+	// Scale information.
+	private var _scale:Float;
+	private var _scaleRange:Float;
+	private var _scaleEase:EaseFunction;
+
 	// Color information.
 	private var _red:Float;
 	private var _redRange:Float;
@@ -175,6 +198,10 @@ class ParticleType
 	private var _blue:Float;
 	private var _blueRange:Float;
 	private var _colorEase:EaseFunction;
+
+	// Trail information
+	private var _trailLength:Int;
+	private var _trailDelay:Float;
 
 	// Buffer information.
 	private var _buffer:BitmapData;
