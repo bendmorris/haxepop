@@ -17,6 +17,7 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+import flash.ui.Mouse;
 
 import haxe.Log;
 import haxe.PosInfos;
@@ -214,7 +215,7 @@ class Console
 		// Used to determine some text sizing.
 		var big:Bool = width >= BIG_WIDTH_THRESHOLD;
 
-		// The transparent HaxePunk logo overlay bitmap.
+		// The transparent HaxePop logo overlay bitmap.
 		_sprite.addChild(_back);
 
 		// The entity and selection sprites.
@@ -550,6 +551,9 @@ class Console
 			HXP.clear(SCREEN_LIST);
 			HXP.clear(SELECT_LIST);
 		}
+
+		if (HXP.cursor != null) _paused ? Mouse.show() : Mouse.hide();
+
 		return _paused;
 	}
 

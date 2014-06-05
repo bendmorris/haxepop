@@ -12,6 +12,7 @@ import flash.geom.Rectangle;
 import flash.Lib;
 import haxe.EnumFlags;
 import haxe.Timer;
+import haxepop.graphics.Image;
 import haxepop.graphics.atlas.AtlasData;
 import haxepop.utils.Draw;
 import haxepop.utils.Input;
@@ -86,6 +87,8 @@ class Engine extends Sprite
 		addEventListener(Event.ADDED_TO_STAGE, onStage);
 		Lib.current.addChild(this);
 #end
+
+		HXP.cursor = new Image("graphics/cursor.png");
 	}
 
 	/**

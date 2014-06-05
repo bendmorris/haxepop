@@ -14,6 +14,7 @@ import flash.media.SoundMixer;
 #end
 import flash.media.SoundTransform;
 import flash.system.System;
+import flash.ui.Mouse;
 import flash.utils.ByteArray;
 
 import haxepop.Graphic;
@@ -181,6 +182,34 @@ class HXP
 	 * Defines how to rende the scene (deprecated; use #if buffer or #if hardware instead.)
 	 */
 	public static var renderMode(default, never):RenderMode = #if buffer RenderMode.BUFFER #else RenderMode.HARDWARE #end;
+
+	/**
+	 * If this is not null, a custom cursor will be drawn at the mouse position.
+	 */
+	public static var cursor(default, set):Graphic;
+	static function set_cursor(c:Graphic)
+	{
+		if (c == null) Mouse.show()
+		else Mouse.hide();
+		
+		return cursor = c;
+	}
+
+	public static function drawCursor()
+	{
+		var cursor = HXP.cursor;
+		if (cursor != null)
+		{
+			cursor.scrollX = cursor.scrollY = 0;
+			cursorPoint.x = screen.mouseX;
+			cursorPoint.y = screen.mouseY;
+#if buffer
+			cursor.render(HXP.buffer, cursorPoint, camera);
+#else
+			cursor.renderAtlas(0, cursorPoint, camera);
+#end
+		}
+	}
 
 	/**
 	 * The choose function randomly chooses and returns one of the provided values.
@@ -1233,6 +1262,7 @@ class HXP
 	// Global objects used for rendering, collision, etc.
 	public static var point:Point = new Point();
 	public static var point2:Point = new Point();
+	public static var cursorPoint:Point = new Point();
 	public static var zero:Point = new Point();
 	public static var rect:Rectangle = new Rectangle();
 	public static var matrix:Matrix = new Matrix();

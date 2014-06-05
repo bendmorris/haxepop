@@ -136,6 +136,8 @@ class Scene extends Tweener
 			}
 		}
 
+		HXP.drawCursor();
+
 #if hardware
 		AtlasData.active = null; // forces the last active atlas to flush
 #end
