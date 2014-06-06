@@ -57,8 +57,8 @@ class Screen
 	 */
 	public function resize()
 	{
-		width = Math.ceil(HXP.bounds.width);
-		height = Math.ceil(HXP.bounds.height);
+		width = Math.ceil(HXP.windowWidth);
+		height = Math.ceil(HXP.windowHeight);
 #if buffer
 		disposeBitmap(_bitmap[0]);
 		disposeBitmap(_bitmap[1]);

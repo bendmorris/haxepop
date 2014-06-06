@@ -128,6 +128,11 @@ class HXP
 	public static var rate:Float = 1;
 
 	/**
+	 * Whether the game should be paused when focus is lost.
+	 */
+	public static var autoPause:Bool = true;
+
+	/**
 	 * The Screen object, use to transform or offset the Screen.
 	 */
 	public static var screen:Screen;
@@ -259,16 +264,16 @@ class HXP
 	 * @param width		New width.
 	 * @param height	New height.
 	 */
-	public static function resize(width:Int, height:Int)
+	public static function resize(w:Int, h:Int)
 	{
 		// resize scene to scale
-		HXP.width = Std.int(width / HXP.screen.fullScaleX);
-		HXP.height = Std.int(height / HXP.screen.fullScaleY);
-		HXP.halfWidth = HXP.width / 2;
-		HXP.halfHeight = HXP.height / 2;
-		HXP.bounds.width = width;
-		HXP.bounds.height = height;
-		HXP.screen.resize();
+		width = Std.int(w / HXP.screen.fullScaleX);
+		height = Std.int(h / HXP.screen.fullScaleY);
+		halfWidth = width / 2;
+		halfHeight = height / 2;
+		bounds.width = w;
+		bounds.height = h;
+		screen.resize();
 	}
 
 	/**

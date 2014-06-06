@@ -8,6 +8,7 @@ import flash.display.StageDisplayState;
 import flash.display.StageQuality;
 import flash.display.StageScaleMode;
 import flash.events.Event;
+import flash.events.FocusEvent;
 import flash.geom.Rectangle;
 import flash.Lib;
 import haxe.EnumFlags;
@@ -99,12 +100,26 @@ class Engine extends Sprite
 	/**
 	 * Override this, called when game gains focus
 	 */
-	public function focusGained() { }
+	public function focusGained()
+	{
+		if (HXP.autoPause)
+		{
+			HXP.stage.removeChild(_pauseOverlay);
+			HXP.rate = 1;
+		}
+	}
 
 	/**
 	 * Override this, called when game loses focus
 	 */
-	public function focusLost() { }
+	public function focusLost()
+	{
+		if (HXP.autoPause)
+		{
+			HXP.stage.addChild(_pauseOverlay);
+			HXP.rate = 0;
+		}
+	}
 
 	/**
 	 * Updates the game, updating the Scene and Entities.
@@ -177,13 +192,13 @@ class Engine extends Sprite
 			resize();
 		});
 
-		HXP.stage.addEventListener(Event.ACTIVATE, function (e:Event) {
+		HXP.stage.addEventListener(#if desktop FocusEvent.FOCUS_IN #else Event.ACTIVATE #end, function (e:Event) {
 			HXP.focused = true;
 			focusGained();
 			_scene.focusGained();
 		});
 
-		HXP.stage.addEventListener(Event.DEACTIVATE, function (e:Event) {
+		HXP.stage.addEventListener(#if desktop FocusEvent.FOCUS_OUT #else Event.DEACTIVATE #end, function (e:Event) {
 			HXP.focused = false;
 			focusLost();
 			_scene.focusLost();
@@ -212,6 +227,8 @@ class Engine extends Sprite
 		HXP.screen.scaleX = HXP.stage.stageWidth / HXP.width;
 		HXP.screen.scaleY = HXP.stage.stageHeight / HXP.height;
 		HXP.resize(HXP.stage.stageWidth, HXP.stage.stageHeight);
+
+		createPauseOverlay();
 	}
 
 	/** @private Event handler for stage entry. */
@@ -257,14 +274,14 @@ class Engine extends Sprite
 		}
 
 #if buffer
-			#if (!(flash || js) && debug)
-			HXP.console.log(["Warning: Using #buffer on native target may result in bad performance"]);
-			#end
+		#if (!(flash || js) && debug)
+		HXP.console.log(["Warning: Using #buffer on native target may result in bad performance"]);
+		#end
 #end
 #if hardware
-			#if ((flash || js) && debug)
-			HXP.console.log(["Warning: Using #hardware on flash/html5 target may result in corrupt graphics"]);
-			#end
+		#if ((flash || js) && debug)
+		HXP.console.log(["Warning: Using #hardware on flash/html5 target may result in corrupt graphics"]);
+		#end
 #end
 	}
 
@@ -409,6 +426,30 @@ class Engine extends Sprite
 		return _scene;
 	}
 
+	function createPauseOverlay()
+	{
+		if (_pauseBitmap == null)
+			_pauseBitmap = new Bitmap();
+
+		if (_pauseBitmap.bitmapData != null)
+		{
+			_pauseBitmap.bitmapData.dispose();
+		}
+
+		var w:Int = HXP.windowWidth, h:Int = HXP.windowHeight;
+		_pauseBitmap.bitmapData = HXP.createBitmap(w, h, true, 0x80FFFFFF);
+
+		_pauseOverlay = new Sprite();
+		_pauseOverlay.addChild(_pauseBitmap);
+
+		var g = _pauseOverlay.graphics;
+		g.moveTo(w / 3, h / 3);
+		g.beginFill(0x808080);
+		g.lineTo(w * 2 / 3, h / 2);
+		g.lineTo(w / 3, h * 2 / 3);
+		g.lineTo(w / 3, h / 3);
+	}
+
 	// Scene information.
 	private var _scene:Scene = new Scene();
 	private var _scenes:List<Scene> = new List<Scene>();
@@ -432,4 +473,7 @@ class Engine extends Sprite
 	private var _frameLast:Float;
 	private var _frameListSum:Int;
 	private var _frameList:Array<Int>;
+
+	private var _pauseOverlay:Sprite;
+	private var _pauseBitmap:Bitmap;
 }
