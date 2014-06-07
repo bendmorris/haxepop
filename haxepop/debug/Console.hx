@@ -2,8 +2,9 @@ package haxepop.debug;
 
 import haxepop.Entity;
 import haxepop.HXP;
-import haxepop.utils.Input;
-import haxepop.utils.Key;
+import haxepop.Input;
+import haxepop.input.Key;
+import haxepop.input.Mouse;
 
 import openfl.Assets;
 import flash.display.Bitmap;
@@ -17,7 +18,6 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import flash.ui.Mouse;
 
 import haxe.Log;
 import haxe.PosInfos;
@@ -42,7 +42,7 @@ class Console
 	{
 		init();
 
-		Input.define("_ARROWS", [Key.RIGHT, Key.LEFT, Key.DOWN, Key.UP]);
+		Key.define("_ARROWS", [Key.RIGHT, Key.LEFT, Key.DOWN, Key.UP]);
 	}
 
 	// Initialize variables
@@ -444,12 +444,12 @@ class Console
 				if (HXP.engine.paused)
 				{
 					// When the mouse is pressed.
-					if (Input.mousePressed)
+					if (Mouse.mousePressed)
 					{
 						// Mouse is within clickable area.
-						if (Input.mouseFlashY > 20 && (Input.mouseFlashX > _debReadText1.width || Input.mouseFlashY < _debRead.y))
+						if (Mouse.mouseFlashY > 20 && (Mouse.mouseFlashX > _debReadText1.width || Mouse.mouseFlashY < _debRead.y))
 						{
-							if (Input.check(Key.SHIFT))
+							if (Key.check(Key.SHIFT))
 							{
 								if (SELECT_LIST.length != 0) startDragging();
 								else startPanning();
@@ -466,10 +466,10 @@ class Console
 					}
 
 					// Select all Entities
-					if (Input.pressed(Key.A)) selectAll();
+					if (Key.pressed(Key.A)) selectAll();
 
 					// If the shift key is held.
-					if (Input.check(Key.SHIFT))
+					if (Key.check(Key.SHIFT))
 					{
 						// If Entities are selected.
 						if (SELECT_LIST.length != 0)
@@ -499,7 +499,7 @@ class Console
 			{
 				// log scrollbar
 				if (_scrolling) updateScrolling();
-				else if (Input.mousePressed) startScrolling();
+				else if (Mouse.mousePressed) startScrolling();
 			}
 		}
 		else
@@ -510,7 +510,7 @@ class Console
 		}
 
 		// Console toggle.
-		if (Input.pressed(toggleKey)) paused = !_paused;
+		if (Key.pressed(toggleKey)) paused = !_paused;
 	}
 
 	/**
@@ -552,7 +552,7 @@ class Console
 			HXP.clear(SELECT_LIST);
 		}
 
-		if (HXP.cursor != null) _paused ? Mouse.show() : Mouse.hide();
+		if (HXP.cursor != null) _paused ? flash.ui.Mouse.show() : flash.ui.Mouse.hide();
 
 		return _paused;
 	}
@@ -593,17 +593,17 @@ class Console
 	private function startDragging()
 	{
 		_dragging = true;
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
 	}
 
 	/** @private Updates Entity dragging. */
 	private function updateDragging()
 	{
-		moveSelected(Std.int(Input.mouseX - _entRect.x), Std.int(Input.mouseY - _entRect.y));
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
-		if (Input.mouseReleased) _dragging = false;
+		moveSelected(Std.int(Mouse.mouseX - _entRect.x), Std.int(Mouse.mouseY - _entRect.y));
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
+		if (Mouse.mouseReleased) _dragging = false;
 	}
 
 	/** @private Move the selected Entitites by the amount. */
@@ -623,17 +623,17 @@ class Console
 	private function startPanning()
 	{
 		_panning = true;
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
 	}
 
 	/** @private Updates camera panning. */
 	private function updatePanning()
 	{
-		if (Input.mouseReleased) _panning = false;
-		panCamera(Std.int(_entRect.x - Input.mouseX), Std.int(_entRect.y - Input.mouseY));
-		_entRect.x = Input.mouseX;
-		_entRect.y = Input.mouseY;
+		if (Mouse.mouseReleased) _panning = false;
+		panCamera(Std.int(_entRect.x - Mouse.mouseX), Std.int(_entRect.y - Mouse.mouseY));
+		_entRect.x = Mouse.mouseX;
+		_entRect.y = Mouse.mouseY;
 	}
 
 	/** @private Pans the camera. */
@@ -660,8 +660,8 @@ class Console
 	private function startSelection()
 	{
 		_selecting = true;
-		_entRect.x = Input.mouseFlashX;
-		_entRect.y = Input.mouseFlashY;
+		_entRect.x = Mouse.mouseFlashX;
+		_entRect.y = Mouse.mouseFlashY;
 		_entRect.width = 0;
 		_entRect.height = 0;
 	}
@@ -669,9 +669,9 @@ class Console
 	/** @private Updates Entity selection. */
 	private function updateSelection()
 	{
-		_entRect.width = Input.mouseFlashX - _entRect.x;
-		_entRect.height = Input.mouseFlashY - _entRect.y;
-		if (Input.mouseReleased)
+		_entRect.width = Mouse.mouseFlashX - _entRect.x;
+		_entRect.height = Mouse.mouseFlashY - _entRect.y;
+		if (Mouse.mouseReleased)
 		{
 			selectEntities(_entRect);
 			renderEntities();
@@ -699,7 +699,7 @@ class Console
 			sy:Float = HXP.screen.fullScaleY,
 			e:Entity;
 
-		if (!Input.check(Key.CONTROL))
+		if (!Key.check(Key.CONTROL))
 		{
 			// Replace selections with new selections.
 			HXP.clear(SELECT_LIST);
@@ -741,30 +741,30 @@ class Console
 	/** @private Starts log text scrolling. */
 	private function startScrolling()
 	{
-		if (LOG.length > _logLines) _scrolling = _logBarGlobal.contains(Input.mouseFlashX, Input.mouseFlashY);
+		if (LOG.length > _logLines) _scrolling = _logBarGlobal.contains(Mouse.mouseFlashX, Mouse.mouseFlashY);
 	}
 
 	/** @private Updates log text scrolling. */
 	private function updateScrolling()
 	{
-		_scrolling = Input.mouseDown;
-		_logScroll = HXP.scaleClamp(Input.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
+		_scrolling = Mouse.mouseDown;
+		_logScroll = HXP.scaleClamp(Mouse.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
 		updateLog();
 	}
 
 	/** @private Moves Entities with the arrow keys. */
 	private function updateKeyMoving()
 	{
-		HXP.point.x = (Input.pressed(Key.RIGHT) ? 1 : 0) - (Input.pressed(Key.LEFT) ? 1 : 0);
-		HXP.point.y = (Input.pressed(Key.DOWN) ? 1 : 0) - (Input.pressed(Key.UP) ? 1 : 0);
+		HXP.point.x = (Key.pressed(Key.RIGHT) ? 1 : 0) - (Key.pressed(Key.LEFT) ? 1 : 0);
+		HXP.point.y = (Key.pressed(Key.DOWN) ? 1 : 0) - (Key.pressed(Key.UP) ? 1 : 0);
 		if (HXP.point.x != 0 || HXP.point.y != 0) moveSelected(Std.int(HXP.point.x), Std.int(HXP.point.y));
 	}
 
 	/** @private Pans the camera with the arrow keys. */
 	private function updateKeyPanning()
 	{
-		HXP.point.x = (Input.check(Key.RIGHT) ? 1 : 0) - (Input.check(Key.LEFT) ? 1 : 0);
-		HXP.point.y = (Input.check(Key.DOWN) ? 1 : 0) - (Input.check(Key.UP) ? 1 : 0);
+		HXP.point.x = (Key.check(Key.RIGHT) ? 1 : 0) - (Key.check(Key.LEFT) ? 1 : 0);
+		HXP.point.y = (Key.check(Key.DOWN) ? 1 : 0) - (Key.check(Key.UP) ? 1 : 0);
 		if (HXP.point.x != 0 || HXP.point.y != 0) panCamera(Std.int(HXP.point.x), Std.int(HXP.point.y));
 	}
 
@@ -1052,7 +1052,7 @@ class Console
 		if (_butDebug.bitmapData.rect.contains(_butDebug.mouseX, _butDebug.mouseY))
 		{
 			_butDebug.alpha = _butOutput.alpha = 1;
-			if (Input.mousePressed) debug = !_debug;
+			if (Mouse.mousePressed) debug = !_debug;
 		}
 		else _butDebug.alpha = _butOutput.alpha = 0.5;
 
@@ -1060,7 +1060,7 @@ class Console
 		if (_butPlay.bitmapData.rect.contains(_butPlay.mouseX, _butPlay.mouseY))
 		{
 			_butPlay.alpha = _butPause.alpha = 1;
-			if (Input.mousePressed)
+			if (Mouse.mousePressed)
 			{
 				HXP.engine.paused = !HXP.engine.paused;
 				renderEntities();
@@ -1072,7 +1072,7 @@ class Console
 		if (_butStep.bitmapData.rect.contains(_butStep.mouseX, _butStep.mouseY))
 		{
 			_butStep.alpha = 1;
-			if (Input.mousePressed) stepFrame();
+			if (Mouse.mousePressed) stepFrame();
 		}
 		else _butStep.alpha = .5;
 	}

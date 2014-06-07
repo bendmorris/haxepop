@@ -247,7 +247,7 @@ class Engine extends Sprite
 		setStageProperties();
 
 		// enable input
-		Input.enable();
+		Input.init();
 
 		// switch scenes
 		checkScene();
@@ -303,7 +303,6 @@ class Engine extends Sprite
 		// update console
 		if (HXP.consoleEnabled()) HXP.console.update();
 
-		// update input
 		Input.update();
 
 		// update timer
@@ -429,11 +428,13 @@ class Engine extends Sprite
 	function createPauseOverlay()
 	{
 		if (_pauseBitmap == null)
+		{
 			_pauseBitmap = new Bitmap();
-
-		if (_pauseBitmap.bitmapData != null)
+		}
+		else
 		{
 			_pauseBitmap.bitmapData.dispose();
+			_pauseOverlay.graphics.clear();
 		}
 
 		var w:Int = HXP.windowWidth, h:Int = HXP.windowHeight;
