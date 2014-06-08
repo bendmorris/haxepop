@@ -286,13 +286,13 @@ class Engine extends Sprite
 		}
 
 #if buffer
-		#if (!(flash || js) && debug)
+		#if (native && debug)
 		HXP.console.log(["Warning: Using #buffer on native target may result in bad performance"]);
 		#end
 #end
 #if hardware
-		#if ((flash || js) && debug)
-		HXP.console.log(["Warning: Using #hardware on flash/html5 target may result in corrupt graphics"]);
+		#if (flash && debug)
+		HXP.console.log(["Warning: Using #hardware on flash target may result in corrupt graphics"]);
 		#end
 #end
 	}
