@@ -209,18 +209,18 @@ class Image extends Graphic
 
 			if (flipped) sx *= -1;
 
-			// optimized matrix math
-			var b = sx * fsx * sin;
-			var a = sx * fsx * cos;
+			var sxi = fsx * sx;
+			var syi = fsy * sy;
+			var b = sxi * sin;
+			var a = sxi * cos;
+			var d = syi * cos;
+			var c = syi * -sin;
 
-			var d = sy * fsy * cos;
-			var c = sy * fsy * -sin;
-
-			var tx = -originX * sx,
-				ty = -originY * sy;
+			var tx = -originX * sxi,
+				ty = -originY * syi;
 			var tx1 = tx * cos - ty * sin;
-			ty = ((tx * sin + ty * cos) + originY + _point.y) * fsy;
-			tx = (tx1 + originX + _point.x) * fsx;
+			ty = ((tx * sin + ty * cos) + (originY + _point.y) * fsy);
+			tx = tx1 + (originX + _point.x) * fsx;
 
 			_region.drawMatrix(tx, ty, a, b, c, d, layer, _red, _green, _blue, _alpha, smooth);
 		}
