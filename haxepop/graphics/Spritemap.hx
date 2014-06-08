@@ -50,9 +50,15 @@ class Spritemap extends Image
 		switch (source.type)
 		{
 			case Left(bd):
+				if (frameWidth == 0) frameWidth = bd.width;
+				if (frameHeight == 0) frameWidth = bd.height;
+				_rect.width = frameWidth;
+				_rect.height = frameHeight;
 				super(bd, _rect);
 			case Right(atlas):
 				_atlas = atlas;
+				if (frameWidth == 0) frameWidth = _atlas.width;
+				if (frameHeight == 0) frameHeight = _atlas.height;
 				_atlas.prepare(frameWidth, frameHeight);
 				super(atlas.getRegion(_frame), _rect);
 		}

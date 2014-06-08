@@ -200,7 +200,7 @@ class Joystick implements InputMethod
 		return false;
 	}
 
-	public function inputGet(button:Int):ButtonPress
+	public static function get(button:Int):ButtonPress
 	{
 		var press = new ButtonPress();
 		press.down = check(button);
@@ -298,7 +298,7 @@ class Joystick implements InputMethod
 
 	private var _timeout:Float;
 
-	private static var _joysticks:Map<Int,ActiveJoystick> = new Map<Int,ActiveJoystick>();
+	private static var _joysticks:Map<Int,Joystick> = new Map<Int,Joystick>();
 
 }
 

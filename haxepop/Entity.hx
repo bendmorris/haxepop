@@ -83,12 +83,12 @@ class Entity extends Tweener
 	/**
 	 * X origin of the Entity's hitbox.
 	 */
-	public var originX:Int;
+	public var originX:Float;
 
 	/**
 	 * Y origin of the Entity's hitbox.
 	 */
-	public var originY:Int;
+	public var originY:Float;
 
 	/**
 	 * The BitmapData target to draw the Entity to. Leave as null to render to the current screen buffer (default).
@@ -617,7 +617,7 @@ class Entity extends Tweener
 	 * @param	originX		X origin of the hitbox.
 	 * @param	originY		Y origin of the hitbox.
 	 */
-	public inline function setHitbox(width:Int = 0, height:Int = 0, originX:Int = 0, originY:Int = 0)
+	public inline function setHitbox(width:Int = 0, height:Int = 0, originX:Float = 0, originY:Float = 0)
 	{
 		this.width = width;
 		this.height = height;
@@ -654,7 +654,7 @@ class Entity extends Tweener
 	 * @param	x		X origin.
 	 * @param	y		Y origin.
 	 */
-	public inline function setOrigin(x:Int = 0, y:Int = 0)
+	public inline function setOrigin(x:Float = 0, y:Float = 0)
 	{
 		originX = x;
 		originY = y;
@@ -665,8 +665,8 @@ class Entity extends Tweener
 	 */
 	public inline function centerOrigin()
 	{
-		originX = Std.int(halfWidth);
-		originY = Std.int(halfHeight);
+		originX = halfWidth;
+		originY = halfHeight;
 	}
 
 	/**

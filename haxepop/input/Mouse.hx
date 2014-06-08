@@ -53,53 +53,53 @@ class Mouse implements InputMethod
 	/**
 	 * If the left button mouse is held down
 	 */
-	public static var mouseDown:Bool;
+	public static var mouseDown:Bool = false;
 	/**
 	 * If the left button mouse is up
 	 */
-	public static var mouseUp:Bool;
+	public static var mouseUp:Bool = true;
 	/**
 	 * If the left button mouse was recently pressed
 	 */
-	public static var mousePressed:Bool;
+	public static var mousePressed:Bool = false;
 	/**
 	 * If the left button mouse was recently released
 	 */
-	public static var mouseReleased:Bool;
+	public static var mouseReleased:Bool = false;
 
 	/**
 	 * If the right button mouse is held down
 	 */
-	public static var rightMouseDown:Bool;
+	public static var rightMouseDown:Bool = false;
 	/**
 	 * If the right button mouse is up
 	 */
-	public static var rightMouseUp:Bool;
+	public static var rightMouseUp:Bool = true;
 	/**
 	 * If the right button mouse was recently pressed
 	 */
-	public static var rightMousePressed:Bool;
+	public static var rightMousePressed:Bool = false;
 	/**
 	 * If the right button mouse was recently released
 	 */
-	public static var rightMouseReleased:Bool;
+	public static var rightMouseReleased:Bool = false;
 
 	/**
 	 * If the middle button mouse is held down
 	 */
-	public static var middleMouseDown:Bool;
+	public static var middleMouseDown:Bool = false;
 	/**
 	 * If the middle button mouse is up
 	 */
-	public static var middleMouseUp:Bool;
+	public static var middleMouseUp:Bool = true;
 	/**
 	 * If the middle button mouse was recently pressed
 	 */
-	public static var middleMousePressed:Bool;
+	public static var middleMousePressed:Bool = false;
 	/**
 	 * If the middle button mouse was recently released
 	 */
-	public static var middleMouseReleased:Bool;
+	public static var middleMouseReleased:Bool = false;
 
 	/**
 	 * If the mouse wheel has moved

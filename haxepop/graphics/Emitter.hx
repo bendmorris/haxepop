@@ -1,17 +1,17 @@
 package haxepop.graphics;
 
-import haxepop.Graphic;
-import haxepop.graphics.atlas.Atlas;
-import haxepop.graphics.atlas.AtlasRegion;
-import haxepop.HXP;
-import haxepop.utils.Input;
-import haxepop.utils.Key;
-import haxepop.utils.Ease;
-
 import flash.display.BitmapData;
 import flash.geom.ColorTransform;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+import haxepop.HXP;
+import haxepop.Graphic;
+import haxepop.graphics.ParticleType;
+import haxepop.graphics.atlas.Atlas;
+import haxepop.graphics.atlas.AtlasRegion;
+import haxepop.utils.Input;
+import haxepop.utils.Key;
+import haxepop.utils.Ease;
 
 /**
  * Particle emitter used for emitting and rendering particle sprites.
@@ -28,7 +28,6 @@ class Emitter extends Graphic
 	public function new(source:TileType, frameWidth:Int = 0, frameHeight:Int = 0)
 	{
 		super();
-		_p = new Point();
 		_tint = new ColorTransform();
 		_types = new Map<String,ParticleType>();
 
@@ -63,7 +62,30 @@ class Emitter extends Graphic
 		while (p != null)
 		{
 			p._time += e; // Update particle time elapsed
+
 			var type = p._type;
+			var t = p._time / p._duration;
+			if (t < 1)
+			{
+				// check for collision callbacks
+				var td = (type._ease == null) ? t : type._ease(t);
+				var px = p._x + p._ox + p._moveX * (type._backwards ? 1 - td : td);
+				var py = p._y + p._oy + p._moveY * (type._backwards ? 1 - td : td);
+				for (key in type.onCollide.keys())
+				{
+					var collide:Entity = HXP.scene.collidePoint(key, px, py);
+					if (collide != null)
+					{
+						var result:Bool = Lambda.fold(type.onCollide.call(key, collide), function(a:Bool, b:Bool) {return a || b;}, false);
+						if (result)
+						{
+							p._duration = p._time;
+							break;
+						}
+					}
+				}
+			}
+
 			if (p._time - (type._trailLength * type._trailDelay) >= p._duration) // remove on time-out
 			{
 				if (p._next != null) p._next._prev = p._prev;
@@ -113,7 +135,7 @@ class Emitter extends Graphic
 		_particle = null;
 	}
 
-	private inline function renderParticle(renderFunc:ParticleType->Float->Float->Void, point:Point, camera:Point)
+	private inline function renderParticle(renderFunc:Void->Void, point:Point, camera:Point)
 	{
 		// quit if there are no particles
 		if (_particle == null)
@@ -122,10 +144,6 @@ class Emitter extends Graphic
 		}
 		else
 		{
-			// get rendering position
-			_point.x = point.x + x;
-			_point.y = point.y + y;
-
 			// particle info
 			var t:Float, pt:Float, td:Float, atd:Float, std:Float,
 				p:Particle = _particle,
@@ -136,15 +154,19 @@ class Emitter extends Graphic
 			{
 				// get time scale
 				t = p._time / p._duration;
+				if (p._firstDraw)
+				{
+					p._ox = point.x;
+					p._oy = point.y;
+					p._firstDraw = false;
+				}
 
 				// get particle type
 				type = p._type;
 
 				// get position
 				td = (type._ease == null) ? t : type._ease(t);
-				_p.x = _point.x + p._x + p._moveX * (type._backwards ? 1 - td : td);
-				_p.y = _point.y + p._y + p._moveY * (type._backwards ? 1 - td : td);
-				p._moveY += p._gravity * td;
+				// TODO: gravity
 
 				var n:Int = type._trailLength;
 				while (n >= 0)
@@ -158,15 +180,15 @@ class Emitter extends Graphic
 					std = (type._scaleEase == null) ? t : type._scaleEase(t);
 
 					_source.frame = type._frames[Std.int(td * type._frames.length)];
-					_source.angle = p._angle;
-					_source.alpha = type._alpha + type._alphaRange * atd;
+					//_source.angle = p._rotate;
+					var alpha = type._alpha + type._alphaRange * atd;
+					if (type._trailAlpha < 1) alpha *= Math.pow(type._trailAlpha, n);
+					_source.alpha = alpha;
 					_source.scale = type._scale + type._scaleRange * std;
-					_source.x = _p.x - p._moveX * (type._backwards ? 1 - td : td);
-					_source.y = _p.y - p._moveY * (type._backwards ? 1 - td : td);
+					_source.x = p._x - point.x + p._ox + p._moveX * (type._backwards ? 1 - td : td);
+					_source.y = p._y - point.y + p._oy + p._moveY * (type._backwards ? 1 - td : td);
 
-					renderFunc(type, t, td);
-
-					
+					renderFunc();
 				}
 
 				// get next particle
@@ -177,14 +199,14 @@ class Emitter extends Graphic
 
 	override public function render(target:BitmapData, point:Point, camera:Point)
 	{
-		renderParticle(function(type:ParticleType, t:Float, td:Float) {
+		renderParticle(function() {
 			_source.render(target, point, camera);
 		}, point, camera);
 	}
 
 	override public function renderAtlas(layer:Int, point:Point, camera:Point)
 	{
-		renderParticle(function(type:ParticleType, t:Float, td:Float) {
+		renderParticle(function() {
 			_source.renderAtlas(layer, point, camera);
 		}, point, camera);
 	}
@@ -275,13 +297,14 @@ class Emitter extends Graphic
 	 * @param	name		The particle type.
 	 * @param	length		Number of trailing particles to draw.
 	 * @param	delay		Time to delay each trailing particle, in seconds.
+	 * @param	alpha		Multiply each successive trail particle's alpha by this amount.
 	 * @return	This ParticleType object.
 	 */
-	public function setTrail(name:String, length:Int = 1, delay:Float = 0.1):ParticleType
+	public function setTrail(name:String, length:Int = 1, delay:Float = 0.1, alpha:Float=1):ParticleType
 	{
 		var pt:ParticleType = _types.get(name);
 		if (pt == null) return null;
-		return pt.setTrail(length, delay);
+		return pt.setTrail(length, delay, alpha);
 	}
 
 	/**
@@ -299,14 +322,21 @@ class Emitter extends Graphic
 		return pt.setColor(start, finish, ease);
 	}
 
+	public function onCollide(name:String, collideType:String, callback:CollideCallback)
+	{
+		var pt:ParticleType = _types.get(name);
+		pt.onCollide.bind(collideType, callback);
+	}
+
 	/**
 	 * Emits a particle.
 	 * @param	name		Particle type to emit.
 	 * @param	x			X point to emit from.
 	 * @param	y			Y point to emit from.
+	 * @param	angle		Base angle to start from.
 	 * @return	The Particle emited.
 	 */
-	public function emit(name:String, ?x:Float = 0, ?y:Float = 0):Particle
+	public function emit(name:String, ?x:Float = 0, ?y:Float = 0, ?angle:Float = 0):Particle
 	{
 		var p:Particle, type:ParticleType = _types.get(name);
 
@@ -329,13 +359,15 @@ class Emitter extends Graphic
 		p._type = type;
 		p._time = 0;
 		p._duration = type._duration + type._durationRange * HXP.random;
-		p._angle = type._angle + type._angleRange * HXP.random;
+		p._angle = angle + type._angle + type._angleRange * HXP.random;
 		var d:Float = type._distance + type._distanceRange * HXP.random;
-		p._moveX = Math.cos(p._angle) * d;
-		p._moveY = Math.sin(p._angle) * d;
+		p._moveX = Math.cos(p._angle * HXP.RAD) * d;
+		p._moveY = Math.sin(p._angle * HXP.RAD) * d;
 		p._x = x;
 		p._y = y;
 		p._gravity = type._gravity + type._gravityRange * HXP.random;
+		p._firstDraw = true;
+		p._ox = p._oy = 0;
 		particleCount ++;
 		return (_particle = p);
 	}
@@ -393,7 +425,6 @@ class Emitter extends Graphic
 	private var _frames:Array<AtlasRegion>;
 
 	// Drawing information.
-	private var _p:Point;
 	private var _tint:ColorTransform;
 	private static var SIN(get,never):Float;
 	private static inline function get_SIN():Float { return Math.PI / 2; }

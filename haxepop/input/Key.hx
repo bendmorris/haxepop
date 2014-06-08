@@ -205,17 +205,17 @@ class Key implements InputMethod
 		_releaseNum = 0;
 	}
 
-	public static function check(key:Int)
+	public static function check(key:Int):Bool
 	{
 		return (key < 0 ? _keyNum > 0 : _key.get(key));
 	}
 
-	public static function pressed(key:Int)
+	public static function pressed(key:Int):Bool
 	{
 		return (key < 0 ? _pressNum != 0 : HXP.indexOf(_press, key) >= 0);
 	}
 
-	public static function released(key:Int)
+	public static function released(key:Int):Bool
 	{
 		return (key < 0 ? _releaseNum != 0 : HXP.indexOf(_release, key) >= 0);
 	}

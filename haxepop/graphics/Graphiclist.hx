@@ -30,6 +30,8 @@ class Graphiclist extends Graphic
 		{
 			for (g in graphic) add(g);
 		}
+
+		blit = #if buffer true #else false #end ;
 	}
 
 	/** @private Updates the graphics in the list. */
@@ -100,10 +102,6 @@ class Graphiclist extends Graphic
 	public function add(graphic:Graphic):Graphic
 	{
 		if (graphic == null) return graphic;
-
-		// set blit mode on first add
-		if (_count == 0) blit = graphic.blit;
-		else if (blit != graphic.blit) throw "Can't add graphic objects with different render methods.";
 
 		_graphics[_count ++] = graphic;
 		if (!active) active = graphic.active;

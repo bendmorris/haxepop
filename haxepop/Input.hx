@@ -4,8 +4,10 @@ import flash.ui.Keyboard;
 import flash.ui.Multitouch;
 import flash.ui.MultitouchInputMode;
 import haxepop.HXP;
+import haxepop.Signal;
 import haxepop.ds.Either;
-import haxepop.input.*;
+import haxepop.input.InputMethod;
+import haxepop.input.Mouse;
 
 typedef InputType =
 {
@@ -37,25 +39,25 @@ class Input
 {
 
 	public static var inputMethods:Map<String, InputMethod>;
-	public static var onDownCallbacks:Map<String, InputCallback> = new Map();
-	public static var onPressCallbacks:Map<String, InputCallback> = new Map();
-	public static var onReleaseCallbacks:Map<String, InputCallback> = new Map();
+	public static var onDown:Signal<InputInstance, Void> = new Signal();
+	public static var onPress:Signal<InputInstance, Void> = new Signal();
+	public static var onRelease:Signal<InputInstance, Void> = new Signal();
 
 	public static function init()
 	{
 		inputMethods = new Map();
 
 #if (flash || desktop || html5)
-		Mouse.enable();
+		haxepop.input.Mouse.enable();
 #end
 #if (flash || desktop || html5)
-		Key.enable();
+		haxepop.input.Key.enable();
 #end
 #if (mobile)
-		Gesture.enable();
+		haxepop.input.Gesture.enable();
 #end
 #if (native)
-		//Joystick.enable();
+		//haxepop.input.Joystick.enable();
 #end
 
 		for (inputMethod in inputMethods)
@@ -165,35 +167,30 @@ class Input
 	 */
 	public static function update()
 	{
-		for (name in onDownCallbacks.keys())
+		if (HXP.engine.active)
 		{
-			if (check(name))
+			// check callbacks
+			for (name in onDown.keys())
 			{
-				if (onDownCallbacks[name] != null)
+				if (check(name))
 				{
-					onDownCallbacks[name](get(name));
+					onDown.call(name, get(name));
 				}
 			}
-		}
 
-		for (name in onPressCallbacks.keys())
-		{
-			if (pressed(name))
+			for (name in onPress.keys())
 			{
-				if (onPressCallbacks[name] != null)
+				if (pressed(name))
 				{
-					onPressCallbacks[name](get(name));
+					onPress.call(name, get(name));
 				}
 			}
-		}
 
-		for (name in onReleaseCallbacks.keys())
-		{
-			if (released(name))
+			for (name in onRelease.keys())
 			{
-				if (onReleaseCallbacks[name] != null)
+				if (released(name))
 				{
-					onReleaseCallbacks[name](get(name));
+					onRelease.call(name, get(name));
 				}
 			}
 		}
@@ -204,21 +201,7 @@ class Input
 		}
 	}
 
-	public static function onDown(name:String, f:InputCallback)
-	{
-		onDownCallbacks[name] = f;
-	}
-
-	public static function onPress(name:String, f:InputCallback)
-	{
-		onPressCallbacks[name] = f;
-	}
-
-	public static function onRelease(name:String, f:InputCallback)
-	{
-		onReleaseCallbacks[name] = f;
-	}
-
+	// for backwards compatibility
 	public static var mouseDown(get, never):Bool;
 	static function get_mouseDown() { return Mouse.mouseDown; }
 	public static var mousePressed(get, never):Bool;

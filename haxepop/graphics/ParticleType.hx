@@ -1,10 +1,13 @@
 package haxepop.graphics;
 
-import haxepop.HXP;
-import haxepop.utils.Ease;
-
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
+import haxepop.HXP;
+import haxepop.Entity;
+import haxepop.Signal;
+import haxepop.utils.Ease;
+
+typedef CollideCallback = Entity->Bool;
 
 /**
  * Template used to define a particle type used by the Emitter class. Instead
@@ -25,6 +28,7 @@ class ParticleType
 	{
 		_red = _green = _blue = _alpha = _scale = _trailLength = 1;
 		_redRange = _greenRange = _blueRange = _alphaRange = _scaleRange = _trailDelay = 0;
+		_trailAlpha = 1;
 
 		_name = name;
 		_frame = new Rectangle(0, 0, frameWidth, frameHeight);
@@ -36,6 +40,8 @@ class ParticleType
 		_gravity  = _gravityRange  = 0;
 		_duration = _durationRange = 0;
 		_distance = _distanceRange = 0;
+
+		onCollide = new Signal();
 	}
 
 	/**
@@ -52,10 +58,10 @@ class ParticleType
 	 */
 	public function setMotion(angle:Float, distance:Float, duration:Float, angleRange:Float = 0, distanceRange:Float = 0, durationRange:Float = 0, ease:EaseFunction = null, backwards:Bool = false):ParticleType
 	{
-		_angle = angle * HXP.RAD;
+		_angle = angle;
 		_distance = distance;
 		_duration = duration;
-		_angleRange = angleRange * HXP.RAD;
+		_angleRange = angleRange;
 		_distanceRange = distanceRange;
 		_durationRange = durationRange;
 		_ease = ease;
@@ -152,14 +158,18 @@ class ParticleType
 	 * Sets the trail of this particle type.
 	 * @param	length		Number of trailing particles to draw.
 	 * @param	delay		Time to delay each trailing particle, in seconds.
+ 	 * @param	alpha		Multiply each successive trail particle's alpha by this amount.
 	 * @return	This ParticleType object.
 	 */
-	public function setTrail(length:Int = 1, delay:Float = 0.1):ParticleType
+	public function setTrail(length:Int = 1, delay:Float = 0.1, alpha:Float = 1):ParticleType
 	{
 		_trailLength = length;
 		_trailDelay = delay;
+		_trailAlpha = alpha;
 		return this;
 	}
+
+	public var onCollide:Signal<Entity, Bool>;
 
 	// Particle information.
 	private var _name:String;
@@ -202,6 +212,7 @@ class ParticleType
 	// Trail information
 	private var _trailLength:Int;
 	private var _trailDelay:Float;
+	private var _trailAlpha:Float;
 
 	// Buffer information.
 	private var _buffer:BitmapData;

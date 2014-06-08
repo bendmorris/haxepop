@@ -30,7 +30,21 @@ class Engine extends Sprite
 	public var paused:Bool;
 
 	/**
-	 * Cap on the elapsed time (default at 30 FPS). Raise this to allow for lower framerates (eg. 1 / 10).
+	 * If focus is currently lost.
+	 */
+	public var focus:Bool=true;
+
+	/**
+	 * If updating/rendering should occur.
+	 */
+	public var active(get, never):Bool;
+	function get_active()
+	{
+		return !(paused || (HXP.autoPause && !focus));
+	}
+
+	/**
+	 * Cap on the elapsed time (default at 10 FPS). Raise this to allow for lower framerates.
 	 */
 	public var maxElapsed:Float;
 
@@ -73,7 +87,7 @@ class Engine extends Sprite
 		HXP.time = Lib.getTimer();
 
 		paused = false;
-		maxElapsed = 0.0333;
+		maxElapsed = 0.1;
 		maxFrameSkip = 5;
 		tickRate = 4;
 		_frameList = new Array<Int>();
@@ -88,8 +102,6 @@ class Engine extends Sprite
 		addEventListener(Event.ADDED_TO_STAGE, onStage);
 		Lib.current.addChild(this);
 #end
-
-		HXP.cursor = new Image("graphics/cursor.png");
 	}
 
 	/**
@@ -105,8 +117,8 @@ class Engine extends Sprite
 		if (HXP.autoPause)
 		{
 			HXP.stage.removeChild(_pauseOverlay);
-			HXP.rate = 1;
 		}
+		focus = true;
 	}
 
 	/**
@@ -117,8 +129,8 @@ class Engine extends Sprite
 		if (HXP.autoPause)
 		{
 			HXP.stage.addChild(_pauseOverlay);
-			HXP.rate = 0;
 		}
+		focus = false;
 	}
 
 	/**
@@ -298,7 +310,7 @@ class Engine extends Sprite
 		_last = _time;
 
 		// update loop
-		if (!paused) update();
+		if (active) update();
 
 		// update console
 		if (HXP.consoleEnabled()) HXP.console.update();
@@ -310,7 +322,7 @@ class Engine extends Sprite
 		HXP._updateTime = _time - _updateTime;
 
 		// render loop
-		if (paused) _frameLast = _time; // continue updating frame timer
+		if (!active) _frameLast = _time; // continue updating frame timer
 		else render();
 
 		// update timer
@@ -346,7 +358,7 @@ class Engine extends Sprite
 			_prev = _time;
 
 			// update loop
-			if (!paused) update();
+			if (active) update();
 
 			// update console
 			if (HXP.consoleEnabled()) HXP.console.update();
@@ -363,7 +375,7 @@ class Engine extends Sprite
 		_renderTime = _time;
 
 		// render loop
-		if (!paused) render();
+		if (active) render();
 
 		// update timer
 		_time = _systemTime = Lib.getTimer();

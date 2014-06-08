@@ -3,8 +3,8 @@ package haxepop.graphics;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
 import haxepop.graphics.Emitter;
+import haxepop.graphics.ParticleType;
 
 /**
  * Used by the Emitter class to track an existing Particle.
@@ -23,6 +23,8 @@ class Particle
 		_moveX = _moveY = 0;
 		_gravity = 0;
 		_angle = 0;
+		_firstDraw = false;
+		_ox = _oy = 0;
 	}
 
 	// Particle information.
@@ -36,6 +38,9 @@ class Particle
 	private var _moveX:Float;
 	private var _moveY:Float;
 	private var _angle:Float;
+	private var _firstDraw:Bool;
+	private var _ox:Float;
+	private var _oy:Float;
 
 	// Gravity information.
 	private var _gravity:Float;
@@ -43,4 +48,5 @@ class Particle
 	// List information.
 	private var _prev:Particle;
 	private var _next:Particle;
+	private var _collideCallback:CollideCallback;
 }
