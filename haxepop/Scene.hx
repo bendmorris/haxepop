@@ -38,7 +38,6 @@ class Scene extends Tweener
 
 		_add = new Array<Entity>();
 		_remove = new Array<Entity>();
-		_recycle = new Array<Entity>();
 
 		_update = new List<Entity>();
 		_layerDisplay = new Map<Int,Bool>();
@@ -46,7 +45,6 @@ class Scene extends Tweener
 		_types = new Map<String,List<Entity>>();
 
 		_classCount = new Map<String,Int>();
-		_recycled = new Map<String,Entity>();
 		_entityNames = new Map<String,Entity>();
 	}
 
@@ -247,75 +245,6 @@ class Scene extends Tweener
 		if (type != "") e.type = type;
 		e.active = e.visible = false;
 		return add(e);
-	}
-
-	/**
-	 * Returns a new Entity, or a stored recycled Entity if one exists.
-	 * @param	classType			The Class of the Entity you want to add.
-	 * @param	addToScene			Add it to the Scene immediately.
-	 * @param	constructorsArgs	List of the entity constructor arguments (optional).
-	 * @return	The new Entity object.
-	 */
-	public function create<E:Entity>(classType:Class<E>, addToScene:Bool = true, ?constructorsArgs:Array<Dynamic>):E
-	{
-		var className:String = Type.getClassName(classType);
-		var e:Entity = _recycled.get(className);
-		if (e != null)
-		{
-			_recycled.set(className, e._recycleNext);
-			e._recycleNext = null;
-		}
-		else
-		{
-			if (constructorsArgs != null)
-				e = Type.createInstance(classType, constructorsArgs);
-			else
-				e = Type.createInstance(classType, []);
-		}
-
-		return cast (addToScene ? add(e) : e);
-	}
-
-	/**
-	 * Removes the Entity from the Scene at the end of the frame and recycles it.
-	 * The recycled Entity can then be fetched again by calling the create() function.
-	 * @param	e		The Entity to recycle.
-	 * @return	The recycled Entity.
-	 */
-	public function recycle<E:Entity>(e:E):E
-	{
-		_recycle[_recycle.length] = e;
-		return remove(e);
-	}
-
-	/**
-	 * Clears stored reycled Entities of the Class type.
-	 * @param	classType		The Class type to clear.
-	 */
-	public function clearRecycled<E:Entity>(classType:Class<E>)
-	{
-		var className:String = Type.getClassName(classType),
-			e:Entity = _recycled.get(className),
-			n:Entity;
-		while (e != null)
-		{
-			n = e._recycleNext;
-			e._recycleNext = null;
-			e = n;
-		}
-		_recycled.remove(className);
-	}
-
-	/**
-	 * Clears stored recycled Entities of all Class types.
-	 */
-	public function clearRecycledAll()
-	{
-		var e:Entity;
-		for (e in _recycled)
-		{
-			clearRecycled(Type.getClass(e));
-		}
 	}
 
 	/**
@@ -1021,20 +950,6 @@ class Scene extends Tweener
 			}
 			HXP.clear(_add);
 		}
-
-		// recycle entities
-		if (_recycle.length > 0)
-		{
-			for (e in _recycle)
-			{
-				if (e._scene != null || e._recycleNext != null)
-					continue;
-
-				e._recycleNext = _recycled.get(e._class);
-				_recycled.set(e._class, e);
-			}
-			HXP.clear(_recycle);
-		}
 	}
 
 	/** @private Adds Entity to the update list. */
@@ -1187,7 +1102,6 @@ class Scene extends Tweener
 	// Adding and removal.
 	private var _add:Array<Entity>;
 	private var _remove:Array<Entity>;
-	private var _recycle:Array<Entity>;
 
 	// Update information.
 	private var _update:List<Entity>;
@@ -1201,6 +1115,5 @@ class Scene extends Tweener
 
 	private var _types:Map<String,List<Entity>>;
 
-	private var _recycled:Map<String,Entity>;
 	private var _entityNames:Map<String,Entity>;
 }

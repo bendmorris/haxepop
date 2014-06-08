@@ -36,15 +36,15 @@ class Entity extends Tweener
 	/**
 	 * X position of the Entity in the Scene.
 	 */
-	@:isVar public var x(get, set):Float;
-	private inline function get_x():Float
+	@:isVar public var x(get, set):Float = 0;
+	private function get_x():Float
 	{
 		if (followCamera)
 			return x + HXP.camera.x;
 		else
 			return x;
 	}
-	private inline function set_x(v:Float):Float
+	private function set_x(v:Float):Float
 	{
 		return x = v;
 	}
@@ -52,15 +52,15 @@ class Entity extends Tweener
 	/**
 	 * Y position of the Entity in the Scene.
 	 */
-	@:isVar public var y(get, set):Float;
-	private inline function get_y():Float
+	@:isVar public var y(get, set):Float = 0;
+	private function get_y():Float
 	{
 		if (followCamera)
 			return y + HXP.camera.y;
 		else
 			return y;
 	}
-	private inline function set_y(v:Float):Float
+	private function set_y(v:Float):Float
 	{
 		return y = v;
 	}
@@ -892,8 +892,6 @@ class Entity extends Tweener
 	private var _type:String;
 	private var _layer:Int;
 	private var _name:String;
-
-	private var _recycleNext:Entity;
 
 	// Collision information.
 	private var HITBOX:Mask;
