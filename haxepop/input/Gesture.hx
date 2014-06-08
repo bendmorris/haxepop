@@ -133,7 +133,7 @@ class Gesture implements InputMethod
 	// not a MOVE
 	public static var deadZone:Float = 5;
 
-	public var gestures:Map<InputType, GestureInstance> = new Map();
+	public static var gestures:Map<Int, GestureInstance> = new Map();
 
 	inline function getTouch(touches:Map<Int, Touch>, touchOrder:Array<Int>, n:Int):Touch
 	{
@@ -146,7 +146,7 @@ class Gesture implements InputMethod
 	/**
 	 * Returns true if a gesture is active.
 	 */
-	public static function check(type:InputType):Bool
+	public static function check(type:Int):Bool
 	{
 		if (!gestures.exists(type)) return false;
 		return (gestures[type].down);
@@ -155,7 +155,7 @@ class Gesture implements InputMethod
 	/**
 	 * Returns true if a gesture was started this frame.
 	 */
-	public static function pressed(type:InputType):Bool
+	public static function pressed(type:Int):Bool
 	{
 		if (!gestures.exists(type)) return false;
 		return (gestures[type].pressed);
@@ -164,7 +164,7 @@ class Gesture implements InputMethod
 	/**
 	 * Returns true if a gesture was released this frame.
 	 */
-	public static function released(type:InputType):Bool
+	public static function released(type:Int):Bool
 	{
 		if (!gestures.exists(type)) return false;
 		return (gestures[type].released);
@@ -173,7 +173,7 @@ class Gesture implements InputMethod
 	/**
 	 * Get an object describing an active gesture.
 	 */
-	public static function get(type:InputType):GestureInstance
+	public static function get(type:Int):GestureInstance
 	{
 		if (!check(type)) return null;
 		return (gestures[type]);
@@ -187,7 +187,7 @@ class Gesture implements InputMethod
 	/**
 	 * Start a gesture.
 	 */
-	function start(type:InputType, x:Float=0, y:Float=0)
+	function start(type:Int, x:Float=0, y:Float=0)
 	{
 		if (!gestures.exists(type))
 		{
@@ -202,7 +202,7 @@ class Gesture implements InputMethod
 	/**
 	 * Finish a gesture.
 	 */
-	function finish(type:InputType)
+	function finish(type:Int)
 	{
 		if (!gestures.exists(type))
 		{
@@ -227,15 +227,15 @@ class Gesture implements InputMethod
 	 */
 	public function update()
 	{
-		for (touch in _touches) touch.update();
+		Touch.updateTouches();
 
 		for (gesture in gestures)
 		{
 			gesture.update();
 		}
 
-		var touches = Input.touches;
-		var touchOrder = Input.touchOrder;
+		var touches = Touch.touches;
+		var touchOrder = Touch.touchOrder;
 		var touchCount:Int = 0;
 		for (touch in touchOrder)
 		{
@@ -269,7 +269,7 @@ class Gesture implements InputMethod
 					// initiate a tap or long press
 					mode = READY;
 					var touch:Touch = getTouch(touches, touchOrder, 0);
-					var t:InputType = (touch.time < longPressTime) ? TAP : LONG_PRESS;
+					var t:Int = (touch.time < longPressTime) ? TAP : LONG_PRESS;
 					
 					if (t == TAP && _lastTap > 0) t = DOUBLE_TAP;
 					
@@ -378,36 +378,8 @@ class Gesture implements InputMethod
 
 		if (touchCount == 0) finishAll();
 
-		for (touch in _touches)
-		{
-			if (touch.released && !touch.pressed)
-			{
-				_touches.remove(touch.id);
-				_touchOrder.remove(touch.id);
-			}
-		}
-
+		Touch.removeTouches();
 	}
-
-	private static function onTouchBegin(e:TouchEvent)
-	{
-		var touchPoint = new Touch(e.stageX / HXP.screen.fullScaleX, e.stageY / HXP.screen.fullScaleY, e.touchPointID);
-		_touches.set(e.touchPointID, touchPoint);
-		_touchOrder.push(e.touchPointID);
-	}
-
-	private static function onTouchMove(e:TouchEvent)
-	{
-		var point = _touches.get(e.touchPointID);
-		point.x = e.stageX / HXP.screen.fullScaleX;
-		point.y = e.stageY / HXP.screen.fullScaleY;
-	}
-
-	private static function onTouchEnd(e:TouchEvent)
-	{
-		_touches.get(e.touchPointID).released = true;
-	}
-
 
 	var mode:GestureMode;
 	var _lastTap:Float = 0;

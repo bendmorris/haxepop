@@ -107,6 +107,42 @@ class Touch
 		}
 	}
 
+	private static function onTouchBegin(e:TouchEvent)
+	{
+		var touchPoint = new Touch(e.stageX / HXP.screen.fullScaleX, e.stageY / HXP.screen.fullScaleY, e.touchPointID);
+		_touches.set(e.touchPointID, touchPoint);
+		_touchOrder.push(e.touchPointID);
+	}
+
+	private static function onTouchMove(e:TouchEvent)
+	{
+		var point = _touches.get(e.touchPointID);
+		point.x = e.stageX / HXP.screen.fullScaleX;
+		point.y = e.stageY / HXP.screen.fullScaleY;
+	}
+
+	private static function onTouchEnd(e:TouchEvent)
+	{
+		_touches.get(e.touchPointID).released = true;
+	}
+
+	public static function updateTouches()
+	{
+		for (touch in _touches) touch.update();
+	}
+
+	public static function removeTouches()
+	{
+		for (touch in _touches)
+		{
+			if (touch.released && !touch.pressed)
+			{
+				_touches.remove(touch.id);
+				_touchOrder.remove(touch.id);
+			}
+		}
+	}
+
 	private static var _touches:Map<Int,Touch> = new Map<Int,Touch>();
 	private static var _touchOrder:Array<Int> = new Array();
 }
