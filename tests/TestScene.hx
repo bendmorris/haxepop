@@ -82,26 +82,6 @@ class TestScene extends haxe.unit.TestCase
 		assertEquals(1, scene.layers);
 	}
 
-	public function testCreateRecycle()
-	{
-		var e:TestEntity = scene.create(TestEntity, false);
-		assertTrue(Std.is(e, TestEntity));
-		scene.updateLists();
-		assertEquals(0, countRecycled(scene));
-
-		scene.recycle(e);
-		scene.recycle(new Entity());
-		scene.recycle(new Entity()); // linked with previous entity _recycleNext
-		scene.updateLists();
-		assertEquals(2, countRecycled(scene));
-
-		scene.clearRecycled(TestEntity);
-		assertEquals(1, countRecycled(scene));
-
-		scene.clearRecycledAll();
-		assertEquals(0, countRecycled(scene));
-	}
-
 	public function testEntityName()
 	{
 		var e = new Entity();
@@ -114,14 +94,6 @@ class TestScene extends haxe.unit.TestCase
 		e.name = "bar";
 		assertEquals(e, scene.getInstance("bar"));
 		assertEquals(null, scene.getInstance("foo"));
-	}
-
-	@:access(haxepop.Scene)
-	private function countRecycled(scene:Scene)
-	{
-		var i:Int = 0;
-		for (r in scene._recycled) i++;
-		return i;
 	}
 
 	private var scene:Scene;

@@ -1,5 +1,5 @@
-<project name="HaxePunk" default="all" basedir=".">
-	<description>Builds the haxepunk project</description>
+<project name="haxepop" default="all" basedir=".">
+	<description>Builds the haxepop project</description>
 
 	<target name="tools">
 		<exec executable="haxe" dir="tools">
@@ -9,14 +9,6 @@
 
 	<target name="haxelib" depends="tools">
 		<zip destfile="template.zip" useLanguageEncodingFlag="UTF-8" basedir="template" />
-		<zip destfile="haxepunk.zip" useLanguageEncodingFlag="UTF-8">
-			<zipfileset dir="" prefix="haxepunk" includes="run.n,haxelib.json,include.xml,template.zip,CHANGELOG,LICENSE" />
-			<zipfileset dir="com" prefix="haxepunk/com" />
-			<zipfileset dir="assets" prefix="haxepunk/assets" />
-		</zip>
-		<exec executable="haxelib" dir=".">
-			<arg line="local haxepunk.zip" />
-		</exec>
 	</target>
 
 	<target name="unit" depends="haxelib">
@@ -36,7 +28,7 @@
 
 	<target name="build" depends="haxelib">
 		<exec executable="haxelib" dir=".">
-			<arg line="run HaxePunk new build-test" />
+			<arg line="run haxepop new build-test" />
 		</exec>
 		<exec executable="lime" dir="build-test">
 			<arg line="build flash" />
@@ -70,17 +62,17 @@
 	<target name="docset" depends="doc">
 		<exec executable="haxelib" dir="doc">
 			<arg line="run docset" />
-			<arg line="-i ../template/assets/HaxePunk.svg" />
+			<arg line="-i ../template/assets/haxepop.svg" />
 			<arg line="-x neko.xml" />
 			<arg line="-t local.xml" />
-			<arg line="HaxePunk" />
+			<arg line="haxepop" />
 		</exec>
 	</target>
 
 	<target name="clean">
 		<delete quiet="true">
 			<fileset dir="Example" />
-			<fileset dir="." includes="*.n,*.zip,com.haxepunk.debug.swf" />
+			<fileset dir="." includes="*.n,*.zip,haxepop.debug.swf" />
 		</delete>
 	</target>
 

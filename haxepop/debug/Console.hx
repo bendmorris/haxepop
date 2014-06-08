@@ -184,7 +184,7 @@ class Console
 	/**
 	 * Enables the console.
 	 *
-	 * @param	trace_capture	Option to capture trace in HaxePunk.
+	 * @param	trace_capture	Option to capture trace in HaxePop.
 	 * @param	toggleKey		Key used to toggle the console, tilde (~) by default.
 	 */
 	public function enable(?trace_capture:TraceCapture, toggleKey=Key.TILDE)

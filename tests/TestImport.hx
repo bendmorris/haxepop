@@ -2,9 +2,11 @@ import haxepop.Engine;
 import haxepop.Entity;
 import haxepop.Graphic;
 import haxepop.HXP;
+import haxepop.Input;
 import haxepop.Mask;
 import haxepop.Scene;
 import haxepop.Screen;
+import haxepop.Signal;
 import haxepop.Sfx;
 import haxepop.Tweener;
 import haxepop.Tween;
@@ -12,7 +14,6 @@ import haxepop.World;
 import haxepop.debug.Console;
 import haxepop.debug.LayerList;
 import haxepop.graphics.Animation;
-import haxepop.graphics.Backdrop;
 import haxepop.graphics.BitmapText;
 import haxepop.graphics.Canvas;
 import haxepop.graphics.Emitter;
@@ -22,7 +23,6 @@ import haxepop.graphics.Particle;
 import haxepop.graphics.ParticleType;
 import haxepop.graphics.PreRotation;
 import haxepop.graphics.Spritemap;
-import haxepop.graphics.Stamp;
 import haxepop.graphics.Text;
 import haxepop.graphics.TiledImage;
 import haxepop.graphics.TiledSpritemap;
@@ -33,6 +33,12 @@ import haxepop.graphics.atlas.AtlasRegion;
 import haxepop.graphics.atlas.BitmapFontAtlas;
 import haxepop.graphics.atlas.TextureAtlas;
 import haxepop.graphics.atlas.TileAtlas;
+import haxepop.input.Gesture;
+import haxepop.input.InputMethod;
+//import haxepop.input.Joystick;
+import haxepop.input.Key;
+import haxepop.input.Mouse;
+import haxepop.input.Touch;
 import haxepop.masks.Circle;
 import haxepop.masks.Grid;
 import haxepop.masks.Hitbox;
@@ -63,13 +69,13 @@ import haxepop.utils.Data;
 import haxepop.utils.Draw;
 import haxepop.utils.Ease;
 import haxepop.utils.Input;
-import haxepop.utils.Joystick;
+//import haxepop.utils.Joystick;
 import haxepop.utils.Key;
 import haxepop.utils.Touch;
 
 /**
  * Empty test.
- * Import all of HaxePunk classes to make sure everything compile,
+ * Import all of HaxePop classes to make sure everything compiles,
  * and that all used openfl functionalities exists.
  */
 class TestImport extends haxe.unit.TestCase

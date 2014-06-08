@@ -1,7 +1,9 @@
 -neko unit.n
 --macro allowPackage("flash")
 -main TestMain
+-D openfl-native
 -lib openfl
 -lib lime
--lib openfl-native
--lib HaxePunk
+-lib haxepop
+--remap flash:openfl
+--macro openfl.Lib.includeBackend("native")

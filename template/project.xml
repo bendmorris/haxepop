@@ -11,12 +11,12 @@
 
 	<source path="src" />
 
-	<haxelib name="HaxePunk" />
+	<haxelib name="haxepop" />
 
-	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg" />
-	<assets path="assets/audio" rename="audio" include="*.mp3" if="flash" />
-	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg" unless="flash" />
-	<assets path="assets/font" rename="font" include="*.ttf" />
+	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg" type="image" embed="true" />
+	<assets path="assets/audio" rename="audio" include="*.mp3" embed="true" if="flash" />
+	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg" embed="true" unless="flash" />
+	<assets path="assets/font" rename="font" include="*.ttf" embed="true" />
 
-	<icon path="assets/HaxePunk.svg" />
+	<icon path="assets/haxepop.svg" />
 </project>
