@@ -5,6 +5,7 @@ import haxepop.HXP;
 import haxepop.Input;
 import haxepop.input.Key;
 import haxepop.input.Mouse;
+import haxepop.utils.Math;
 
 import openfl.Assets;
 import flash.display.Bitmap;
@@ -748,7 +749,7 @@ class Console
 	private function updateScrolling()
 	{
 		_scrolling = Mouse.mouseDown;
-		_logScroll = HXP.scaleClamp(Mouse.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
+		_logScroll = Math.scaleClamp(Mouse.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
 		updateLog();
 	}
 
@@ -968,7 +969,7 @@ class Console
 			"Game: " + Std.string(HXP._gameTime) + "ms";
 #if !js
 		_memReadText.text =
-			(width >= BIG_WIDTH_THRESHOLD ? "Mem: " : "") + HXP.round(flash.system.System.totalMemory / 1024 / 1024, 2) + "MB";
+			(width >= BIG_WIDTH_THRESHOLD ? "Mem: " : "") + Math.roundTo(flash.system.System.totalMemory / 1024 / 1024, 2) + "MB";
 #end
 	}
 

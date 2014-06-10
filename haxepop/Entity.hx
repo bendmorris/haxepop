@@ -6,6 +6,7 @@ import flash.geom.Rectangle;
 import haxepop.graphics.Image;
 import haxepop.graphics.Graphiclist;
 import haxepop.ds.Either;
+import haxepop.utils.Math;
 
 abstract SolidType(Either<String, Array<String>>)
 {
@@ -678,7 +679,7 @@ class Entity extends Tweener
 	public inline function distanceFrom(e:Entity, useHitboxes:Bool = false):Float
 	{
 		if (!useHitboxes) return Math.sqrt((x - e.x) * (x - e.x) + (y - e.y) * (y - e.y));
-		else return HXP.distanceRects(x - originX, y - originY, width, height, e.x - e.originX, e.y - e.originY, e.width, e.height);
+		else return Math.distanceRects(x - originX, y - originY, width, height, e.x - e.originX, e.y - e.originY, e.width, e.height);
 	}
 
 	/**
@@ -691,7 +692,7 @@ class Entity extends Tweener
 	public inline function distanceToPoint(px:Float, py:Float, useHitbox:Bool = false):Float
 	{
 		if (!useHitbox) return Math.sqrt((x - px) * (x - px) + (y - py) * (y - py));
-		else return HXP.distanceRectPoint(px, py, x - originX, y - originY, width, height);
+		else return Math.distanceRectPoint(px, py, x - originX, y - originY, width, height);
 	}
 
 	/**
@@ -704,7 +705,7 @@ class Entity extends Tweener
 	 */
 	public inline function distanceToRect(rx:Float, ry:Float, rwidth:Float, rheight:Float):Float
 	{
-		return HXP.distanceRects(rx, ry, rwidth, rheight, x - originX, y - originY, width, height);
+		return Math.distanceRects(rx, ry, rwidth, rheight, x - originX, y - originY, width, height);
 	}
 
 	/**

@@ -301,7 +301,7 @@ class Spritemap extends Image
 	 */
 	public function randFrame()
 	{
-		frame = HXP.rand(_frameCount);
+		frame = Std.random(_frameCount);
 	}
 
 	/**

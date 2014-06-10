@@ -1,4 +1,4 @@
-package haxepop.math;
+package haxepop.utils;
 
 class Projection
 {

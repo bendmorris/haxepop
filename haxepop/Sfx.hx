@@ -5,6 +5,7 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import openfl.Assets;
+import haxepop.utils.Math;
 
 typedef AudioCompleteCallback = Void -> Void;
 
@@ -64,9 +65,9 @@ class Sfx
 	{
 		if (_sound == null) return;
 		if (playing) stop();
-		_pan = HXP.clamp(pan, -1, 1);
+		_pan = Math.clamp(pan, -1, 1);
 		_volume = volume < 0 ? 0 : volume;
-		_filteredPan = HXP.clamp(_pan + getPan(_type), -1, 1);
+		_filteredPan = Math.clamp(_pan + getPan(_type), -1, 1);
 		_filteredVol = Math.max(0, _volume * getVolume(_type));
 		_transform.pan = _filteredPan;
 		_transform.volume = _filteredVol;
@@ -188,9 +189,9 @@ class Sfx
 	private function get_pan():Float { return _pan; }
 	private function set_pan(value:Float):Float
 	{
-		value = HXP.clamp(value, -1, 1);
+		value = Math.clamp(value, -1, 1);
 		if (_channel == null || _pan == value) return value;
-		var filteredPan:Float = HXP.clamp(value + getPan(_type), -1, 1);
+		var filteredPan:Float = Math.clamp(value + getPan(_type), -1, 1);
 		if (_filteredPan == filteredPan) return value;
 		_pan = value;
 		_filteredPan = _transform.pan = filteredPan;
@@ -290,7 +291,7 @@ class Sfx
 			transform = new SoundTransform();
 			_typeTransforms.set(type, transform);
 		}
-		transform.pan = HXP.clamp(pan, -1, 1);
+		transform.pan = Math.clamp(pan, -1, 1);
 
 		if (_typePlaying.exists(type))
 		{

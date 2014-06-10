@@ -1,8 +1,8 @@
 package haxepop;
 
 import haxepop.Entity;
-import haxepop.math.Projection;
-import haxepop.math.Vector;
+import haxepop.utils.Projection;
+import haxepop.utils.Vector;
 import haxepop.masks.Masklist;
 import flash.display.Graphics;
 import flash.geom.Point;

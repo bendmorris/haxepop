@@ -5,7 +5,9 @@ import haxepop.graphics.atlas.TextureAtlas;
 import haxepop.graphics.atlas.TileAtlas;
 import haxepop.graphics.atlas.AtlasRegion;
 import haxepop.masks.Polygon;
-import haxepop.math.Vector;
+import haxepop.utils.Vector;
+import haxepop.utils.Math;
+import haxepop.utils.Color;
 import haxepop.Graphic;
 import haxepop.HXP;
 
@@ -308,8 +310,8 @@ class Image extends Graphic
 		
 		polygon.angle = 0;	// set temporarily angle to 0 so we can sync with image angle later
 		
-		minX = minY = HXP.NUMBER_MAX_VALUE;
-		maxX = maxY = -HXP.NUMBER_MAX_VALUE;
+		minX = minY = Math.NUMBER_MAX_VALUE;
+		maxX = maxY = -Math.NUMBER_MAX_VALUE;
 		
 		// find polygon bounds
 		for (p in points)
@@ -425,9 +427,9 @@ class Image extends Graphic
 		if (_color == value) return value;
 		_color = value;
 		// save individual color channel values
-		_red = HXP.getRed(_color) / 255;
-		_green = HXP.getGreen(_color) / 255;
-		_blue = HXP.getBlue(_color) / 255;
+		_red = Color.getRed(_color) / 255;
+		_green = Color.getGreen(_color) / 255;
+		_blue = Color.getBlue(_color) / 255;
 		if (blit) updateColorTransform();
 		return _color;
 	}

@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import haxepop.HXP;
 import haxepop.Mask;
+import haxepop.utils.Math;
 
 enum TileType
 {
@@ -337,8 +338,8 @@ class SlopedGrid extends Hitbox
 						var x = opx, y = opy + oph;
 						if (tile.slope < 0) x += opw;
 
-						x = HXP.clamp(x, xx, xx + tileWidth);
-						y = HXP.clamp(y, yy, yy + tileHeight);
+						x = Math.clamp(x, xx, xx + tileWidth);
+						y = Math.clamp(y, yy, yy + tileHeight);
 
 						if (collidePointInSlope(xx, yy, x, y, tile))
 						{
@@ -348,8 +349,8 @@ class SlopedGrid extends Hitbox
 						var x = opx, y = opy;
 						if (tile.slope > 0) x += opw;
 
-						x = HXP.clamp(x, xx, xx + tileWidth);
-						y = HXP.clamp(y, yy, yy + tileHeight);
+						x = Math.clamp(x, xx, xx + tileWidth);
+						y = Math.clamp(y, yy, yy + tileHeight);
 
 						if (collidePointInSlope(xx, yy, x, y, tile))
 						{

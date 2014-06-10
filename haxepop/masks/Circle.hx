@@ -4,8 +4,8 @@ import haxepop.Graphic;
 import haxepop.Mask;
 import haxepop.masks.Grid;
 import haxepop.masks.SlopedGrid;
-import haxepop.math.Projection;
-import haxepop.math.Vector;
+import haxepop.utils.Projection;
+import haxepop.utils.Vector;
 import flash.display.Graphics;
 import flash.geom.Point;
 

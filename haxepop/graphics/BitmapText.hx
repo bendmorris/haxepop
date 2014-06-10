@@ -11,7 +11,7 @@ import haxepop.graphics.Canvas;
 import haxepop.graphics.Text;
 import haxepop.graphics.atlas.BitmapFontAtlas;
 import haxepop.graphics.atlas.AtlasRegion;
-
+import haxepop.utils.Color;
 
 typedef RenderFunction = AtlasRegion -> GlyphData -> Float -> Float -> Void;
 
@@ -134,9 +134,9 @@ class BitmapText extends Graphic
 	private function updateColor()
 	{
 		// update _colorTransform if blitting
-		_red = HXP.getRed(color) / 255;
-		_green = HXP.getGreen(color) / 255;
-		_blue = HXP.getBlue(color) / 255;
+		_red = Color.getRed(color) / 255;
+		_green = Color.getGreen(color) / 255;
+		_blue = Color.getBlue(color) / 255;
 
 		if (blit)
 		{

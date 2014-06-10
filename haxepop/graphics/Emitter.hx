@@ -358,14 +358,14 @@ class Emitter extends Graphic
 
 		p._type = type;
 		p._time = 0;
-		p._duration = type._duration + type._durationRange * HXP.random;
-		p._angle = angle + type._angle + type._angleRange * HXP.random;
-		var d:Float = type._distance + type._distanceRange * HXP.random;
+		p._duration = type._duration + type._durationRange * Math.random();
+		p._angle = angle + type._angle + type._angleRange * Math.random();
+		var d:Float = type._distance + type._distanceRange * Math.random();
 		p._moveX = Math.cos(p._angle * HXP.RAD) * d;
 		p._moveY = Math.sin(p._angle * HXP.RAD) * d;
 		p._x = x;
 		p._y = y;
-		p._gravity = type._gravity + type._gravityRange * HXP.random;
+		p._gravity = type._gravity + type._gravityRange * Math.random();
 		p._firstDraw = true;
 		p._ox = p._oy = 0;
 		particleCount ++;
@@ -400,7 +400,7 @@ class Emitter extends Graphic
 	 */
 	public function emitInRectangle(name:String, x:Float, y:Float, width:Float ,height:Float):Particle
 	{
-		return emit(name, x + HXP.random * width, y + HXP.random * height);
+		return emit(name, x + Math.random() * width, y + Math.random() * height);
 	}
 
 	/**

@@ -9,6 +9,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import haxepop.HXP;
 import haxepop.Graphic;
+import haxepop.utils.Color;
 
 /**
  * A  multi-purpose drawing canvas, can be sized beyond the normal Flash BitmapData limits.
@@ -338,9 +339,9 @@ class Canvas extends Graphic
 		value %= 0xFFFFFF;
 		if (_color == value) return _color;
 		_color = value;
-		_red = HXP.getRed(color) / 255;
-		_green = HXP.getGreen(color) / 255;
-		_blue = HXP.getBlue(color) / 255;
+		_red = Color.getRed(color) / 255;
+		_green = Color.getGreen(color) / 255;
+		_blue = Color.getBlue(color) / 255;
 
 		if (_alpha == 1 && _color == 0xFFFFFF)
 		{

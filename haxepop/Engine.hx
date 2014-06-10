@@ -80,9 +80,6 @@ class Engine extends Sprite
 		HXP.height = height;
 		HXP.screen = new Screen();
 
-		// miscellaneous startup stuff
-		if (HXP.randomSeed == 0) HXP.randomizeSeed();
-
 		HXP.entity = new Entity();
 		HXP.time = Lib.getTimer();
 

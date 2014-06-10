@@ -10,7 +10,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import haxepop.HXP;
 import haxepop.graphics.Image;
-
+import haxepop.utils.Math;
 
 @:bitmap("assets/graphics/preloader/haxepop.png")
 class Logo extends BitmapData {}
@@ -49,7 +49,7 @@ class Preloader extends NMEPreloader
 		super.onUpdate(bytesLoaded, bytesTotal);
 
 		var percentLoaded = bytesLoaded / bytesTotal;
-		img.alpha = HXP.clamp(percentLoaded, 0.2, 1);
+		img.alpha = Math.clamp(percentLoaded, 0.2, 1);
 	}
 
 	override public function onLoaded()
