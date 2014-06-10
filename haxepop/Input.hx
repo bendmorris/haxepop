@@ -214,5 +214,4 @@ class Input
 	static function get_mouseY() { return Mouse.mouseY; }
 
 	private static var _control:Map<String,Array<InputType>> = new Map<String,Array<InputType>>();
-	private static var _callbacks:Map<String, InputCallback> = new Map();
 }
