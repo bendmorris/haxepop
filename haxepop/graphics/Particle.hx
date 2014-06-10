@@ -25,6 +25,7 @@ class Particle
 		_angle = 0;
 		_firstDraw = false;
 		_ox = _oy = 0;
+		_startAngle = _spanAngle = 0;
 	}
 
 	// Particle information.
@@ -41,6 +42,8 @@ class Particle
 	private var _firstDraw:Bool;
 	private var _ox:Float;
 	private var _oy:Float;
+	private var _startAngle:Float;
+	private var _spanAngle:Float;
 
 	// Gravity information.
 	private var _gravity:Float;

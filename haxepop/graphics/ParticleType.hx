@@ -29,6 +29,7 @@ class ParticleType
 		_red = _green = _blue = _alpha = _scale = _trailLength = 1;
 		_redRange = _greenRange = _blueRange = _alphaRange = _scaleRange = _trailDelay = 0;
 		_trailAlpha = 1;
+		_startAngle = _spanAngle = _startAngleRange = _spanAngleRange = 0;
 
 		_name = name;
 		_frame = new Rectangle(0, 0, frameWidth, frameHeight);
@@ -134,6 +135,25 @@ class ParticleType
 	}
 
 	/**
+	 * Sets the rotation range of this particle type.
+	 * @param	startAngle	Starting angle.
+	 * @param	spanAngle	Total amount of degrees to rotate.
+	 * @param	startAngleRange	Random amount to add to the particle's starting angle.
+	 * @param	spanAngleRange	Random amount to add to the particle's span angle.
+	 * @param	ease	Optional easer function.
+	 * @return	This ParticleType object.
+	 */
+	public function setRotation(startAngle:Float, spanAngle:Float, startAngleRange:Float = 0, spanAngleRange:Float = 0, ease:EaseFunction = null):ParticleType
+	{
+		_startAngle = startAngle;
+		_spanAngle = spanAngle;
+		_startAngleRange = startAngleRange;
+		_spanAngleRange = spanAngleRange;
+		_rotationEase = ease;
+		return this;
+	}
+
+	/**
 	 * Sets the color range of this particle type.
 	 * @param	start		The starting color.
 	 * @param	finish		The finish color.
@@ -199,6 +219,13 @@ class ParticleType
 	private var _scale:Float;
 	private var _scaleRange:Float;
 	private var _scaleEase:EaseFunction;
+
+	// Rotation information.
+	private var _startAngle:Float;
+	private var _spanAngle:Float;
+	private var _startAngleRange:Float;
+	private var _spanAngleRange:Float;
+	private var _rotationEase:EaseFunction;
 
 	// Color information.
 	private var _red:Float;

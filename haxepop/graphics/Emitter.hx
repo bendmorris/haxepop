@@ -145,7 +145,8 @@ class Emitter extends Graphic
 		else
 		{
 			// particle info
-			var t:Float, pt:Float, td:Float, atd:Float, std:Float,
+			var t:Float, pt:Float, td:Float,
+				atd:Float, std:Float, rtd:Float,
 				p:Particle = _particle,
 				type:ParticleType;
 
@@ -178,9 +179,10 @@ class Emitter extends Graphic
 					td = (type._ease == null) ? t : type._ease(t);
 					atd = (type._alphaEase == null) ? t : type._alphaEase(t);
 					std = (type._scaleEase == null) ? t : type._scaleEase(t);
+					rtd = (type._rotationEase == null) ? t : type._rotationEase(t);
 
 					_source.frame = type._frames[Std.int(td * type._frames.length)];
-					//_source.angle = p._rotate;
+					_source.angle = p._startAngle + p._spanAngle * rtd;
 					var alpha = type._alpha + type._alphaRange * atd;
 					if (type._trailAlpha < 1) alpha *= Math.pow(type._trailAlpha, n);
 					_source.alpha = alpha;
@@ -293,6 +295,23 @@ class Emitter extends Graphic
 	}
 
 	/**
+	 * Defines the rotation range for a particle type.
+	 * @param	name	The particle type.
+	 * @param	startAngle	Starting angle.
+	 * @param	spanAngle	Total amount of degrees to rotate.
+	 * @param	startAngleRange	Random amount to add to the particle's starting angle.
+	 * @param	spanAngleRange	Random amount to add to the particle's span angle.
+	 * @param	ease	Optional easer function.
+	 * @return	This ParticleType object.
+	 */
+	public function setRotation(name:String, startAngle:Float, spanAngle:Float, startAngleRange:Float = 0, spanAngleRange:Float = 0, ease:EaseFunction = null):ParticleType
+	{
+		var pt:ParticleType = _types.get(name);
+		if (pt == null) return null;
+		return pt.setRotation(startAngle, spanAngle, startAngleRange, spanAngleRange, ease);
+	}
+
+	/**
 	 * Sets the trail of the particle type.
 	 * @param	name		The particle type.
 	 * @param	length		Number of trailing particles to draw.
@@ -360,6 +379,8 @@ class Emitter extends Graphic
 		p._time = 0;
 		p._duration = type._duration + type._durationRange * Math.random();
 		p._angle = angle + type._angle + type._angleRange * Math.random();
+		p._startAngle = type._startAngle + type._startAngleRange * Math.random();
+		p._spanAngle = type._spanAngle + type._spanAngleRange * Math.random();
 		var d:Float = type._distance + type._distanceRange * Math.random();
 		p._moveX = Math.cos(p._angle * HXP.RAD) * d;
 		p._moveY = Math.sin(p._angle * HXP.RAD) * d;
