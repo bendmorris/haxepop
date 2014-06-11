@@ -59,7 +59,12 @@ class EntityList<T:Entity> extends Entity
 		return _type = value;
 	}
 
-	public function apply(f:(T->Dynamic)):Array<Dynamic>
+	public function apply(f:(T->Void)):Void
+	{
+		for (entity in entities) f(entity);
+	}
+
+	public function map<R>(f:(T->R)):Array<R>
 	{
 		return [for (entity in entities) f(entity)];
 	}

@@ -1,10 +1,13 @@
 import haxepop.Engine;
 import haxepop.Entity;
+import haxepop.EntityList;
 import haxepop.Graphic;
 import haxepop.HXP;
 import haxepop.Input;
 import haxepop.Mask;
+#if flash
 import haxepop.Preloader;
+#end
 import haxepop.Scene;
 import haxepop.Screen;
 import haxepop.Signal;
