@@ -17,8 +17,7 @@ class Particle
 	 */
 	public function new()
 	{
-		_time = 0;
-		_duration = 0;
+		_time = _duration = _stopTime = 0;
 		_x = _y = 0;
 		_moveX = _moveY = 0;
 		_gravity = 0;
@@ -31,6 +30,7 @@ class Particle
 	// Particle information.
 	private var _type:ParticleType;
 	private var _time:Float;
+	private var _stopTime:Float;
 	private var _duration:Float;
 
 	// Motion information.

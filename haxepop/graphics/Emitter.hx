@@ -65,7 +65,7 @@ class Emitter extends Graphic
 
 			var type = p._type;
 			var t = p._time / p._duration;
-			if (t < 1)
+			if (t < p._stopTime)
 			{
 				// check for collision callbacks
 				var td = (type._ease == null) ? t : type._ease(t);
@@ -79,14 +79,14 @@ class Emitter extends Graphic
 						var result:Bool = Lambda.fold(type.onCollide.call(key, collide), function(a:Bool, b:Bool) {return a || b;}, false);
 						if (result)
 						{
-							p._duration = p._time;
+							p._stopTime = p._time;
 							break;
 						}
 					}
 				}
 			}
 
-			if (p._time - (type._trailLength * type._trailDelay) >= p._duration) // remove on time-out
+			if (p._time - (type._trailLength * type._trailDelay) >= p._stopTime) // remove on time-out
 			{
 				if (p._next != null) p._next._prev = p._prev;
 				if (p._prev != null) p._prev._next = p._next;
@@ -175,7 +175,7 @@ class Emitter extends Graphic
 					pt = p._time - n*type._trailDelay;
 					n -= 1;
 					t = pt / p._duration;
-					if (t < 0 || t >= 1) continue;
+					if (t < 0 || pt >= p._stopTime) continue;
 					td = (type._ease == null) ? t : type._ease(t);
 					atd = (type._alphaEase == null) ? t : type._alphaEase(t);
 					std = (type._scaleEase == null) ? t : type._scaleEase(t);
@@ -378,6 +378,7 @@ class Emitter extends Graphic
 		p._type = type;
 		p._time = 0;
 		p._duration = type._duration + type._durationRange * Math.random();
+		p._stopTime = p._duration;
 		p._angle = angle + type._angle + type._angleRange * Math.random();
 		p._startAngle = type._startAngle + type._startAngleRange * Math.random();
 		p._spanAngle = type._spanAngle + type._spanAngleRange * Math.random();
