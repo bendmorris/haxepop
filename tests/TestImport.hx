@@ -4,6 +4,7 @@ import haxepop.Graphic;
 import haxepop.HXP;
 import haxepop.Input;
 import haxepop.Mask;
+import haxepop.Preloader;
 import haxepop.Scene;
 import haxepop.Screen;
 import haxepop.Signal;
