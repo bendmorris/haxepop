@@ -70,7 +70,7 @@ class Emitter extends Graphic
 				// check for collision callbacks
 				var td = (type._ease == null) ? t : type._ease(t);
 				var px = p._x + p._ox + p._moveX * (type._backwards ? 1 - td : td);
-				var py = p._y + p._oy + p._moveY * (type._backwards ? 1 - td : td);
+				var py = p._y + p._oy + p._moveY * (type._backwards ? 1 - td : td) + Math.pow(t, 2)*p._gravity/2;
 				for (key in type.onCollide.keys())
 				{
 					var collide:Entity = HXP.scene.collidePoint(key, px, py);
@@ -188,7 +188,7 @@ class Emitter extends Graphic
 					_source.alpha = alpha;
 					_source.scale = type._scale + type._scaleRange * std;
 					_source.x = p._x - point.x + p._ox + p._moveX * (type._backwards ? 1 - td : td);
-					_source.y = p._y - point.y + p._oy + p._moveY * (type._backwards ? 1 - td : td);
+					_source.y = p._y - point.y + p._oy + p._moveY * (type._backwards ? 1 - td : td) + Math.pow(t, 2)*p._gravity/2;
 
 					renderFunc();
 				}
