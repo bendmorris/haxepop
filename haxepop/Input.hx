@@ -208,6 +208,12 @@ class Input
 	static function get_mousePressed() { return Mouse.mousePressed; }
 	public static var mouseReleased(get, never):Bool;
 	static function get_mouseReleased() { return Mouse.mouseReleased; }
+	public static var rightMouseDown(get, never):Bool;
+	static function get_rightMouseDown() { return Mouse.rightMouseDown; }
+	public static var rightMousePressed(get, never):Bool;
+	static function get_rightMousePressed() { return Mouse.rightMousePressed; }
+	public static var rightMouseReleased(get, never):Bool;
+	static function get_rightMouseReleased() { return Mouse.rightMouseReleased; }
 	public static var mouseX(get, never):Float;
 	static function get_mouseX() { return Mouse.mouseX; }
 	public static var mouseY(get, never):Float;
