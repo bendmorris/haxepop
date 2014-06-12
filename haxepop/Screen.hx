@@ -9,6 +9,7 @@ import flash.display.PixelSnapping;
 import flash.display.Sprite;
 import flash.filters.BitmapFilter;
 import flash.geom.Matrix;
+import flash.utils.ByteArray;
 import flash.Lib;
 
 /**
@@ -337,15 +338,35 @@ class Screen
 	private function get_mouseY():Int { return Std.int(_sprite.mouseY / fullScaleY); }
 
 	/**
-	 * Captures the current screen as an Image object.
-	 * @return	A new Image object.
+	 * Captures the current screen as a BitmapData.
+	 * @return	A new BitmapData object.
 	 */
-	public function capture():Image
+	public function capture():BitmapData
 	{
 #if buffer
-		return new Image(_bitmap[_current].bitmapData.clone());
+		return _bitmap[_current].bitmapData.clone();
 #else
-		throw "Screen.capture only supported with buffer rendering";
+		var screenshotBuffer = new BitmapData(HXP.windowWidth, HXP.windowHeight);
+		screenshotBuffer.draw(HXP.stage);
+		return screenshotBuffer;
+#end
+	}
+
+	/**
+	 * Saves a screenshot of the current stage as a PNG.
+	 *
+	 * @param	path	Filepath to save the screenshot.
+	 */
+	public function screenshot(path:String):Void
+	{
+#if native
+		var img:BitmapData = capture();
+		var encoded:ByteArray = img.encode("png", 1);
+		var file = sys.io.File.write(path, true);
+		file.writeString(encoded.toString());
+		file.close();
+#else
+		throw "Screenshots are only available on native.";
 #end
 	}
 

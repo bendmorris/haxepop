@@ -82,7 +82,7 @@ class Console
 		_debReadText1 = new TextField();
 
 		// Button panel information.
-		_butRead = new Sprite();
+		_btnRead = new Sprite();
 
 		// Entity selection information.
 		_entScreen = new Sprite();
@@ -199,11 +199,14 @@ class Console
 		try
 		{
 			_bmpLogo = new Bitmap(Assets.getBitmapData("graphics/debug/console_logo.png"));
-			_butDebug = new Bitmap(Assets.getBitmapData("graphics/debug/console_debug.png"));
-			_butOutput = new Bitmap(Assets.getBitmapData("graphics/debug/console_output.png"));
-			_butPlay = new Bitmap(Assets.getBitmapData("graphics/debug/console_play.png"));
-			_butPause = new Bitmap(Assets.getBitmapData("graphics/debug/console_pause.png"));
-			_butStep = new Bitmap(Assets.getBitmapData("graphics/debug/console_step.png"));
+			_btnDebug = new Bitmap(Assets.getBitmapData("graphics/debug/console_debug.png"));
+			_btnOutput = new Bitmap(Assets.getBitmapData("graphics/debug/console_output.png"));
+			_btnPlay = new Bitmap(Assets.getBitmapData("graphics/debug/console_play.png"));
+			_btnPause = new Bitmap(Assets.getBitmapData("graphics/debug/console_pause.png"));
+			_btnStep = new Bitmap(Assets.getBitmapData("graphics/debug/console_step.png"));
+#if native
+			_btnScreenshot = new Bitmap(Assets.getBitmapData("graphics/debug/console_screenshot.png"));
+#end
 		} catch (e:Dynamic) {
 			return;
 		}
@@ -340,21 +343,24 @@ class Console
 		_debRead.y = height - (_debReadText1.y + _debReadText1.height);
 
 		// The button panel buttons.
-		_sprite.addChild(_butRead);
-		_butRead.addChild(_butDebug);
-		_butRead.addChild(_butOutput);
-		_butRead.addChild(_butPlay).x = 20;
-		_butRead.addChild(_butPause).x = 20;
-		_butRead.addChild(_butStep).x = 40;
+		_sprite.addChild(_btnRead);
+		_btnRead.addChild(_btnDebug);
+		_btnRead.addChild(_btnOutput);
+		_btnRead.addChild(_btnPlay).x = 20;
+		_btnRead.addChild(_btnPause).x = 20;
+		_btnRead.addChild(_btnStep).x = 40;
+#if native
+		_btnRead.addChild(_btnScreenshot).x = 60;
+#end
 		updateButtons();
 
 		// The button panel.
-		_butRead.graphics.clear();
-		_butRead.graphics.beginFill(0, .75);
+		_btnRead.graphics.clear();
+		_btnRead.graphics.beginFill(0, .75);
 #if flash
-		_butRead.graphics.drawRoundRectComplex(-20, 0, 100, 20, 0, 0, 20, 20);
+		_btnRead.graphics.drawRoundRectComplex(-20, 0, 100, 20, 0, 0, 20, 20);
 #else
-		_butRead.graphics.drawRoundRect(-20, -20, 100, 40, 40, 40);
+		_btnRead.graphics.drawRoundRect(-20, -20, 120, 40, 40, 40);
 #end
 		debug = true;
 
@@ -429,7 +435,7 @@ class Console
 		_layerList.visible = HXP.engine.paused && _debug;
 
 		// Update buttons.
-		if (_butRead.visible)
+		if (_btnRead.visible)
 			updateButtons();
 
 		// If the console is paused.
@@ -532,7 +538,7 @@ class Console
 		_back.visible = value;
 		_entScreen.visible = value;
 #if !mobile // buttons always show on mobile devices
-		_butRead.visible = value;
+		_btnRead.visible = value;
 #end
 
 		// If the console is paused.
@@ -1042,40 +1048,59 @@ class Console
 	private function updateButtons()
 	{
 		// Button visibility.
-		_butRead.x = (width >= BIG_WIDTH_THRESHOLD ? _fpsInfo.x + _fpsInfoText0.width + _fpsInfoText1.width + Std.int((_entRead.x - (_fpsInfo.x + _fpsInfoText0.width + _fpsInfoText1.width)) / 2) - 30 : 160 + 20);
-		_butDebug.visible = _paused && !_debug;
-		_butOutput.visible = _paused && _debug;
-		_butPlay.visible = HXP.engine.paused;
-		_butPause.visible = !HXP.engine.paused;
-		_butStep.visible = _paused;
+		_btnRead.x = (width >= BIG_WIDTH_THRESHOLD ? _fpsInfo.x + _fpsInfoText0.width + _fpsInfoText1.width + Std.int((_entRead.x - (_fpsInfo.x + _fpsInfoText0.width + _fpsInfoText1.width)) / 2) - 30 : 160 + 20);
+		_btnDebug.visible = _paused && !_debug;
+		_btnOutput.visible = _paused && _debug;
+#if native
+		_btnScreenshot.visible = _paused && _debug;
+#end
+		_btnPlay.visible = HXP.engine.paused;
+		_btnPause.visible = !HXP.engine.paused;
+		_btnStep.visible = _paused;
 
 		// Debug/Output button.
-		if (_butDebug.bitmapData.rect.contains(_butDebug.mouseX, _butDebug.mouseY))
+		if (_btnDebug.bitmapData.rect.contains(_btnDebug.mouseX, _btnDebug.mouseY))
 		{
-			_butDebug.alpha = _butOutput.alpha = 1;
+			_btnDebug.alpha = _btnOutput.alpha = 1;
 			if (Mouse.mousePressed) debug = !_debug;
 		}
-		else _butDebug.alpha = _butOutput.alpha = 0.5;
+		else _btnDebug.alpha = _btnOutput.alpha = 0.5;
 
 		// Play/Pause button.
-		if (_butPlay.bitmapData.rect.contains(_butPlay.mouseX, _butPlay.mouseY))
+		if (_btnPlay.bitmapData.rect.contains(_btnPlay.mouseX, _btnPlay.mouseY))
 		{
-			_butPlay.alpha = _butPause.alpha = 1;
+			_btnPlay.alpha = _btnPause.alpha = 1;
 			if (Mouse.mousePressed)
 			{
 				HXP.engine.paused = !HXP.engine.paused;
 				renderEntities();
 			}
 		}
-		else _butPlay.alpha = _butPause.alpha = 0.5;
+		else _btnPlay.alpha = _btnPause.alpha = 0.5;
 
 		// Frame step button.
-		if (_butStep.bitmapData.rect.contains(_butStep.mouseX, _butStep.mouseY))
+		if (_btnStep.bitmapData.rect.contains(_btnStep.mouseX, _btnStep.mouseY))
 		{
-			_butStep.alpha = 1;
+			_btnStep.alpha = 1;
 			if (Mouse.mousePressed) stepFrame();
 		}
-		else _butStep.alpha = .5;
+		else _btnStep.alpha = .5;
+
+#if native
+		// Screenshot button.
+		if (_btnDebug.bitmapData.rect.contains(_btnScreenshot.mouseX, _btnScreenshot.mouseY))
+		{
+			_btnScreenshot.alpha = 1;
+			if (Mouse.mousePressed)
+			{
+				_sprite.visible = false;
+				HXP.engine.render();
+				HXP.screen.screenshot("Screenshot " + Date.now().toString() + ".png");
+				_sprite.visible = true;
+			}
+		}
+		else _btnScreenshot.alpha = _btnScreenshot.alpha = 0.5;
+#end
 	}
 
 	/** @private Gets a TextFormat object with the formatting. */
@@ -1151,12 +1176,13 @@ class Console
 	private var _debReadText1:TextField;
 
 	// Button panel information
-	private var _butRead:Sprite;
-	private var _butDebug:Bitmap;
-	private var _butOutput:Bitmap;
-	private var _butPlay:Bitmap;
-	private var _butPause:Bitmap;
-	private var _butStep:Bitmap;
+	private var _btnRead:Sprite;
+	private var _btnDebug:Bitmap;
+	private var _btnOutput:Bitmap;
+	private var _btnScreenshot:Bitmap;
+	private var _btnPlay:Bitmap;
+	private var _btnPause:Bitmap;
+	private var _btnStep:Bitmap;
 
 	private var _bmpLogo:Bitmap;
 
