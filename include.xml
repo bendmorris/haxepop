@@ -8,8 +8,11 @@
 	<haxelib name="openfl-ouya" if="ouya" />
 	<haxelib name="openfl" />
 
-	<haxedef name="buffer" if="flash" />
-	<haxedef name="hardware" unless="flash" />
+	<section if="flash || html5 || buffer" unless="hardware">
+		<haxedef name="buffer" />
+		<set name="buffer" />
+	</section>
+	<haxedef name="hardware" unless="buffer" />
 
 	<haxeflag name="--remap" value="haxepunk:haxepop" />
 </project>
