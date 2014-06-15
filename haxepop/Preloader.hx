@@ -25,17 +25,18 @@ class Preloader extends NMEPreloader
 	public function new()
 	{
 		img = new Bitmap(new Logo(0,0));
-		var w = 256;
-		var h = 64;
+		img.alpha = 0.2;
+		var w = 512;
+		var h = 102;
 
 		super();
 
-		outline.y += 40;
-		progress.y += 40;
-		
+		outline.y += h - 20;
+		progress.y += h - 20;
+
 		img.x = (getWidth() - w) / 2;
 		img.y = (getHeight() - h) / 2 - 20;
-		
+
 		addChild(img);
 	}
 

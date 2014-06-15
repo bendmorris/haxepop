@@ -30,17 +30,12 @@ class Engine extends Sprite
 	public var paused:Bool;
 
 	/**
-	 * If focus is currently lost.
-	 */
-	public var focus:Bool=true;
-
-	/**
 	 * If updating/rendering should occur.
 	 */
 	public var active(get, never):Bool;
 	function get_active()
 	{
-		return !(paused || (HXP.autoPause && !focus));
+		return !(paused || (HXP.autoPause && !(_gainFocus || HXP.focused)));
 	}
 
 	/**
@@ -111,11 +106,10 @@ class Engine extends Sprite
 	 */
 	public function focusGained()
 	{
-		if (HXP.autoPause)
+		if (HXP.autoPause && _pauseOverlay != null)
 		{
-			HXP.stage.removeChild(_pauseOverlay);
+			_pauseOverlay.visible = false;
 		}
-		focus = true;
 	}
 
 	/**
@@ -123,11 +117,10 @@ class Engine extends Sprite
 	 */
 	public function focusLost()
 	{
-		if (HXP.autoPause)
+		if (HXP.autoPause && _pauseOverlay != null)
 		{
-			HXP.stage.addChild(_pauseOverlay);
+			_pauseOverlay.visible = true;
 		}
-		focus = false;
 	}
 
 	/**
@@ -145,6 +138,11 @@ class Engine extends Sprite
 		}
 		_scene.updateLists(false);
 		HXP.screen.update();
+		if (_gainFocus)
+		{
+			_gainFocus = false;
+			HXP.focused = true;
+		}
 	}
 
 	/**
@@ -202,7 +200,7 @@ class Engine extends Sprite
 		});
 
 		HXP.stage.addEventListener(#if desktop FocusEvent.FOCUS_IN #else Event.ACTIVATE #end, function (e:Event) {
-			HXP.focused = true;
+			_gainFocus = true;
 			focusGained();
 			_scene.focusGained();
 		});
@@ -443,7 +441,11 @@ class Engine extends Sprite
 		else
 		{
 			_pauseBitmap.bitmapData.dispose();
+		}
+		if (_pauseOverlay != null)
+		{
 			_pauseOverlay.graphics.clear();
+			if (contains(_pauseOverlay)) removeChild(_pauseOverlay);
 		}
 
 		var w:Int = HXP.windowWidth, h:Int = HXP.windowHeight;
@@ -458,6 +460,9 @@ class Engine extends Sprite
 		g.lineTo(w * 2 / 3, h / 2);
 		g.lineTo(w / 3, h * 2 / 3);
 		g.lineTo(w / 3, h / 3);
+
+		_pauseOverlay.visible = false;
+		addChild(_pauseOverlay);
 	}
 
 	// Scene information.
@@ -483,6 +488,7 @@ class Engine extends Sprite
 	private var _frameLast:Float;
 	private var _frameListSum:Int;
 	private var _frameList:Array<Int>;
+	private var _gainFocus:Bool = true;
 
 	private var _pauseOverlay:Sprite;
 	private var _pauseBitmap:Bitmap;

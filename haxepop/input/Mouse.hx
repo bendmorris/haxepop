@@ -219,11 +219,18 @@ class Mouse implements InputMethod
 
 	private static function onMouseDown(e:MouseEvent)
 	{
-		if (!mouseDown)
+		if (!(mouseDown || _mouseDownNoFocus))
 		{
-			mouseDown = true;
-			mouseUp = false;
-			mousePressed = true;
+			if (HXP.focused)
+			{
+				mouseDown = true;
+				mouseUp = false;
+				mousePressed = true;
+			}
+			else
+			{
+				_mouseDownNoFocus = true;
+			}
 		}
 	}
 
@@ -232,6 +239,7 @@ class Mouse implements InputMethod
 		mouseDown = false;
 		mouseUp = true;
 		mouseReleased = true;
+		_mouseDownNoFocus = false;
 	}
 
 	private static function onMouseWheel(e:MouseEvent)
@@ -275,4 +283,5 @@ class Mouse implements InputMethod
 	}
 
 	private static var _mouseWheelDelta:Int = 0;
+	private static var _mouseDownNoFocus:Bool = false;
 }
