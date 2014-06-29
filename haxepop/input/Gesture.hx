@@ -5,14 +5,15 @@ import haxepop.utils.Math;
 import haxepop.HXP;
 import haxepop.Input;
 
-enum GestureMode
+@:enum
+abstract GestureMode(Int)
 {
-	READY;
-	SINGLE_TOUCH;
-	SINGLE_MOVE;
-	MULTI_TOUCH;
-	MULTI_MOVE;
-	FINISHED;
+	var READY = 1;
+	var SINGLE_TOUCH = 2;
+	var SINGLE_MOVE = 3;
+	var MULTI_TOUCH = 4;
+	var MULTI_MOVE = 5;
+	var FINISHED = 6;
 }
 
 class GestureInstance extends InputInstance
@@ -382,7 +383,7 @@ class Gesture implements InputMethod
 		Touch.removeTouches();
 	}
 
-	var mode:GestureMode;
+	var mode:GestureMode = GestureMode.READY;
 	var _lastTap:Float = 0;
 
 }
