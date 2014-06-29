@@ -403,6 +403,7 @@ class Math
 	public static inline function sqrt(f:Float) { return std.Math.sqrt(f); }
 	public static inline function floor(f:Float) { return std.Math.floor(f); }
 	public static inline function ceil(f:Float) { return std.Math.ceil(f); }
+	public static inline function random() { return std.Math.random(); }
 	public static inline function round(f:Float) { return std.Math.round(f); }
 	public static inline function pow(v:Float, p:Float) { return std.Math.pow(v, p); }
 
