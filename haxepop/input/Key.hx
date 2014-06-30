@@ -87,49 +87,51 @@ class Key implements InputMethod
 	public static inline var Y = 89;
 	public static inline var Z = 90;
 
-	public static var F1 = 112;
-	public static var F2 = 113;
-	public static var F3 = 114;
-	public static var F4 = 115;
-	public static var F5 = 116;
-	public static var F6 = 117;
-	public static var F7 = 118;
-	public static var F8 = 119;
-	public static var F9 = 120;
-	public static var F10 = 121;
-	public static var F11 = 122;
-	public static var F12 = 123;
-	public static var F13 = 124;
-	public static var F14 = 125;
-	public static var F15 = 126;
+	public static inline var F1 = 112;
+	public static inline var F2 = 113;
+	public static inline var F3 = 114;
+	public static inline var F4 = 115;
+	public static inline var F5 = 116;
+	public static inline var F6 = 117;
+	public static inline var F7 = 118;
+	public static inline var F8 = 119;
+	public static inline var F9 = 120;
+	public static inline var F10 = 121;
+	public static inline var F11 = 122;
+	public static inline var F12 = 123;
+	public static inline var F13 = 124;
+	public static inline var F14 = 125;
+	public static inline var F15 = 126;
 
-	public static var DIGIT_0 = 48;
-	public static var DIGIT_1 = 49;
-	public static var DIGIT_2 = 50;
-	public static var DIGIT_3 = 51;
-	public static var DIGIT_4 = 52;
-	public static var DIGIT_5 = 53;
-	public static var DIGIT_6 = 54;
-	public static var DIGIT_7 = 55;
-	public static var DIGIT_8 = 56;
-	public static var DIGIT_9 = 57;
+	public static inline var DIGIT_0 = 48;
+	public static inline var DIGIT_1 = 49;
+	public static inline var DIGIT_2 = 50;
+	public static inline var DIGIT_3 = 51;
+	public static inline var DIGIT_4 = 52;
+	public static inline var DIGIT_5 = 53;
+	public static inline var DIGIT_6 = 54;
+	public static inline var DIGIT_7 = 55;
+	public static inline var DIGIT_8 = 56;
+	public static inline var DIGIT_9 = 57;
 
-	public static var NUMPAD_0 = 96;
-	public static var NUMPAD_1 = 97;
-	public static var NUMPAD_2 = 98;
-	public static var NUMPAD_3 = 99;
-	public static var NUMPAD_4 = 100;
-	public static var NUMPAD_5 = 101;
-	public static var NUMPAD_6 = 102;
-	public static var NUMPAD_7 = 103;
-	public static var NUMPAD_8 = 104;
-	public static var NUMPAD_9 = 105;
+	public static inline var NUMPAD_0 = 96;
+	public static inline var NUMPAD_1 = 97;
+	public static inline var NUMPAD_2 = 98;
+	public static inline var NUMPAD_3 = 99;
+	public static inline var NUMPAD_4 = 100;
+	public static inline var NUMPAD_5 = 101;
+	public static inline var NUMPAD_6 = 102;
+	public static inline var NUMPAD_7 = 103;
+	public static inline var NUMPAD_8 = 104;
+	public static inline var NUMPAD_9 = 105;
 	public static inline var NUMPAD_ADD = 107;
 	public static inline var NUMPAD_DECIMAL = 110;
 	public static inline var NUMPAD_DIVIDE = 111;
 	public static inline var NUMPAD_ENTER = 108;
 	public static inline var NUMPAD_MULTIPLY = 106;
 	public static inline var NUMPAD_SUBTRACT = 109;
+
+	public static inline var ANDROID_MENU = 16777234;
 
 	public function init()
 	{

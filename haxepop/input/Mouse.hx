@@ -221,7 +221,7 @@ class Mouse implements InputMethod
 	{
 		if (!(mouseDown || _mouseDownNoFocus))
 		{
-			if (HXP.focused)
+			if (true)//HXP.focused)
 			{
 				mouseDown = true;
 				mouseUp = false;

@@ -110,6 +110,7 @@ class Gesture implements InputMethod
 		Input.define(input, [for (i in inputs) {type:name, value:i}]);
 	}
 
+	public static var TOUCH=0;
 	public static var TAP=1;
 	public static var DOUBLE_TAP=2;
 	public static var LONG_PRESS=3;
@@ -243,7 +244,7 @@ class Gesture implements InputMethod
 		{
 			if (touches.exists(touch))
 			{
-				if (touches[touch].pressed || !touches[touch].released) touchCount += 1;
+				if (touches[touch].pressed || touches[touch].active) touchCount += 1;
 			}
 			else
 			{
@@ -253,127 +254,148 @@ class Gesture implements InputMethod
 
 		if (_lastTap > 0) _lastTap = Math.max(0, _lastTap - HXP.elapsed / doubleTapTime);
 
-		switch (mode)
+		if (touchCount > 0 && !check(TOUCH))
 		{
-			case READY:
+			var touch:Touch = getTouch(touches, touchOrder, 0);
+			start(TOUCH, touch.x, touch.y);
+		}
+		else if (touchCount > 0)
+		{
+			var touch:Touch = getTouch(touches, touchOrder, 0);
+			get(TOUCH).x = touch.x;
+			get(TOUCH).y = touch.y;
+		}
+		else if (check(TOUCH)) finish(TOUCH);
+
+		var changed:Bool = true;
+		while (changed)
+		{
+			changed = false;
+			switch (mode)
 			{
-				if (touchCount > 0)
+				case READY:
 				{
-					// start tracking gesture
-					mode = touchCount == 1 ? SINGLE_TOUCH : MULTI_TOUCH;
-				}
-			}
-			case SINGLE_TOUCH:
-			{
-				if (touchCount == 0)
-				{
-					// was touching with one finger, now released
-					// initiate a tap or long press
-					mode = READY;
-					var touch:Touch = getTouch(touches, touchOrder, 0);
-					var t:Int = (touch.time < longPressTime) ? TAP : LONG_PRESS;
-					
-					if (t == TAP && _lastTap > 0) t = DOUBLE_TAP;
-					
-					if (!check(t))
+					if (touchCount > 0)
 					{
-						start(t, touch.x, touch.y);
-						if (t == TAP) _lastTap = 1;
+						// start tracking gesture
+						mode = touchCount == 1 ? SINGLE_TOUCH : MULTI_TOUCH;
+						changed = true;
 					}
 				}
-				else if (touchCount == 1)
+				case SINGLE_TOUCH:
 				{
-					var touch:Touch = getTouch(touches, touchOrder, 0);
-					var dist = Math.distance(touch.startX, touch.startY, touch.x, touch.y);
-					if (dist > deadZone)
+					if (touchCount == 0)
 					{
-						mode = SINGLE_MOVE;
-					}
-					else if (touch.time >= longPressTime && !check(LONG_PRESS))
-					{
-						start(LONG_PRESS, touch.x, touch.y);
-					}
-				}
-				else if (touchCount > 1)
-				{
-					mode = MULTI_TOUCH;
-				}
-			}
-			case SINGLE_MOVE:
-			{
-				if (touchCount == 0)
-				{
-					mode = READY;
-				}
-				else
-				{
-					var touch:Touch = getTouch(touches, touchOrder, 0);
-					var dist = Math.distance(touch.startX, touch.startY, touch.x, touch.y);
-					if (!check(MOVE))
-					{
-						start(MOVE, touch.startX, touch.startY);
-					}
-					var g = get(MOVE);
-					g.x2 = touch.x;
-					g.y2 = touch.y;
-					g.magnitude = dist;
-				}
-				if (touchCount > 1)
-				{
-					var touch:Touch = getTouch(touches, touchOrder, 1);
-					start(TWO_FINGER_TAP, touch.x, touch.y);
-				}
-				else if (check(TWO_FINGER_TAP))
-				{
-					finish(TWO_FINGER_TAP);
-				}
-			}
-			case MULTI_TOUCH:
-			{
-				if (touchCount < 2)
-				{
-					mode = (touchCount == 0 ? READY : FINISHED);
-					if (!check(PINCH))
-					{
-						var t1:Touch = getTouch(touches, touchOrder, 0);
-						var t2:Touch = getTouch(touches, touchOrder, 1);
-						if (t2 != null)
+						// was touching with one finger, now released
+						// initiate a tap or long press
+						mode = READY;
+						var touch:GestureInstance = get(TOUCH);
+						var t:Int = (touch.time < longPressTime) ? TAP : LONG_PRESS;
+
+						if (t == TAP && _lastTap > 0) t = DOUBLE_TAP;
+
+						if (!check(t))
 						{
-							var mx = (t1.startX - t2.startX) / 2;
-							var my = (t1.startY - t2.startY) / 2;
-							start(TWO_FINGER_TAP, mx, my);
+							start(t, touch.x, touch.y);
+							if (t == TAP) _lastTap = 1;
 						}
 					}
-					finishAll();
-				}
-				else
-				{
-					var t1:Touch = getTouch(touches, touchOrder, 0);
-					var t2:Touch = getTouch(touches, touchOrder, 1);
-					if (t1 != null && t2 != null)
+					else if (touchCount == 1)
 					{
-						var d1 = Math.distance(t1.startX, t1.startY, t1.x, t1.y);
-						var d2 = Math.distance(t2.startX, t2.startY, t2.x, t2.y);
-						if (d1 > deadZone && d2 > deadZone)
+						var touch:Touch = getTouch(touches, touchOrder, 0);
+						var dist = Math.distance(touch.startX, touch.startY, touch.x, touch.y);
+						if (dist > deadZone)
 						{
-							if (!check(PINCH))
+							mode = SINGLE_MOVE;
+							changed = true;
+						}
+						else if (touch.time >= longPressTime && !check(LONG_PRESS))
+						{
+							start(LONG_PRESS, touch.x, touch.y);
+						}
+					}
+					else if (touchCount > 1)
+					{
+						mode = MULTI_TOUCH;
+						changed = true;
+					}
+				}
+				case SINGLE_MOVE:
+				{
+					if (touchCount == 0)
+					{
+						mode = READY;
+					}
+					else
+					{
+						var touch:Touch = getTouch(touches, touchOrder, 0);
+						var dist = Math.distance(touch.startX, touch.startY, touch.x, touch.y);
+						if (!check(MOVE))
+						{
+							start(MOVE, touch.startX, touch.startY);
+						}
+						var g = get(MOVE);
+						g.x2 = touch.x;
+						g.y2 = touch.y;
+						g.magnitude = dist;
+					}
+					if (touchCount > 1)
+					{
+						var touch:Touch = getTouch(touches, touchOrder, 1);
+						start(TWO_FINGER_TAP, touch.x, touch.y);
+					}
+					else if (check(TWO_FINGER_TAP))
+					{
+						finish(TWO_FINGER_TAP);
+					}
+				}
+				case MULTI_TOUCH:
+				{
+					if (touchCount < 2)
+					{
+						mode = (touchCount == 0 ? READY : FINISHED);
+						if (!check(PINCH))
+						{
+							var t1:Touch = getTouch(touches, touchOrder, 0);
+							var t2:Touch = getTouch(touches, touchOrder, 1);
+							if (t2 != null)
 							{
 								var mx = (t1.startX - t2.startX) / 2;
 								var my = (t1.startY - t2.startY) / 2;
-								start(PINCH, mx, my);
+								start(TWO_FINGER_TAP, mx, my);
 							}
-							var inner = Math.distance(t1.startX, t1.startY, t2.startX, t2.startY);
-							var outer = Math.distance(t1.x, t1.y, t2.x, t2.y);
-							get(PINCH).magnitude = inner / outer;
+						}
+						finishAll();
+					}
+					else
+					{
+						var t1:Touch = getTouch(touches, touchOrder, 0);
+						var t2:Touch = getTouch(touches, touchOrder, 1);
+						if (t1 != null && t2 != null)
+						{
+							var d1 = Math.distance(t1.startX, t1.startY, t1.x, t1.y);
+							var d2 = Math.distance(t2.startX, t2.startY, t2.x, t2.y);
+							if (d1 > deadZone && d2 > deadZone)
+							{
+								if (!check(PINCH))
+								{
+									var mx = (t1.startX - t2.startX) / 2;
+									var my = (t1.startY - t2.startY) / 2;
+									start(PINCH, mx, my);
+								}
+								var inner = Math.distance(t1.startX, t1.startY, t2.startX, t2.startY);
+								var outer = Math.distance(t1.x, t1.y, t2.x, t2.y);
+								get(PINCH).magnitude = inner / outer;
+							}
 						}
 					}
 				}
-			}
-			default:
-			{
-				if (touchCount == 0)
+				default:
 				{
-					mode = READY;
+					if (touchCount == 0)
+					{
+						mode = READY;
+					}
 				}
 			}
 		}

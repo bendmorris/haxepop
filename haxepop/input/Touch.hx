@@ -50,7 +50,7 @@ class Touch
 	 * @param  y  y-axis coord in window
 	 * @param  id touch id
 	 */
-	public function new(x:Float, y:Float, id:Int)
+	public function new(id:Int, ?x:Float=0, ?y:Float=0)
 	{
 		this.startX = this.x = x;
 		this.startY = this.y = y;
@@ -86,16 +86,21 @@ class Touch
 	/**
 	 * If the touch was pressed this frame.
 	 */
-	public var pressed(get, never):Bool;
-	private inline function get_pressed():Bool { return time == 0; }
+	public var pressed:Bool = true;
 
+	/**
+	 * If the touch was released this frame.
+	 */
 	public var released:Bool = false;
+
+	public var active:Bool = true;
 
 	/**
 	 * Updates the touch state.
 	 */
 	public function update()
 	{
+        if (time > 0) pressed = false;
 		time += HXP.elapsed;
 	}
 
@@ -109,8 +114,20 @@ class Touch
 
 	private static function onTouchBegin(e:TouchEvent)
 	{
-		var touchPoint = new Touch(e.stageX / HXP.screen.fullScaleX, e.stageY / HXP.screen.fullScaleY, e.touchPointID);
-		_touches.set(e.touchPointID, touchPoint);
+		var touch:Touch;
+		if (_touches.exists(e.touchPointID))
+		{
+			touch = _touches.get(e.touchPointID);
+		}
+		else
+		{
+			touch = new Touch(e.touchPointID);
+			_touches.set(e.touchPointID, touch);
+		}
+		touch.startX = touch.x = e.stageX / HXP.screen.fullScaleX;
+		touch.startY = touch.y = e.stageY / HXP.screen.fullScaleY;
+		touch.time = 0;
+		touch.pressed = touch.active = true;
 		_touchOrder.push(e.touchPointID);
 	}
 
@@ -123,22 +140,27 @@ class Touch
 
 	private static function onTouchEnd(e:TouchEvent)
 	{
-		_touches.get(e.touchPointID).released = true;
+		var touch:Touch = _touches.get(e.touchPointID);
+		touch.released = true;
+		touch.active = false;
 	}
 
 	public static function updateTouches()
 	{
-		for (touch in _touches) touch.update();
+		for (touch in _touches)
+		{
+			touch.update();
+		}
 	}
 
 	public static function removeTouches()
 	{
 		for (touch in _touches)
 		{
-			if (touch.released && !touch.pressed)
+			if (touch.released && !touch.active)
 			{
-				_touches.remove(touch.id);
 				_touchOrder.remove(touch.id);
+				touch.released = false;
 			}
 		}
 	}

@@ -47,12 +47,8 @@ class Input
 	{
 		inputMethods = new Map();
 
-#if (flash || desktop || html5)
 		haxepop.input.Mouse.enable();
-#end
-#if (flash || desktop || html5)
 		haxepop.input.Key.enable();
-#end
 #if (mobile)
 		haxepop.input.Gesture.enable();
 #end
