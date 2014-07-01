@@ -26,7 +26,8 @@ class Atlas
 
 	private function new(source:AtlasDataType)
 	{
-		_data = source;
+		if (source != null)
+			_data = source;
 	}
 
 	/**

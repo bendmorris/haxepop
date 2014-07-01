@@ -78,7 +78,7 @@ class GestureInstance extends InputInstance
 		{
 			pressed = false;
 		}
-		else if (released)
+		if (released)
 		{
 			reset();
 		}

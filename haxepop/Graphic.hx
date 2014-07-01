@@ -1,6 +1,7 @@
 package haxepop;
 
 import haxepop.HXP;
+import haxepop.Assets;
 import haxepop.ds.Either;
 import haxepop.graphics.atlas.Atlas;
 import haxepop.graphics.atlas.TileAtlas;
@@ -49,11 +50,7 @@ abstract ImageType(Either<BitmapData, AtlasRegion>)
 	@:to inline function get_type() return this;
 
 	@:from public static inline function fromString(s:String) {
-#if hardware
-			return new ImageType(Right(Atlas.loadImageAsRegion(s)));
-#else
-			return new ImageType(Left(HXP.getBitmap(s)));
-#end
+			return Assets.getImage(s);
 	}
 	@:from public static inline function fromTileAtlas(atlas:TileAtlas) {
 		return new ImageType(Right(atlas.getRegion(0)));

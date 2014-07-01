@@ -33,7 +33,7 @@ class TiledImage extends Image
 	{
 		if (_width == 0) _width = Std.int(_sourceRect.width);
 		if (_height == 0) _height = Std.int(_sourceRect.height);
-		_buffer = HXP.createBitmap(_width, _height, true);
+		_buffer = Assets.createBitmap(_width, _height, true);
 		_bufferRect = _buffer.rect;
 	}
 
@@ -45,7 +45,7 @@ class TiledImage extends Image
 			if (_source == null) return;
 			if (_texture == null)
 			{
-				_texture = HXP.createBitmap(Std.int(_sourceRect.width), Std.int(_sourceRect.height), true);
+				_texture = Assets.createBitmap(Std.int(_sourceRect.width), Std.int(_sourceRect.height), true);
 				_texture.copyPixels(_source, _sourceRect, HXP.zero);
 			}
 			_buffer.fillRect(_bufferRect, 0);

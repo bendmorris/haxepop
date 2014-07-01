@@ -1,5 +1,6 @@
 package haxepop.debug;
 
+import haxepop.Assets;
 import haxepop.Entity;
 import haxepop.HXP;
 import haxepop.Input;
@@ -7,7 +8,6 @@ import haxepop.input.Key;
 import haxepop.input.Mouse;
 import haxepop.utils.Math;
 
-import openfl.Assets;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
@@ -384,7 +384,7 @@ class Console
 		{
 			_back.bitmapData.dispose();
 		}
-		_back.bitmapData = HXP.createBitmap(width, height, true, 0xFFFFFFFF);
+		_back.bitmapData = Assets.createBitmap(width, height, true, 0xFFFFFFFF);
 		HXP.matrix.identity();
 		HXP.matrix.tx = Math.max((_back.bitmapData.width - _bmpLogo.width) / 2, 0);
 		HXP.matrix.ty = Math.max((_back.bitmapData.height - _bmpLogo.height) / 2, 0);

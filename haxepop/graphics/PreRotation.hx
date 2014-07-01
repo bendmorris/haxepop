@@ -49,7 +49,7 @@ class PreRotation extends Image
 				width = Std.int(_MAX_WIDTH - (_MAX_WIDTH % _frame.width));
 				height = Std.int(Math.ceil(frameCount / (width / _frame.width)) * _frame.height);
 			}
-			r = HXP.createBitmap(width, height, true);
+			r = Assets.createBitmap(width, height, true);
 			_rotated.set(source, r);
 			var m:Matrix = HXP.matrix,
 				a:Float = 0,

@@ -35,7 +35,7 @@ class TiledSpritemap extends Spritemap
 	{
 		if (_imageWidth == 0) _imageWidth = Std.int(_sourceRect.width);
 		if (_imageHeight == 0) _imageHeight = Std.int(_sourceRect.height);
-		_buffer = HXP.createBitmap(_imageWidth, _imageHeight, true);
+		_buffer = Assets.createBitmap(_imageWidth, _imageHeight, true);
 		_bufferRect = _buffer.rect;
 	}
 

@@ -291,7 +291,7 @@ class BitmapText extends Graphic
 		if (_buffer == null || _buffer.width != w || _buffer.height != h)
 		{
 			if (_buffer != null) _buffer.dispose();
-			_buffer = HXP.createBitmap(w, h, true, 0);
+			_buffer = Assets.createBitmap(w, h, true, 0);
 		}
 		else
 		{

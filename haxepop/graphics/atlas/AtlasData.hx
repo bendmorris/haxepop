@@ -2,6 +2,7 @@ package haxepop.graphics.atlas;
 
 import haxepop.Scene;
 import haxepop.ds.Either;
+import haxepop.utils.Math;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -26,6 +27,7 @@ abstract AtlasDataType(AtlasData)
 	}
 }
 
+@:allow(haxepop.graphics.atlas.AtlasRegion)
 class AtlasData
 {
 
@@ -56,6 +58,7 @@ class AtlasData
 		_smoothData = new Array<Float>();
 		_dataIndex = _smoothDataIndex = 0;
 
+		_source = bd;
 		_tilesheet = new Tilesheet(bd);
 		// create a unique name if one is not specified
 		if (name == null)
@@ -95,7 +98,7 @@ class AtlasData
 		}
 		else if(create)
 		{
-			var bitmap:BitmapData = HXP.getBitmap(name);
+			var bitmap:BitmapData = Assets.getBitmap(name);
 			if (bitmap != null)
 			{
 				data = new AtlasData(bitmap, name);
@@ -118,8 +121,9 @@ class AtlasData
 	 */
 	public function reload(bd:BitmapData):Void
 	{
-		HXP.overwriteBitmapCache(_name, bd);
+		Assets.overwriteBitmapCache(_name, bd);
 		_tilesheet = new Tilesheet(bd);
+		_source = bd;
 		// recreate tile indexes
 		for (r in _rects)
 		{
@@ -158,7 +162,7 @@ class AtlasData
 	 */
 	public function destroy():Void
 	{
-		HXP.removeBitmap(_name);
+		Assets.removeBitmap(_name);
 		_dataPool.remove(_name);
 	}
 
@@ -180,12 +184,14 @@ class AtlasData
 	 *
 	 * @return The new AtlasRegion object.
 	 */
-	public inline function createRegion(rect:Rectangle, ?center:Point):AtlasRegion
+	public inline function createRegion(rect:Rectangle, ?center:Point, ?rotated:Bool=false):AtlasRegion
 	{
 		var r = rect.clone();
 		_rects.push(r);
 		var tileIndex = _tilesheet.addTileRect(r, null);
-		return new AtlasRegion(this, tileIndex, r);
+		var region = new AtlasRegion(this, tileIndex, r);
+		region.rotated = rotated;
+		return region;
 	}
 
 	/**
@@ -304,8 +310,8 @@ class AtlasData
 		}
 		else
 		{
-			var cos = Math.cos(-angle * HXP.RAD);
-			var sin = Math.sin(-angle * HXP.RAD);
+			var cos = Math.cos(-angle * Math.RAD);
+			var sin = Math.sin(-angle * Math.RAD);
 			_data[_dataIndex++] = cos * scaleX; // m00
 			_data[_dataIndex++] = -sin * scaleY; // m10
 			_data[_dataIndex++] = sin * scaleX; // m01
@@ -407,6 +413,7 @@ class AtlasData
 	private var _flagRGB:Bool;
 	private var _flagAlpha:Bool;
 
+	private var _source:BitmapData;
 	private var _tilesheet:Tilesheet;
 	private var _data:Array<Float>;
 	private var _dataIndex:Int;

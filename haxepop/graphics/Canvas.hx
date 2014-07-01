@@ -67,7 +67,7 @@ class Canvas extends Graphic
 #if buffer
 		_refWidth = Math.ceil(width / _maxWidth);
 		_refHeight = Math.ceil(height / _maxHeight);
-		_ref = HXP.createBitmap(_refWidth, _refHeight);
+		_ref = Assets.createBitmap(_refWidth, _refHeight);
 		var x:Int = 0, y:Int = 0, w:Int, h:Int, i:Int = 0,
 			ww:Int = _width % _maxWidth,
 			hh:Int = _height % _maxHeight;
@@ -80,7 +80,7 @@ class Canvas extends Graphic
 			{
 				w = x < _refWidth - 1 ? _maxWidth : ww;
 				_ref.setPixel(x, y, i);
-				_buffers[i] = HXP.createBitmap(w, h, true);
+				_buffers[i] = Assets.createBitmap(w, h, true);
 				i ++; x ++;
 			}
 			x = 0; y ++;
@@ -139,7 +139,7 @@ class Canvas extends Graphic
 								{
 									_midBuffers[i].dispose();
 								}
-								_midBuffers[i] = HXP.createBitmap(w, h, true);
+								_midBuffers[i] = Assets.createBitmap(w, h, true);
 							}
 							else
 							{

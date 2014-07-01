@@ -1,5 +1,6 @@
 package haxepop.graphics.atlas;
 
+import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import flash.geom.Matrix;
@@ -83,7 +84,11 @@ class AtlasRegion
 		red:Float=1, green:Float=1, blue:Float=1, alpha:Float=1, ?smooth:Bool)
 	{
 		if (smooth == null) smooth = Atlas.smooth;
-		if (rotated) angle = angle + 90;
+		if (rotated)
+		{
+			angle -= 90;
+			x += height * scaleX;
+		}
 
 		_parent.prepareTile(tileIndex, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
 	}
@@ -110,7 +115,8 @@ class AtlasRegion
 		if (rotated)
 		{
 			var matrix = new Matrix(a, b, c, d, tx, ty);
-			matrix.rotate(90 * HXP.RAD);
+			matrix.rotate(-90 * HXP.RAD);
+			//matrix.tx += height * scaleX;
 			_parent.prepareTileMatrix(tileIndex, layer,
 				matrix.tx, matrix.ty, matrix.a, matrix.b, matrix.c, matrix.d,
 				red, green, blue, alpha, smooth);
@@ -128,6 +134,21 @@ class AtlasRegion
 			_parent.destroy();
 			_parent = null;
 		}
+	}
+
+	public function getBitmapData():BitmapData
+	{
+		var bd:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0);
+		bd.copyPixels(_parent._source, _rect, new Point());
+		if (rotated)
+		{
+			var newBd:BitmapData = new BitmapData(Std.int(height), Std.int(width), true, 0);
+			var m:Matrix = new Matrix(0, 1, -1, 0, height, 0);
+			newBd.draw(bd, m);
+			bd.dispose();
+			bd = newBd;
+		}
+		return bd;
 	}
 
 	/**

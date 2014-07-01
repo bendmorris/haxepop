@@ -28,7 +28,7 @@ class TileAtlas extends Atlas
 	{
 		return _regions[index];
 	}
-	
+
 	/**
 	 * Prepares the atlas for drawing.
 	 * @param	tileWidth	With of the tiles.

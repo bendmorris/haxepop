@@ -58,14 +58,16 @@ class Screen
 	 */
 	public function resize()
 	{
-		width = Math.ceil(HXP.windowWidth);
-		height = Math.ceil(HXP.windowHeight);
+		width = HXP.width;
+		height = HXP.height;
 #if buffer
 		disposeBitmap(_bitmap[0]);
 		disposeBitmap(_bitmap[1]);
 
-		_bitmap[0] = new Bitmap(HXP.createBitmap(width, height, true), PixelSnapping.NEVER);
-		_bitmap[1] = new Bitmap(HXP.createBitmap(width, height, true), PixelSnapping.NEVER);
+		var w = Math.ceil(HXP.windowWidth);
+		var h = Math.ceil(HXP.windowHeight);
+		_bitmap[0] = new Bitmap(Assets.createBitmap(w, h, true), PixelSnapping.NEVER);
+		_bitmap[1] = new Bitmap(Assets.createBitmap(w, h, true), PixelSnapping.NEVER);
 
 		_sprite.addChild(_bitmap[0]).visible = true;
 		_sprite.addChild(_bitmap[1]).visible = false;

@@ -12,7 +12,10 @@
 		<haxedef name="buffer" />
 		<set name="buffer" />
 	</section>
-	<haxedef name="hardware" unless="buffer" />
+	<section unless="buffer">
+		<haxedef name="hardware" />
+		<set name="hardware" />
+	</section>
 
 	<haxeflag name="--remap" value="haxepunk:haxepop" />
 </project>

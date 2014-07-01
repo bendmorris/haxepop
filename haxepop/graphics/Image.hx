@@ -132,7 +132,7 @@ class Image extends Graphic
 	/** @private Creates the buffer. */
 	private function createBuffer()
 	{
-		_buffer = HXP.createBitmap(Std.int(_sourceRect.width), Std.int(_sourceRect.height), true);
+		_buffer = Assets.createBitmap(Std.int(_sourceRect.width), Std.int(_sourceRect.height), true);
 		_bufferRect = _buffer.rect;
 		_bitmap.bitmapData = _buffer;
 	}
@@ -241,7 +241,7 @@ class Image extends Graphic
 		if (width == 0 || height == 0)
 			throw "Illegal rect, sizes cannot be 0.";
 
-		var source:BitmapData = HXP.createBitmap(width, height, true, 0xFFFFFFFF);
+		var source:BitmapData = Assets.createBitmap(width, height, true, 0xFFFFFFFF);
 		var image:Image;
 #if hardware
 		image = new Image(Atlas.loadImageAsRegion(source));
@@ -270,7 +270,7 @@ class Image extends Graphic
 		HXP.sprite.graphics.clear();
 		HXP.sprite.graphics.beginFill(0xFFFFFF);
 		HXP.sprite.graphics.drawCircle(radius, radius, radius);
-		var data:BitmapData = HXP.createBitmap(radius * 2, radius * 2, true, 0);
+		var data:BitmapData = Assets.createBitmap(radius * 2, radius * 2, true, 0);
 		data.draw(HXP.sprite);
 
 		var image:Image;
@@ -344,7 +344,7 @@ class Image extends Graphic
 		HXP.matrix.identity();
 		HXP.matrix.translate( -minX, -minY);
 
-		var data:BitmapData = HXP.createBitmap(w, h, true, 0);
+		var data:BitmapData = Assets.createBitmap(w, h, true, 0);
 		data.draw(HXP.sprite, HXP.matrix);
 		
 		var image:Image;
@@ -457,7 +457,7 @@ class Image extends Graphic
 			}
 			else
 			{
-				_source = HXP.createBitmap(_source.width, _source.height, true);
+				_source = Assets.createBitmap(_source.width, _source.height, true);
 				_flips.set(temp, _source);
 				HXP.matrix.identity();
 				HXP.matrix.a = -1;

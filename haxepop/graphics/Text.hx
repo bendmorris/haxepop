@@ -10,9 +10,9 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import openfl.Assets;
 
 import haxepop.HXP;
+import haxepop.Assets;
 import haxepop.Graphic;
 import haxepop.graphics.atlas.Atlas;
 
@@ -130,7 +130,7 @@ class Text extends Image
 		_width = (width == 0 ? Std.int(_field.textWidth + 4) : width);
 		_height = (height == 0 ? Std.int(_field.textHeight + 4) : height);
 
-		var source = HXP.createBitmap(_width, _height, true);
+		var source = Assets.createBitmap(_width, _height, true);
 #if hardware
 		_source = source;
 		_sourceRect = source.rect;
@@ -261,7 +261,7 @@ class Text extends Image
 
 		if (_width > _source.width || _height > _source.height)
 		{
-			_source = HXP.createBitmap(
+			_source = Assets.createBitmap(
 				Std.int(Math.max(_width, _source.width)),
 				Std.int(Math.max(_height, _source.height)),
 				true);

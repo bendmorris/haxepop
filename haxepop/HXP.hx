@@ -223,16 +223,16 @@ class HXP
 
 	/**
 	 * Resize the screen.
-	 * @param width		New width.
-	 * @param height	New height.
+	 * @param w	New width.
+	 * @param h	New height.
 	 */
 	public static function resize(w:Int, h:Int)
 	{
 		// resize scene to scale
 		width = Std.int(w / HXP.screen.fullScaleX);
 		height = Std.int(h / HXP.screen.fullScaleY);
-		halfWidth = width / 2;
-		halfHeight = height / 2;
+		halfWidth = w / 2;
+		halfHeight = h / 2;
 		bounds.width = w;
 		bounds.height = h;
 		screen.resize();
@@ -410,71 +410,7 @@ class HXP
 	 */
 	public static function getBitmap(name:String):BitmapData
 	{
-		if (_bitmap.exists(name))
-			return _bitmap.get(name);
-
-		var data:BitmapData = openfl.Assets.getBitmapData(name, false);
-
-		if (data != null)
-			_bitmap.set(name, data);
-
-		return data;
-	}
-
-	/**
-	 * Overwrites the image cache for a given name
-	 * @param name  The name of the BitmapData to overwrite.
-	 * @param data  The BitmapData object.
-	 */
-	public static function overwriteBitmapCache(name:String, data:BitmapData):Void
-	{
-		removeBitmap(name);
-		_bitmap.set(name, data);
-	}
-
-	/**
-	 * Removes a bitmap from the cache
-	 * @param name  The name of the bitmap to remove.
-	 * @return True if the bitmap was removed.
-	 */
-	public static function removeBitmap(name:String):Bool
-	{
-		if (_bitmap.exists(name))
-		{
-			var bitmap = _bitmap.get(name);
-			bitmap.dispose();
-			bitmap = null;
-			return _bitmap.remove(name);
-		}
-		return false;
-	}
-
-	/**
-	 * Creates BitmapData based on platform specifics
-	 *
-	 * @param	width			BitmapData's width.
-	 * @param	height			BitmapData's height.
-	 * @param	transparent		If the BitmapData can have transparency.
-	 * @param	color			BitmapData's color.
-	 *
-	 * @return	The BitmapData.
-	 */
-	public static function createBitmap(width:Int, height:Int, ?transparent:Bool = false, ?color:Int = 0):BitmapData
-	{
-#if flash
-	#if flash8
-		var sizeError:Bool = (width > 2880 || height > 2880);
-	#else
-		var sizeError:Bool = (width * height > 16777215 || width > 8191 || height > 8191); // flash 10 requires size to be under 16,777,215
-	#end
-		if (sizeError)
-		{
-			trace("BitmapData is too large (" + width + ", " + height + ")");
-			return null;
-		}
-#end // flash
-
-		return new BitmapData(width, height, transparent, color);
+		return Assets.getBitmap(name);
 	}
 
 	/**
@@ -668,9 +604,6 @@ class HXP
 	public static var _renderTime:Float;
 	public static var _gameTime:Float;
 	public static var _systemTime:Float;
-
-	// Bitmap storage.
-	private static var _bitmap:Map<String,BitmapData> = new Map<String,BitmapData>();
 
 	// Pseudo-random number generation (the seed is set in Engine's contructor).
 	private static var _seed:Int = 0;

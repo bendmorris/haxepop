@@ -184,9 +184,7 @@ class Engine extends Sprite
 	{
 		HXP.stage.frameRate = HXP.assignedFrameRate;
 		HXP.stage.align = StageAlign.TOP_LEFT;
-#if !js
 		HXP.stage.quality = StageQuality.HIGH;
-#end
 		HXP.stage.scaleMode = StageScaleMode.NO_SCALE;
 		HXP.stage.displayState = StageDisplayState.NORMAL;
 		HXP.windowWidth = HXP.stage.stageWidth;
@@ -449,7 +447,7 @@ class Engine extends Sprite
 		}
 
 		var w:Int = HXP.windowWidth, h:Int = HXP.windowHeight;
-		_pauseBitmap.bitmapData = HXP.createBitmap(w, h, true, 0x80FFFFFF);
+		_pauseBitmap.bitmapData = Assets.createBitmap(w, h, true, 0x80FFFFFF);
 
 		_pauseOverlay = new Sprite();
 		_pauseOverlay.addChild(_pauseBitmap);

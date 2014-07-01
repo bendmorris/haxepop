@@ -5,15 +5,20 @@ import haxepop.HXP;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import openfl.Assets;
 
+@:allow(haxepop.graphics.atlas.TexturePacker)
+@:allow(haxepop.graphics.atlas.GdxTexturePacker)
 class TextureAtlas extends Atlas
 {
-	private function new(source:AtlasDataType)
+	private function new(?source:AtlasDataType)
 	{
-		_regions = new Map<String,AtlasRegion>();
+		_regions = new Map<String, AtlasRegion>();
+		_pages = new Map<String, AtlasData>();
 
 		super(source);
+
+		if (source != null)
+			_pages.set("", _data);
 	}
 
 	/**
@@ -24,22 +29,17 @@ class TextureAtlas extends Atlas
 	 */
 	public static function loadTexturePacker(file:String):TextureAtlas
 	{
-		var xml = Xml.parse(Assets.getText(file));
-		var root = xml.firstElement();
-		var atlas = new TextureAtlas(root.get("imagePath"));
-		for (sprite in root.elements())
-		{
-			HXP.rect.x = Std.parseInt(sprite.get("x"));
-			HXP.rect.y = Std.parseInt(sprite.get("y"));
-			if (sprite.exists("w")) HXP.rect.width = Std.parseInt(sprite.get("w"));
-			if (sprite.exists("h")) HXP.rect.height = Std.parseInt(sprite.get("h"));
+		return TexturePacker.load(file);
+	}
 
-			// set the defined region
-			var region = atlas.defineRegion(sprite.get("n"), HXP.rect);
-
-			if (sprite.exists("r") && sprite.get("r") == "y") region.rotated = true;
-		}
-		return atlas;
+	/**
+	 * Loads a libGDX TexturePacker atlas file and generates all tile regions.
+	 * @param	file	The TexturePacker file to load
+	 * @return	A TextureAtlas with all packed images defined as regions
+	 */
+	public static function loadGdx(file:String):TextureAtlas
+	{
+		return GdxTexturePacker.load(file);
 	}
 
 	/**
@@ -57,19 +57,32 @@ class TextureAtlas extends Atlas
 	}
 
 	/**
+	 * Gets an array of defined region names.
+	 *
+	 * @return	An array of strings.
+	 */
+	public function getRegionNames():Array<String>
+	{
+		return [for (k in _regions.keys()) k];
+	}
+
+	/**
 	 * Creates a new AtlasRegion and assigns it to a name
 	 * @param	name	The region name to create
 	 * @param	rect	Defines the rectangle of the tile on the tilesheet
 	 * @param	center	Positions the local center point to pivot on
+	 * @param	rotated	Whether the image is rotated 90 degrees in the atlas
 	 *
 	 * @return	The new AtlasRegion object.
 	 */
-	public function defineRegion(name:String, rect:Rectangle, ?center:Point):AtlasRegion
+	public function defineRegion(name:String, rect:Rectangle, ?center:Point, ?rotated:Bool=false, ?page:String=""):AtlasRegion
 	{
-		var region = _data.createRegion(rect, center);
+		var _data:AtlasData = _pages.get(page);
+		var region = _data.createRegion(rect, center, rotated);
 		_regions.set(name, region);
 		return region;
 	}
 
-	private var _regions:Map<String,AtlasRegion>;
+	private var _regions:Map<String, AtlasRegion>;
+	private var _pages:Map<String, AtlasData>;
 }
