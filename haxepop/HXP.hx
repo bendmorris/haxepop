@@ -82,7 +82,7 @@ class HXP
 	/**
 	 * Time elapsed since the last frame (non-fixed framerate only).
 	 */
-	public static var elapsed:Float;
+	public static var elapsed:Float = 0;
 
 	/**
 	 * Timescale applied to HXP.elapsed (non-fixed framerate only).

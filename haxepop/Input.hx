@@ -49,9 +49,7 @@ class Input
 
 		haxepop.input.Mouse.enable();
 		haxepop.input.Key.enable();
-#if (mobile)
 		haxepop.input.Gesture.enable();
-#end
 #if (native)
 		//haxepop.input.Joystick.enable();
 #end

@@ -182,7 +182,14 @@ class Engine extends Sprite
 	 */
 	private function setStageProperties()
 	{
-		HXP.stage.frameRate = HXP.assignedFrameRate;
+		if (HXP.assignedFrameRate <= 0)
+		{
+			HXP.assignedFrameRate = HXP.stage.frameRate;
+		}
+		else
+		{
+			HXP.stage.frameRate = HXP.assignedFrameRate;
+		}
 		HXP.stage.align = StageAlign.TOP_LEFT;
 		HXP.stage.quality = StageQuality.HIGH;
 		HXP.stage.scaleMode = StageScaleMode.NO_SCALE;
