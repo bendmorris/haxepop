@@ -137,8 +137,8 @@ class Image extends Graphic
 		_bitmap.bitmapData = _buffer;
 	}
 
-	/** Renders the image. */
-	override public function render(target:BitmapData, point:Point, camera:Point)
+	/** @private Computes the transformation matrix from scale, screen scale, offset, and rotation before rendering. */
+	inline function computeMatrix(point:Point, camera:Point)
 	{
 		var sx = scale * scaleX,
 			sy = scale * scaleY,
@@ -149,25 +149,33 @@ class Image extends Graphic
 		_point.x = point.x + x - originX - camera.x * scrollX;
 		_point.y = point.y + y - originY - camera.y * scrollY;
 
+		var angle = angle * HXP.RAD;
+		var cos = Math.cos(angle);
+		var sin = Math.sin(angle);
+		_matrix.a = sx * cos * fsx;
+		_matrix.b = sx * sin * fsy;
+		_matrix.c = -sy * sin * fsx;
+		_matrix.d = sy * cos * fsy;
+		_matrix.tx = (-originX * sx * cos + originY * sy * sin + originX + _point.x) * fsx;
+		_matrix.ty = (-originX * sx * sin - originY * sy * cos + originY + _point.y) * fsy;
+	}
+
+	/** Renders the image. */
+	override public function render(target:BitmapData, point:Point, camera:Point)
+	{
 		// only draw if buffer exists
 		if (_buffer != null)
 		{
-			if (angle == 0 && sx * fsx == 1 && sy * fsy == 1 && blend == null)
+			if (angle == 0 && scaleX * HXP.screen.fullScaleX == 1 && scaleY * HXP.screen.fullScaleY == 1 && blend == null)
 			{
+			_point.x = point.x + x - originX - camera.x * scrollX;
+			_point.y = point.y + y - originY - camera.y * scrollY;
 				// render without transformation
 				target.copyPixels(_buffer, _bufferRect, _point, null, null, true);
 			}
 			else
 			{
-				// render with transformation
-				_matrix.b = _matrix.c = 0;
-				_matrix.a = sx * fsx;
-				_matrix.d = sy * fsy;
-				_matrix.tx = -originX * sx * fsx;
-				_matrix.ty = -originY * sy * fsy;
-				if (angle != 0) _matrix.rotate(angle * HXP.RAD);
-				_matrix.tx += (originX + _point.x) * fsx;
-				_matrix.ty += (originY + _point.y) * fsy;
+				computeMatrix(point, camera);
 				target.draw(_bitmap, _matrix, null, blend, null, _bitmap.smoothing);
 			}
 		}
@@ -205,26 +213,8 @@ class Image extends Graphic
 		}
 		else
 		{
-			var theta = angle * HXP.RAD;
-			var cos = Math.cos(theta);
-			var sin = Math.sin(theta);
-
-			if (flipped) sx *= -1;
-
-			var sxi = fsx * sx;
-			var syi = fsy * sy;
-			var b = sxi * sin;
-			var a = sxi * cos;
-			var d = syi * cos;
-			var c = syi * -sin;
-
-			var tx = -originX * sxi,
-				ty = -originY * syi;
-			var tx1 = tx * cos - ty * sin;
-			ty = ((tx * sin + ty * cos) + (originY + _point.y) * fsy);
-			tx = tx1 + (originX + _point.x) * fsx;
-
-			_region.drawMatrix(tx, ty, a, b, c, d, layer, _red, _green, _blue, _alpha, smooth);
+			computeMatrix(point, camera);
+			_region.drawMatrix(_matrix.tx, _matrix.ty, _matrix.a, _matrix.b, _matrix.c, _matrix.d, layer, _red, _green, _blue, _alpha, smooth);
 		}
 	}
 
