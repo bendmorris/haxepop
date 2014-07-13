@@ -9,12 +9,14 @@ class Scanlines extends Overlay
 	public var frequency:Int;
 	public var thickness:Int;
 	public var color:Int;
+	public var scale:Bool;
 
-	public function new(frequency:Int=2, thickness:Int=1, color:Int=0x202020)
+	public function new(frequency:Int=2, thickness:Int=1, color:Int=0x202020, scale:Bool=true)
 	{
 		this.frequency = frequency;
 		this.thickness = thickness;
 		this.color = color;
+		this.scale = scale;
 
 		drawScanlines();
 	}
@@ -45,6 +47,9 @@ class Scanlines extends Overlay
 		var bmd = new BitmapData(width, height, false, 0);
 
 		Draw.setTarget(bmd);
+		var scale:Int = scale ? Math.ceil(Math.max(HXP.screen.scaleY * HXP.screen.scale, 1)) : 1;
+		var frequency = frequency * scale;
+		var thickness = thickness * scale;
 		for (i in 0 ... Math.floor(height / frequency)) {
 			var yi = Math.floor(i * frequency);
 			for (j in 0 ... thickness)
