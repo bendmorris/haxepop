@@ -181,7 +181,9 @@ class Emitter extends Graphic
 					std = (type._scaleEase == null) ? t : type._scaleEase(t);
 					rtd = (type._rotationEase == null) ? t : type._rotationEase(t);
 
-					_source.frame = type._frames[Std.int(td * type._frames.length)];
+					var frame = Std.int(td * type._frames.length);
+					if (frame >= type._frames.length - 1) frame = type._frames.length - 1;
+					_source.frame = type._frames[frame];
 					_source.angle = p._startAngle + p._spanAngle * rtd;
 					var alpha = type._alpha + type._alphaRange * atd;
 					if (type._trailAlpha < 1) alpha *= Math.pow(type._trailAlpha, n);
