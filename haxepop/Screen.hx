@@ -2,6 +2,7 @@ package haxepop;
 
 import haxepop.graphics.atlas.Atlas;
 import haxepop.graphics.Image;
+import haxepop.overlays.Overlay;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -17,6 +18,8 @@ import flash.Lib;
  */
 class Screen
 {
+	public var overlays:Array<Overlay>;
+
 	/**
 	 * Constructor.
 	 */
@@ -24,6 +27,7 @@ class Screen
 	{
 		_sprite = new Sprite();
 		_bitmap = new Array<Bitmap>();
+		overlays = new Array();
 		init();
 	}
 
@@ -76,6 +80,8 @@ class Screen
 
 		_current = 0;
 		needsResize = false;
+
+		for (overlay in overlays) overlay.resize();
 	}
 
 	/**

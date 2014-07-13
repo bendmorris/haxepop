@@ -14,7 +14,6 @@ import flash.Lib;
 import haxe.EnumFlags;
 import haxe.Timer;
 import haxepop.graphics.Image;
-import haxepop.graphics.atlas.AtlasData;
 import haxepop.utils.Draw;
 import haxepop.utils.Input;
 import haxepop.Tweener;
@@ -168,6 +167,10 @@ class Engine extends Sprite
 #if buffer
 		HXP.screen.redraw();
 #end
+
+		// update and draw screen overlays
+		for (overlay in HXP.screen.overlays) overlay.update();
+		for (overlay in HXP.screen.overlays) overlay.render();
 
 		// more timing stuff
 		t = Lib.getTimer();

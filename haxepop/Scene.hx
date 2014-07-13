@@ -8,6 +8,7 @@ import haxepop.Entity;
 import haxepop.Tweener;
 import haxepop.utils.Math;
 import haxepop.graphics.atlas.AtlasData;
+import haxepop.overlays.Overlay;
 
 /**
  * Updated by Engine, main game container that holds all currently active Entities.
@@ -25,6 +26,8 @@ class Scene extends Tweener
 	 */
 	public var camera:Point;
 
+	public var overlays:Array<Overlay>;
+
 	/**
 	 * Constructor.
 	 */
@@ -34,6 +37,7 @@ class Scene extends Tweener
 		visible = true;
 		camera = new Point();
 		sprite = new Sprite();
+		overlays = new Array();
 
 		_layerList = new Array<Int>();
 
@@ -86,6 +90,9 @@ class Scene extends Tweener
 			}
 			if (e.graphic != null && e.graphic.active) e.graphic.update();
 		}
+
+		// update scene overlays
+		for (overlay in overlays) overlay.update();
 	}
 
 	/**
@@ -136,6 +143,9 @@ class Scene extends Tweener
 		}
 
 		HXP.drawCursor();
+
+		// draw scene overlays
+		for (overlay in overlays) overlay.render();
 
 #if hardware
 		AtlasData.active = null; // forces the last active atlas to flush
