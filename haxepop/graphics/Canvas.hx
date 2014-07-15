@@ -371,6 +371,7 @@ class Canvas extends Graphic
 		if (_alpha == 1 && _color == 0xFFFFFF)
 		{
 			_tint = null;
+			_redrawBuffers = true;
 			return _alpha;
 		}
 		_tint = _colorTransform;
