@@ -6,12 +6,12 @@ import haxepop.utils.Draw;
 
 class Scanlines extends Overlay
 {
-	public var frequency:Int;
-	public var thickness:Int;
+	public var frequency:Float;
+	public var thickness:Float;
 	public var color:Int;
 	public var scale:Bool;
 
-	public function new(frequency:Int=2, thickness:Int=1, color:Int=0x202020, scale:Bool=true)
+	public function new(frequency:Float=2, thickness:Float=1, color:Int=0x202020, scale:Bool=true)
 	{
 		this.frequency = frequency;
 		this.thickness = thickness;
@@ -48,8 +48,8 @@ class Scanlines extends Overlay
 
 		Draw.setTarget(bmd);
 		var scale:Int = scale ? Math.ceil(Math.max(HXP.screen.scaleY * HXP.screen.scale, 1)) : 1;
-		var frequency = frequency * scale;
-		var thickness = thickness * scale;
+		var frequency = Std.int(Math.round(frequency * scale));
+		var thickness = Std.int(Math.round(thickness * scale));
 		for (i in 0 ... Math.floor(height / frequency)) {
 			var yi = Math.floor(i * frequency);
 			for (j in 0 ... thickness)
