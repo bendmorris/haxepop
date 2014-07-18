@@ -167,7 +167,6 @@ class Emitter extends Graphic
 
 				// get position
 				td = (type._ease == null) ? t : type._ease(t);
-				// TODO: gravity
 
 				var n:Int = type._trailLength;
 				while (n >= 0)
@@ -188,7 +187,7 @@ class Emitter extends Graphic
 					var alpha = type._alpha + type._alphaRange * atd;
 					if (type._trailAlpha < 1) alpha *= Math.pow(type._trailAlpha, n);
 					_source.alpha = alpha;
-					_source.scale = type._scale + type._scaleRange * std;
+					_source.scale = scale * (type._scale + type._scaleRange * std);
 					_source.x = p._x - point.x + p._ox + p._moveX * (type._backwards ? 1 - td : td);
 					_source.y = p._y - point.y + p._oy + p._moveY * (type._backwards ? 1 - td : td) + Math.pow(t, 2)*p._gravity;
 
@@ -432,6 +431,7 @@ class Emitter extends Graphic
 	 */
 	public var particleCount(default, null):Int;
 
+	public var scale:Float = 1;
 	public var smooth:Bool = true;
 
 	// Particle information.
