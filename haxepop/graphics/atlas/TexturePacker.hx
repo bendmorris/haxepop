@@ -20,7 +20,7 @@ class TexturePacker
 			// set the defined region
 			var region = atlas.defineRegion(sprite.get("n"), HXP.rect);
 
-			if (sprite.exists("r") && sprite.get("r") == "y") region.rotated = true;
+			if (sprite.exists("r") && sprite.get("r") == "y") region.rotate = 90;
 		}
 		return atlas;
 	}

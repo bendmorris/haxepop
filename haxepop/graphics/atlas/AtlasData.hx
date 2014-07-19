@@ -184,13 +184,13 @@ class AtlasData
 	 *
 	 * @return The new AtlasRegion object.
 	 */
-	public inline function createRegion(rect:Rectangle, ?center:Point, ?rotated:Bool=false):AtlasRegion
+	public inline function createRegion(rect:Rectangle, ?center:Point, ?rotate:Float=0):AtlasRegion
 	{
 		var r = rect.clone();
 		_rects.push(r);
 		var tileIndex = _tilesheet.addTileRect(r, null);
 		var region = new AtlasRegion(this, tileIndex, r);
-		region.rotated = rotated;
+		region.rotate = rotate;
 		return region;
 	}
 

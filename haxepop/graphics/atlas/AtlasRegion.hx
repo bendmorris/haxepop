@@ -9,9 +9,9 @@ class AtlasRegion
 {
 
 	/**
-	 * If the region is rotated by 90 degress (used for sprite packing)
+	 * Amount to rotate the image, in degrees (used for sprite packing)
 	 */
-	public var rotated:Bool;
+	public var rotate:Float;
 	/**
 	 * The tile index used for rendering
 	 */
@@ -36,7 +36,7 @@ class AtlasRegion
 		this._parent = parent;
 		this.tileIndex = tileIndex;
 		this._rect = rect;
-		this.rotated = false;
+		this.rotate = 0;
 	}
 
 	/**
@@ -84,9 +84,9 @@ class AtlasRegion
 		red:Float=1, green:Float=1, blue:Float=1, alpha:Float=1, ?smooth:Bool)
 	{
 		if (smooth == null) smooth = Atlas.smooth;
-		if (rotated)
+		if (rotate != 0)
 		{
-			angle -= 90;
+			angle += rotate;
 			x += height * scaleX;
 		}
 
@@ -112,10 +112,10 @@ class AtlasRegion
 	{
 		if (smooth == null) smooth = Atlas.smooth;
 
-		if (rotated)
+		if (rotate != 0)
 		{
 			var matrix = new Matrix(a, b, c, d, tx, ty);
-			matrix.rotate(-90 * HXP.RAD);
+			matrix.rotate(rotate * HXP.RAD);
 			//matrix.tx += height * scaleX;
 			_parent.prepareTileMatrix(tileIndex, layer,
 				matrix.tx, matrix.ty, matrix.a, matrix.b, matrix.c, matrix.d,
@@ -140,9 +140,10 @@ class AtlasRegion
 	{
 		var bd:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0);
 		bd.copyPixels(_parent._source, _rect, new Point());
-		if (rotated)
+		if (rotate != 0)
 		{
 			var newBd:BitmapData = new BitmapData(Std.int(height), Std.int(width), true, 0);
+			// TODO: this matrix is only correct for GDX's rotation
 			var m:Matrix = new Matrix(0, 1, -1, 0, height, 0);
 			newBd.draw(bd, m);
 			bd.dispose();

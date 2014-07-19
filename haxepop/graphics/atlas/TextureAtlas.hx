@@ -71,14 +71,14 @@ class TextureAtlas extends Atlas
 	 * @param	name	The region name to create
 	 * @param	rect	Defines the rectangle of the tile on the tilesheet
 	 * @param	center	Positions the local center point to pivot on
-	 * @param	rotated	Whether the image is rotated 90 degrees in the atlas
+	 * @param	rotate	Amount (in degrees) the image is rotated in the atlas
 	 *
 	 * @return	The new AtlasRegion object.
 	 */
-	public function defineRegion(name:String, rect:Rectangle, ?center:Point, ?rotated:Bool=false, ?page:String=""):AtlasRegion
+	public function defineRegion(name:String, rect:Rectangle, ?center:Point, ?rotate:Float=0, ?page:String=""):AtlasRegion
 	{
 		var _data:AtlasData = _pages.get(page);
-		var region = _data.createRegion(rect, center, rotated);
+		var region = _data.createRegion(rect, center, rotate);
 		_regions.set(name, region);
 		return region;
 	}

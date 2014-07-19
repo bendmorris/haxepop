@@ -97,8 +97,8 @@ class GdxTexturePacker
 				}
 				var xy:Array<Int> = [for (x in getTuple(values["xy"])) Std.parseInt(x)];
 				var size:Array<Int> = [for (x in getTuple(values["size"])) Std.parseInt(x)];
-				var rotate:Bool = values["rotate"] == "true";
-				var r:Rectangle = rotate ? new Rectangle(xy[0], xy[1], size[1], size[0]) : new Rectangle(xy[0], xy[1], size[0], size[1]);
+				var rotate:Float = values["rotate"] == "true" ? -90 : 0;
+				var r:Rectangle = (rotate != 0) ? new Rectangle(xy[0], xy[1], size[1], size[0]) : new Rectangle(xy[0], xy[1], size[0], size[1]);
 				var path:String = Path.join([inputDir, Path.withExtension(regionName, extension)]);
 				atlas.defineRegion(path, r, null, rotate, pageName);
 			}
