@@ -1,3 +1,24 @@
+# HaxePop
+
+HaxePop is my own personal "flavor" of HaxePunk. HaxePunk is planning some major 
+changes for the next version, so I've created this fork in order to continue 
+development of the current version and implement some experimental changes.
+
+Depending on how HaxePunk 3.0 develops over the next few months, the changes 
+here may get merged in, or may remain a separate fork.
+
+Some of the changes that have been made in HaxePop:
+
+* A unified Input system
+* Support for libGDX-format texture atlases (such as those created by [hxpk](https://github.com/bendmorris/hxpk))
+* A rewritten particle emitter with dynamic particle size, rotation, and trails
+* Proper handling of non-uniform screen scaling
+* Entity lists - group entities and move or modify them together
+* RenderMode is now a haxedef and can be used for conditional compilation or set/referenced in project.xml
+* TextureAtlases can be "loaded" into the asset manager to access atlas regions as regular images
+* Flash is rendered in full resolution for more consistent appearance between targets
+* Built-in screen overlays such as scanlines and RGB noise
+
 # HaxePunk
 
 A Haxe port of the [FlashPunk](http://useflashpunk.net) AS3 library. There are a few additions/differences from the original.
