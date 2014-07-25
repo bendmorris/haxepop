@@ -120,7 +120,6 @@ class Entity extends Tweener
 
 		HITBOX = new Mask();
 		_point = HXP.point;
-		_camera = HXP.point2;
 
 		layer = 0;
 
@@ -159,8 +158,7 @@ class Entity extends Tweener
 				_point.y = y;
 			}
 			else _point.x = _point.y = 0;
-			_camera.x = _scene == null ? HXP.camera.x : _scene.camera.x;
-			_camera.y = _scene == null ? HXP.camera.y : _scene.camera.y;
+			_camera = _scene == null ? HXP.camera : _scene.camera;
 #if buffer
 			_graphic.render((renderTarget != null) ? renderTarget : HXP.buffer, _point, _camera);
 #else
@@ -905,7 +903,7 @@ class Entity extends Tweener
 	// Rendering information.
 	private var _graphic:Graphic;
 	private var _point:Point;
-	private var _camera:Point;
+	private var _camera:Camera;
 	
 	static private var _EMPTY = new Entity();
 }

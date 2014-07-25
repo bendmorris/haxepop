@@ -15,6 +15,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.ColorTransform;
+import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormat;
@@ -454,7 +455,7 @@ class Console
 					if (Mouse.mousePressed)
 					{
 						// Mouse is within clickable area.
-						if (Mouse.mouseFlashY > 20 && (Mouse.mouseFlashX > _debReadText1.width || Mouse.mouseFlashY < _debRead.y))
+						if (HXP.screen.mouseUnscaledY > 20 && (HXP.screen.mouseUnscaledX > _debReadText1.width || HXP.screen.mouseUnscaledY < _debRead.y))
 						{
 							if (Key.check(Key.SHIFT))
 							{
@@ -667,8 +668,8 @@ class Console
 	private function startSelection()
 	{
 		_selecting = true;
-		_entRect.x = Mouse.mouseFlashX;
-		_entRect.y = Mouse.mouseFlashY;
+		_entRect.x = HXP.screen.mouseUnscaledX;
+		_entRect.y = HXP.screen.mouseUnscaledY;
 		_entRect.width = 0;
 		_entRect.height = 0;
 	}
@@ -676,8 +677,8 @@ class Console
 	/** @private Updates Entity selection. */
 	private function updateSelection()
 	{
-		_entRect.width = Mouse.mouseFlashX - _entRect.x;
-		_entRect.height = Mouse.mouseFlashY - _entRect.y;
+		_entRect.width = HXP.screen.mouseUnscaledX - _entRect.x;
+		_entRect.height = HXP.screen.mouseUnscaledY - _entRect.y;
 		if (Mouse.mouseReleased)
 		{
 			selectEntities(_entRect);
@@ -748,14 +749,14 @@ class Console
 	/** @private Starts log text scrolling. */
 	private function startScrolling()
 	{
-		if (LOG.length > _logLines) _scrolling = _logBarGlobal.contains(Mouse.mouseFlashX, Mouse.mouseFlashY);
+		if (LOG.length > _logLines) _scrolling = _logBarGlobal.contains(HXP.screen.mouseUnscaledX, HXP.screen.mouseUnscaledY);
 	}
 
 	/** @private Updates log text scrolling. */
 	private function updateScrolling()
 	{
 		_scrolling = Mouse.mouseDown;
-		_logScroll = Math.scaleClamp(Mouse.mouseFlashY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
+		_logScroll = Math.scaleClamp(HXP.screen.mouseUnscaledY, _logBarGlobal.y, _logBarGlobal.bottom, 0, 1);
 		updateLog();
 	}
 
@@ -814,8 +815,16 @@ class Console
 		var e:Entity;
 		// If debug mode is on.
 		_entScreen.visible = _debug;
-		_entScreen.x = HXP.screen.x;
-		_entScreen.y = HXP.screen.y;
+		_entScreen.x = _entScreen.y;
+		var _matrix = _entScreen.transform.matrix;
+		_matrix.a = 1/HXP.screen.fullScaleX;
+		_matrix.d = 1/HXP.screen.fullScaleY;
+		_matrix.b = _matrix.c = 0;
+		_matrix.tx = _matrix.ty = 0;
+		HXP.camera.applyToMatrix(_matrix);
+		HXP.screen.applyToMatrix(_matrix);
+		_entScreen.transform.matrix = _matrix;
+
 		if (_debug)
 		{
 			var g:Graphics = _entScreen.graphics,
@@ -988,7 +997,7 @@ class Console
 
 		// Update the Debug read text.
 		var s:String =
-			"Mouse: " + Std.string(HXP.scene.mouseX) + ", " + Std.string(HXP.scene.mouseY) +
+			"Mouse: " + Std.string(Mouse.mouseX) + ", " + Std.string(Mouse.mouseY) +
 			"\nCamera: " + Std.string(HXP.camera.x) + ", " + Std.string(HXP.camera.y);
 		if (SELECT_LIST.length != 0)
 		{

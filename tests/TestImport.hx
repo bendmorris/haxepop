@@ -20,7 +20,6 @@ import haxepop.debug.Console;
 import haxepop.debug.LayerList;
 import haxepop.graphics.Animation;
 import haxepop.graphics.BitmapText;
-import haxepop.graphics.Canvas;
 import haxepop.graphics.Emitter;
 import haxepop.graphics.Graphiclist;
 import haxepop.graphics.Image;

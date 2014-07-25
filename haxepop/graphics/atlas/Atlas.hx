@@ -71,6 +71,29 @@ class Atlas
 	}
 
 	/**
+	 * Prepares tile data for rendering using a matrix
+	 * @param  tile  The tile index of the tilesheet
+	 * @param  layer The layer to draw on
+	 * @param  tx    X-Axis translation
+	 * @param  ty    Y-Axis translation
+	 * @param  a     Top-left
+	 * @param  b     Top-right
+	 * @param  c     Bottom-left
+	 * @param  d     Bottom-right
+	 * @param  red   Red color value
+	 * @param  green Green color value
+	 * @param  blue  Blue color value
+	 * @param  alpha Alpha value
+	 */
+	public inline function prepareTileMatrix(tile:Int, layer:Int, tx:Float, ty:Float, a:Float, b:Float, c:Float, d:Float,
+		red:Float=1, green:Float=1, blue:Float=1, alpha:Float=1, ?smooth:Bool)
+	{
+		if (smooth == null) smooth = Atlas.smooth;
+
+		_data.prepareTileMatrix(tile, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
+	}
+
+	/**
 	 * How many Atlases are active.
 	 */
 	// public static var count(get, never):Int;

@@ -138,12 +138,10 @@ class Image extends Graphic
 	}
 
 	/** @private Computes the transformation matrix from scale, screen scale, offset, and rotation before rendering. */
-	inline function computeMatrix(point:Point, camera:Point)
+	inline function computeMatrix(point:Point, camera:Camera)
 	{
 		var sx = scale * scaleX,
-			sy = scale * scaleY,
-			fsx = HXP.screen.fullScaleX,
-			fsy = HXP.screen.fullScaleY;
+			sy = scale * scaleY;
 
 		// determine drawing location
 		_point.x = point.x + x - originX - camera.x * scrollX;
@@ -152,21 +150,25 @@ class Image extends Graphic
 		var angle = angle * HXP.RAD;
 		var cos = Math.cos(angle);
 		var sin = Math.sin(angle);
-		_matrix.a = sx * cos * fsx;
-		_matrix.b = sx * sin * fsy;
-		_matrix.c = -sy * sin * fsx;
-		_matrix.d = sy * cos * fsy;
-		_matrix.tx = (-originX * sx * cos + originY * sy * sin + originX + _point.x) * fsx;
-		_matrix.ty = (-originX * sx * sin - originY * sy * cos + originY + _point.y) * fsy;
+		_matrix.a = sx * cos;
+		_matrix.b = sx * sin;
+		_matrix.c = -sy * sin;
+		_matrix.d = sy * cos;
+		_matrix.tx = (-originX * sx * cos + originY * sy * sin + originX + _point.x);
+		_matrix.ty = (-originX * sx * sin - originY * sy * cos + originY + _point.y);
+
+		// scale and rotate camera
+		camera.applyToMatrix(_matrix, rotateWithCamera, scaleWithCamera);
+		HXP.screen.applyToMatrix(_matrix);
 	}
 
 	/** Renders the image. */
-	override public function render(target:BitmapData, point:Point, camera:Point)
+	override public function render(target:BitmapData, point:Point, camera:Camera)
 	{
 		// only draw if buffer exists
 		if (_buffer != null)
 		{
-			if (angle == 0 && scaleX * HXP.screen.fullScaleX == 1 && scaleY * HXP.screen.fullScaleY == 1 && blend == null)
+			if (angle + (rotateWithCamera ? camera.angle : 0) == 0 && scaleX * HXP.screen.fullScaleX == 1 && scaleY * HXP.screen.fullScaleY == 1 && blend == null)
 			{
 			_point.x = point.x + x - originX - camera.x * scrollX;
 			_point.y = point.y + y - originY - camera.y * scrollY;
@@ -181,41 +183,17 @@ class Image extends Graphic
 		}
 	}
 
-	override public function renderAtlas(layer:Int, point:Point, camera:Point)
+	override public function renderAtlas(layer:Int, point:Point, camera:Camera)
 	{
 		var sx = scale * scaleX,
-			sy = scale * scaleY,
-			fsx = HXP.screen.fullScaleX,
-			fsy = HXP.screen.fullScaleY;
+			sy = scale * scaleY;
 
 		// determine drawing location
 		_point.x = point.x + x - originX - camera.x * scrollX;
 		_point.y = point.y + y - originY - camera.y * scrollY;
 
-		if (angle == 0)
-		{
-			// UGH... recalculation of _point for scaled origins
-			if (!(sx == 1 && sy == 1))
-			{
-				_point.x = (point.x + x - originX * sx - camera.x * scrollX);
-				_point.y = (point.y + y - originY * sy - camera.y * scrollY);
-			}
-
-			if (_flipped) _point.x += _sourceRect.width * sx;
-
-			_point.x = _point.x * fsx;
-			_point.y = _point.y * fsy;
-
-			// render without rotation
-			_region.draw(_point.x, _point.y, layer,
-				sx * fsx * (_flipped ? -1 : 1), sy * fsy, angle,
-				_red, _green, _blue, _alpha, smooth);
-		}
-		else
-		{
-			computeMatrix(point, camera);
-			_region.drawMatrix(_matrix.tx, _matrix.ty, _matrix.a, _matrix.b, _matrix.c, _matrix.d, layer, _red, _green, _blue, _alpha, smooth);
-		}
+		computeMatrix(point, camera);
+		_region.drawMatrix(_matrix.tx, _matrix.ty, _matrix.a, _matrix.b, _matrix.c, _matrix.d, layer, _red, _green, _blue, _alpha, smooth);
 	}
 
 	/**

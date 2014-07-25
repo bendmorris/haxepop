@@ -45,10 +45,10 @@ class Draw
 	 * @param	camera		The camera offset (use null for none).
 	 * @param	blend		The blend mode to use.
 	 */
-	public static function setTarget(target:BitmapData, camera:Point = null, blend:BlendMode = null)
+	public static function setTarget(target:BitmapData, camera:Camera = null, blend:BlendMode = null)
 	{
 		_target = target;
-		_camera = (camera != null) ? camera : HXP.zero;
+		_camera = (camera != null) ? camera : Camera.zero;
 		Draw.blend = blend;
 	}
 
@@ -85,6 +85,7 @@ class Draw
 	 */
 	public static function line(x1:Int, y1:Int, x2:Int, y2:Int, color:Int = 0xFFFFFF)
 	{
+		// TODO: camera
 #if hardware
 		color = 0xFF000000 | (0xFFFFFF & color);
 
@@ -459,12 +460,10 @@ class Draw
 				HXP.point.y = y;
 			}
 			else HXP.point.x = HXP.point.y = 0;
-			HXP.point2.x = HXP.camera.x;
-			HXP.point2.y = HXP.camera.y;
 #if buffer
-			g.render(_target, HXP.point, HXP.point2);	
+			g.render(_target, HXP.point, HXP.camera);
 #else
-			g.renderAtlas(layer, HXP.point, HXP.point2);
+			g.renderAtlas(layer, HXP.point, HXP.camera);
 #end
 		}
 	}
@@ -500,7 +499,7 @@ class Draw
 
 	// Drawing information.
 	private static var _target:BitmapData;
-	private static var _camera:Point;
+	private static var _camera:Camera;
 	private static var _graphics:Graphics;
 	private static var _rect:Rectangle;
 	private static var _matrix:Matrix = new Matrix();

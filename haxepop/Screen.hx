@@ -16,6 +16,7 @@ import flash.Lib;
 /**
  * Container for the main screen buffer. Can be used to transform the screen.
  */
+@:allow(haxepop.HXP)
 class Screen
 {
 	public var overlays:Array<Overlay>;
@@ -151,21 +152,26 @@ class Screen
 		{
 			var sx:Int = Std.random(_shakeMagnitude*2+1) - _shakeMagnitude;
 			var sy:Int = Std.random(_shakeMagnitude*2+1) - _shakeMagnitude;
+			var sa:Int = Std.random(_shakeMagnitude*2+1) - _shakeMagnitude;
 
 			x += sx - _shakeX;
 			y += sy - _shakeY;
+			HXP.camera.angle += sa - _shakeAngle;
 
 			_shakeX = sx;
 			_shakeY = sy;
+			_shakeAngle = sa;
 
 			_shakeTime -= HXP.elapsed;
 			if (_shakeTime < 0) _shakeTime = 0;
 		}
-		else if (_shakeX != 0 || _shakeY != 0)
+		else if (_shakeX != 0 || _shakeY != 0 || _shakeAngle != 0)
 		{
 			x -= _shakeX;
 			y -= _shakeY;
-			_shakeX = _shakeY = 0;
+			HXP.camera.angle -= _shakeAngle;
+			HXP.camera.scale /= _shakeZoom;
+			_shakeX = _shakeY = _shakeAngle = 0;
 		}
 	}
 
@@ -333,17 +339,17 @@ class Screen
 	 */
 	public var height(default, null):Int;
 
-	/**
-	 * X position of the mouse on the screen.
-	 */
 	public var mouseX(get, null):Int;
-	private function get_mouseX():Int { return Std.int(_sprite.mouseX / fullScaleX); }
+	inline function get_mouseX():Int { return Std.int(_sprite.mouseX / fullScaleX); }
 
-	/**
-	 * Y position of the mouse on the screen.
-	 */
 	public var mouseY(get, null):Int;
-	private function get_mouseY():Int { return Std.int(_sprite.mouseY / fullScaleY); }
+	inline function get_mouseY():Int { return Std.int(_sprite.mouseY / fullScaleY); }
+
+	public var mouseUnscaledX(get, null):Int;
+	inline function get_mouseUnscaledX():Int { return Std.int(_sprite.mouseX); }
+
+	public var mouseUnscaledY(get, null):Int;
+	inline function get_mouseUnscaledY():Int { return Std.int(_sprite.mouseY); }
 
 	/**
 	 * Captures the current screen as a BitmapData.
@@ -398,6 +404,16 @@ class Screen
 		_shakeTime = 0;
 	}
 
+	public inline function applyToMatrix(matrix:Matrix):Void
+	{
+		matrix.a *= fullScaleX;
+		matrix.b *= fullScaleY;
+		matrix.c *= fullScaleX;
+		matrix.d *= fullScaleY;
+		matrix.tx *= fullScaleX;
+		matrix.ty *= fullScaleY;
+	}
+
 	// Screen infromation.
 	private var _sprite:Sprite;
 	private var _bitmap:Array<Bitmap>;
@@ -408,4 +424,6 @@ class Screen
 	private var _shakeMagnitude:Int=0;
 	private var _shakeX:Int=0;
 	private var _shakeY:Int=0;
+	private var _shakeAngle:Int=0;
+	private var _shakeZoom:Float=1;
 }

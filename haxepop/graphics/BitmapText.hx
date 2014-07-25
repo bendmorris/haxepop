@@ -7,7 +7,6 @@ import flash.geom.Matrix;
 import flash.geom.ColorTransform;
 import haxepop.HXP;
 import haxepop.Graphic;
-import haxepop.graphics.Canvas;
 import haxepop.graphics.Text;
 import haxepop.graphics.atlas.BitmapFontAtlas;
 import haxepop.graphics.atlas.AtlasRegion;
@@ -91,10 +90,10 @@ class BitmapText extends Graphic
 		autoWidth = (width == 0);
 		autoHeight = (height == 0);
 
+		_matrix = HXP.matrix;
 		if (blit)
 		{
 			_set = HXP.getBitmap(StringTools.replace(options.font, ".fnt", ".png"));
-			_matrix = HXP.matrix;
 			_colorTransform = new ColorTransform();
 		}
 
@@ -373,12 +372,10 @@ class BitmapText extends Graphic
 		}
 	}
 
-	override public function render(target:BitmapData, point:Point, camera:Point)
+	override public function render(target:BitmapData, point:Point, camera:Camera)
 	{
 		// determine drawing location
 		var fontScale = size / _font.fontSize;
-		var fsx = HXP.screen.fullScaleX,
-			fsy = HXP.screen.fullScaleY;
 
 		var sx = scale * scaleX * fontScale,
 			sy = scale * scaleY * fontScale;
@@ -388,30 +385,38 @@ class BitmapText extends Graphic
 
 		// blit the buffer to the screen
 		_matrix.b = _matrix.c = 0;
-		_matrix.a = sx * fsx;
-		_matrix.d = sy * fsy;
-		_matrix.tx = _point.x * fsx;
-		_matrix.ty = _point.y * fsy;
+		_matrix.a = sx;
+		_matrix.d = sy;
+		_matrix.tx = _point.x;
+		_matrix.ty = _point.y;
+		camera.applyToMatrix(_matrix, rotateWithCamera, scaleWithCamera);
+		HXP.screen.applyToMatrix(_matrix);
 		target.draw(_buffer, _matrix, _colorTransform, null, null, smooth);
 	}
 
-	override public function renderAtlas(layer:Int, point:Point, camera:Point)
+	override public function renderAtlas(layer:Int, point:Point, camera:Camera)
 	{
 		// determine drawing location
 		var fontScale = size / _font.fontSize;
 
-		var fsx = HXP.screen.fullScaleX,
+		var sx = scale * scaleX * fontScale,
+			sy = scale * scaleY * fontScale,
+			fsx = HXP.screen.fullScaleX,
 			fsy = HXP.screen.fullScaleY;
-
-		var sx = scale * scaleX * fontScale * fsx,
-			sy = scale * scaleY * fontScale * fsy;
 
 		_point.x = Math.floor(point.x + x - camera.x * scrollX);
 		_point.y = Math.floor(point.y + y - camera.y * scrollY);
 
 		// use hardware accelerated rendering
 		renderFont(function(region:AtlasRegion, gd:GlyphData, x:Float, y:Float) {
-			region.draw(_point.x * fsx + x * sx, _point.y * fsy + y * sy, layer, sx, sy, 0, _red, _green, _blue, alpha, smooth);
+			_matrix.b = _matrix.c = 0;
+			_matrix.a = sx;
+			_matrix.d = sy;
+			_matrix.tx = x * sx + _point.x;
+			_matrix.ty = y * sy + _point.y;
+			camera.applyToMatrix(_matrix, rotateWithCamera, scaleWithCamera);
+			HXP.screen.applyToMatrix(_matrix);
+			region.drawMatrix(_matrix.tx, _matrix.ty, _matrix.a, _matrix.b, _matrix.c, _matrix.d, layer, _red, _green, _blue, alpha, smooth);
 		});
 	}
 

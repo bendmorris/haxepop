@@ -21,7 +21,6 @@ class Graphiclist extends Graphic
 	{
 		_graphics = new Array<Graphic>();
 		_temp = new Array<Graphic>();
-		_camera = new Point();
 		_count = 0;
 
 		super();
@@ -43,12 +42,10 @@ class Graphiclist extends Graphic
 		}
 	}
 
-	private inline function renderList(renderFunc:Graphic->Void, point:Point, camera:Point)
+	private inline function renderList(renderFunc:Graphic->Void, point:Point, camera:Camera)
 	{
 		point.x += x;
 		point.y += y;
-		camera.x *= scrollX;
-		camera.y *= scrollY;
 
 		for (g in _graphics)
 		{
@@ -60,26 +57,24 @@ class Graphiclist extends Graphic
 					_point.y = point.y;
 				}
 				else _point.x = _point.y = 0;
-				_camera.x = camera.x;
-				_camera.y = camera.y;
 				renderFunc(g);
 			}
 		}
 	}
 
 	/** @private Renders the Graphics in the list. */
-	override public function render(target:BitmapData, point:Point, camera:Point)
+	override public function render(target:BitmapData, point:Point, camera:Camera)
 	{
 		renderList(function(g:Graphic) {
-			g.render(target, _point, _camera);
+			g.render(target, _point, camera);
 		}, point, camera);
 	}
 
 	/** @private Renders the Graphics in the list. */
-	override public function renderAtlas(layer:Int, point:Point, camera:Point)
+	override public function renderAtlas(layer:Int, point:Point, camera:Camera)
 	{
 		renderList(function(g:Graphic) {
-			g.renderAtlas(layer, _point, _camera);
+			g.renderAtlas(layer, _point, camera);
 		}, point, camera);
 	}
 
@@ -185,5 +180,4 @@ class Graphiclist extends Graphic
 	private var _graphics:Array<Graphic>;
 	private var _temp:Array<Graphic>;
 	private var _count:Int;
-	private var _camera:Point;
 }

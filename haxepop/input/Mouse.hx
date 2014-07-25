@@ -1,5 +1,6 @@
 package haxepop.input;
 
+import flash.geom.Point;
 import flash.events.MouseEvent;
 import haxepop.HXP;
 import haxepop.Input;
@@ -159,6 +160,10 @@ class Mouse implements InputMethod
 
 	public function update()
 	{
+		_point.x = HXP.screen.mouseX;
+		_point.y = HXP.screen.mouseY;
+		HXP.camera.applyToPoint(_point);
+
 		if (mousePressed) mousePressed = false;
 		if (mouseReleased) mouseReleased = false;
 		if (middleMousePressed) middleMousePressed = false;
@@ -187,7 +192,7 @@ class Mouse implements InputMethod
 	public static var mouseX(get, never):Int;
 	private static function get_mouseX():Int
 	{
-		return HXP.screen.mouseX;
+		return Std.int(_point.x);
 	}
 
 	/**
@@ -196,25 +201,7 @@ class Mouse implements InputMethod
 	public static var mouseY(get, never):Int;
 	private static function get_mouseY():Int
 	{
-		return HXP.screen.mouseY;
-	}
-
-	/**
-	 * The absolute mouse x position on the screen (unscaled).
-	 */
-	public static var mouseFlashX(get, never):Int;
-	private static function get_mouseFlashX():Int
-	{
-		return Std.int(HXP.stage.mouseX - HXP.screen.x);
-	}
-
-	/**
-	 * The absolute mouse y position on the screen (unscaled).
-	 */
-	public static var mouseFlashY(get, never):Int;
-	private static function get_mouseFlashY():Int
-	{
-		return Std.int(HXP.stage.mouseY - HXP.screen.y);
+		return Std.int(_point.y);
 	}
 
 	private static function onMouseDown(e:MouseEvent)
@@ -284,4 +271,5 @@ class Mouse implements InputMethod
 
 	private static var _mouseWheelDelta:Int = 0;
 	private static var _mouseDownNoFocus:Bool = false;
+	private static var _point:Point = new Point();
 }

@@ -118,7 +118,12 @@ class HXP
 	/**
 	 * Point used to determine drawing offset in the render loop.
 	 */
-	public static var camera:Point = new Point();
+	public static var camera(default, set):Camera = new Camera();
+	static inline function set_camera(camera:Camera):Camera
+	{
+		screen._shakeAngle = 0;
+		return HXP.camera = camera;
+	}
 
 	/**
 	 * Global tweener for tweening between multiple scenes
@@ -229,6 +234,7 @@ class HXP
 	public static function resize(w:Int, h:Int)
 	{
 		// resize scene to scale
+		camera.resize(width, height, w, h);
 		width = Std.int(w / HXP.screen.fullScaleX);
 		height = Std.int(h / HXP.screen.fullScaleY);
 		halfWidth = w / 2;

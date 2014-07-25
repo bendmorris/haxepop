@@ -18,6 +18,7 @@ Some of the changes that have been made in HaxePop:
 * TextureAtlases can be "loaded" into the asset manager to access atlas regions as regular images
 * Flash is rendered in full resolution for more consistent appearance between targets
 * Built-in screen overlays such as scanlines and RGB noise
+* A camera with rotation/zooming
 
 # HaxePunk
 

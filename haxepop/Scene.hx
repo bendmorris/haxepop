@@ -22,9 +22,9 @@ class Scene extends Tweener
 	public var visible:Bool;
 
 	/**
-	 * Point used to determine drawing offset in the render loop.
+	 * Used to determine drawing offset in the render loop.
 	 */
-	public var camera:Point;
+	public var camera:Camera;
 
 	public var overlays:Array<Overlay>;
 
@@ -35,7 +35,7 @@ class Scene extends Tweener
 	{
 		super();
 		visible = true;
-		camera = new Point();
+		camera = new Camera();
 		sprite = new Sprite();
 		overlays = new Array();
 

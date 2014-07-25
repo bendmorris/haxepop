@@ -100,19 +100,49 @@ class Graphic
 	 * Can be used for parallax effect, eg. Set to 0 to follow the camera,
 	 * 0.5 to move at half-speed of the camera, or 1 (default) to stay still.
 	 */
-	public var scrollX:Float;
+	public var scrollX:Float = 1;
 
 	/**
 	 * Y scrollfactor, effects how much the camera offsets the drawn graphic.
 	 * Can be used for parallax effect, eg. Set to 0 to follow the camera,
 	 * 0.5 to move at half-speed of the camera, or 1 (default) to stay still.
 	 */
-	public var scrollY:Float;
+	public var scrollY:Float = 1;
+
+	/**
+	 * Whether this graphic will be rotated when the camera rotates.
+	 */
+	public var rotateWithCamera:Bool = true;
+
+	/**
+	 * Whether this graphic will be scaled when the camera rotates.
+	 */
+	public var scaleWithCamera:Bool = true;
 
 	/**
 	 * If the graphic should render at its position relative to its parent Entity's position.
 	 */
-	public var relative:Bool;
+	public var relative:Bool = true;
+
+	/**
+	 * A graphic is sticky if it sticks to the screen and doesn't move with the camera.
+	 * Setting sticky to true will set rotateWithCamera and scaleWithCamera to false,
+	 * and scrollX and scrollY to 0.
+	 */
+	public var sticky(get, set):Bool;
+	inline function get_sticky()
+	{
+		return !(rotateWithCamera || scaleWithCamera || scrollX > 0 || scrollY > 0);
+	}
+	inline function set_sticky(sticky:Bool)
+	{
+		if (sticky)
+		{
+			rotateWithCamera = scaleWithCamera = false;
+			scrollX = scrollY = 0;
+		}
+		return sticky;
+	}
 
 	/**
 	 * If we can blit the graphic or not (flash/html5)
@@ -152,7 +182,7 @@ class Graphic
 	 * @param  point      The position to draw the graphic.
 	 * @param  camera     The camera offset.
 	 */
-	public function render(target:BitmapData, point:Point, camera:Point) { }
+	public function render(target:BitmapData, point:Point, camera:Camera) { }
 
 	/**
 	 * Renders the graphic as an atlas.
@@ -160,7 +190,7 @@ class Graphic
 	 * @param  point      The position to draw the graphic.
 	 * @param  camera     The camera offset.
 	 */
-	public function renderAtlas(layer:Int, point:Point, camera:Point) { }
+	public function renderAtlas(layer:Int, point:Point, camera:Camera) { }
 
 	/**
 	 * Pause updating this graphic.
