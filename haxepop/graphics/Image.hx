@@ -168,7 +168,7 @@ class Image extends Graphic
 		// only draw if buffer exists
 		if (_buffer != null)
 		{
-			if (angle + (rotateWithCamera ? camera.angle : 0) == 0 && scaleX * HXP.screen.fullScaleX == 1 && scaleY * HXP.screen.fullScaleY == 1 && blend == null)
+			if (angle + (rotateWithCamera ? camera.angle : 0) == 0 && scale * scaleX * HXP.screen.fullScaleX == 1 && scale * scaleY * HXP.screen.fullScaleY == 1 && blend == null)
 			{
 			_point.x = point.x + x - originX - camera.x * scrollX;
 			_point.y = point.y + y - originY - camera.y * scrollY;
