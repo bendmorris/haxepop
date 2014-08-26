@@ -275,16 +275,16 @@ class BitmapText extends Graphic
 		if (autoWidth || autoHeight)
 		{
 			computeTextSize();
-			w = Std.int(autoWidth ? (textWidth/sx) : (width/sx));
-			h = Std.int(autoHeight ? (textHeight/sy) : (height/sy));
+			w = Math.ceil(autoWidth ? (textWidth/sx) : (width/sx));
+			h = Math.ceil(autoHeight ? (textHeight/sy) : (height/sy));
 		}
 		else
 		{
-			w = Std.int(width/sx);
-			h = Std.int(height/sy);
+			w = Math.ceil(width/sx);
+			h = Math.ceil(height/sy);
 		}
-		w = Std.int(w);
-		h = Std.int(h+_font.lineHeight+lineSpacing);
+        w = Math.ceil(w+charSpacing+1);
+		h = Math.ceil(h+_font.lineHeight+lineSpacing+1);
 
 		// create or clear the buffer if necessary
 		if (_buffer == null || _buffer.width != w || _buffer.height != h)
