@@ -283,7 +283,7 @@ class BitmapText extends Graphic
 			w = Math.ceil(width/sx);
 			h = Math.ceil(height/sy);
 		}
-        w = Math.ceil(w+charSpacing+1);
+		w = Math.ceil(w+charSpacing+1);
 		h = Math.ceil(h+_font.lineHeight+lineSpacing+1);
 
 		// create or clear the buffer if necessary
