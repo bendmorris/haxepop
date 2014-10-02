@@ -140,7 +140,7 @@ class Image extends Graphic
 	/** @private Computes the transformation matrix from scale, screen scale, offset, and rotation before rendering. */
 	inline function computeMatrix(point:Point, camera:Camera)
 	{
-		var sx = scale * scaleX,
+		var sx = scale * scaleX * ((!blit && flipped) ? -1 : 1),
 			sy = scale * scaleY;
 
 		// determine drawing location
@@ -185,9 +185,6 @@ class Image extends Graphic
 
 	override public function renderAtlas(layer:Int, point:Point, camera:Camera)
 	{
-		var sx = scale * scaleX,
-			sy = scale * scaleY;
-
 		// determine drawing location
 		_point.x = point.x + x - originX - camera.x * scrollX;
 		_point.y = point.y + y - originY - camera.y * scrollY;
