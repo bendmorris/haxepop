@@ -175,10 +175,8 @@ class BitmapText extends Graphic
 	{
 		// subdivide lines
 		var newLines:Array<String> = [];
-		var spaceWidth = _font.glyphData.get(' ').xAdvance;
 		var fontScale = size / _font.fontSize;
-		var sx:Float = scale * scaleX * fontScale, 
-			sy:Float = scale * scaleY * fontScale;
+		var spaceWidth = _font.glyphData.get(' ').xAdvance * fontScale;
 		for (line in lines)
 		{
 			var subLines:Array<String> = [];
@@ -211,13 +209,13 @@ class BitmapText extends Graphic
 					{
 						var letterWidth = _font.glyphData.exists(letter) ?
 						                  _font.glyphData.get(letter).xAdvance : 0;
-						wordWidth += (letterWidth + charSpacing);
+						wordWidth += (letterWidth + charSpacing) * fontScale;
 					}
 					lineWidth += wordWidth;
 					// if the word ends in a space, don't count that last space
 					// toward the line length for determining overflow
 					var endsInSpace = word.charAt(word.length - 1) == ' ';
-					if ((lineWidth - (endsInSpace ? spaceWidth : 0)) > width/sx)
+					if ((lineWidth - (endsInSpace ? spaceWidth : 0)) > width)
 					{
 						// line is too long; split it before this word
 						subLines.push(words.slice(lastBreak, w).join(''));
