@@ -47,7 +47,7 @@ class GdxTexturePacker
 			page = AtlasData.getAtlasDataByName(Path.join([inputDir, pageName]), true);
 			atlas._pages.set(pageName, page);
 			
-			var line:String;
+			var line:String = "";
 			while (true)
 			{
 				try
