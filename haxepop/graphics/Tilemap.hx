@@ -42,6 +42,16 @@ class Tilemap extends Graphic
 	public var usePositions:Bool;
 
 	/**
+	 * Wrap the tilemap horizontally.
+	 */
+	public var wrapX:Bool = false;
+
+	/**
+	 * Wrap the tilemap vertically.
+	 */
+	public var wrapY:Bool = false;
+
+	/**
 	 * Constructor.
 	 * @param	tileset				The source tileset image.
 	 * @param	width				Width of the tilemap, in pixels.
@@ -378,6 +388,7 @@ class Tilemap extends Graphic
 	/** Renders the canvas. */
 	override public function render(target:BitmapData, point:Point, camera:Camera)
 	{
+		// TODO: handle wrapX/wrapY in buffer mode
 		var sx = scale * scaleX,
 			sy = scale * scaleY,
 			fsx = HXP.screen.fullScaleX,
@@ -400,7 +411,7 @@ class Tilemap extends Graphic
 			{
 				buffer = _buffers[_ref.getPixel(xx, yy)];
 
-				if (angle + (rotateWithCamera ? camera.angle : 0) == 0)
+				if (false)//angle + (rotateWithCamera ? camera.angle : 0) == 0)
 				{
 					if (sx*fsx == 1 && sy*fsy == 1 && _tint == null)
 					{
@@ -433,14 +444,16 @@ class Tilemap extends Graphic
 								_midBuffers[i].fillRect(_midBuffers[i].rect, 0);
 							}
 							_matrix.b = _matrix.c = 0;
-							_matrix.a = sx * fsx;
-							_matrix.d = sy * fsy;
-							_matrix.tx = fsx * _point.x;
-							_matrix.ty = fsy * _point.y;
+							_matrix.a = fsx * sx;
+							_matrix.d = fsy * sy;
+							_matrix.tx = _point.x;
+							_matrix.ty = _point.y;
 
 							_midBuffers[i].draw(buffer, _matrix, _tint);
 						}
 
+						_rect.width = w;
+						_rect.height = h;
 						target.copyPixels(_midBuffers[i], _rect, _point, null, null, true);
 					}
 				}
@@ -494,14 +507,20 @@ class Tilemap extends Graphic
 			desty = starty + 1 + Math.ceil(screenRect.height / (th * scy));
 
 		// nothing will render if we're completely off screen
-		if (startx > _columns || starty > _rows || destx < 0 || desty < 0)
+		if ((!wrapX && (startx > _columns || destx < 0)) || (!wrapY && (starty > _rows || desty < 0)))
 			return;
 
 		// clamp values to boundaries
-		if (startx < 0) startx = 0;
-		if (destx > _columns) destx = _columns;
-		if (starty < 0) starty = 0;
-		if (desty > _rows) desty = _rows;
+		if (!wrapX)
+		{
+			if (startx < 0) startx = 0;
+			if (destx > _columns) destx = _columns;
+		}
+		if (!wrapY)
+		{
+			if (starty < 0) starty = 0;
+			if (desty > _rows) desty = _rows;
+		}
 
 		var wx:Float, sx:Float = _point.x + startx * tw * scx + screenRect.x - camera.x,
 			wy:Float = _point.y + starty * th * scy + screenRect.y - camera.y,
@@ -517,7 +536,10 @@ class Tilemap extends Graphic
 
 			for (x in startx...destx)
 			{
-				tile = _map[y % _rows][x % _columns];
+				var ty = y % rows, tx = x % columns;
+				if (ty < 0) ty += rows;
+				if (tx < 0) tx += columns;
+				tile = _map[ty][tx];
 				if (tile >= 0)
 				{
 					// ensure no horizontal overlap between this and next tile
