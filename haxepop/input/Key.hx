@@ -133,10 +133,16 @@ class Key implements InputMethod
 
 	public static inline var ANDROID_MENU = 16777234;
 
+	// keep track of the string of last entered keys
 	public static var keyString:String = "";
+	// maximum keyString length
 	public static var keyStringMax:Int = 50;
+	// restrict keyString input to these characters
 	public static var restrict:String = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	// if true, shift will be used
 	public static var keyStringShiftEnabled:Bool = true;
+	// if true, keypresses that add to the keyString will not count as pressed
+	public static var keyStringSuppressKeyEvent:Bool = false;
 
 	public function init()
 	{
@@ -296,19 +302,27 @@ class Key implements InputMethod
 		if (code == -1) // No key
 			return;
 
-		if (!_key[code])
+		var keyStringChanged:Bool = false;
+		if (code == BACKSPACE)
+		{
+			keyString = keyString.substr(0, keyString.length - 1);
+			keyStringChanged = true;
+		}
+		else if (keyString.length < keyStringMax)
+		{
+			var str = String.fromCharCode((code != SPACE && keyStringShiftEnabled) ? e.charCode : code);
+			if (restrict.indexOf(str) > -1)
+			{
+				keyString += str;
+				keyStringChanged = true;
+			}
+		}
+
+		if (!(_key[code] || (keyStringSuppressKeyEvent && keyStringChanged)))
 		{
 			_key[code] = true;
 			_keyNum++;
 			_press[_pressNum++] = code;
-		}
-
-		if (code == BACKSPACE) keyString = keyString.substr(0, keyString.length - 1);
-		else if (keyString.length < keyStringMax)
-		{
-			var str = String.fromCharCode(keyStringShiftEnabled ? e.charCode : code);
-			if (restrict.indexOf(str) > -1)
-				keyString += str;
 		}
 	}
 
