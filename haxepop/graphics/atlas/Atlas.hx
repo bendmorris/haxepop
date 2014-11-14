@@ -93,6 +93,12 @@ class Atlas
 		_data.prepareTileMatrix(tile, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
 	}
 
+	public function prepareTriangles(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float,
+		u1:Float, v1:Float, u2:Float, v2:Float, u3:Float, v3:Float, u4:Float, v4:Float)
+	{
+		_data.prepareTriangles(x1, y1, x2, y2, x3, y3, x4, y4, u1, v1, u2, v2, u3, v3, u4, v4);
+	}
+
 	/**
 	 * How many Atlases are active.
 	 */
