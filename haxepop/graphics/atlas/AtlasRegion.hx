@@ -127,7 +127,7 @@ class AtlasRegion
 		}
 	}
 
-	public inline function drawTriangles(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float)
+	public inline function drawTriangles(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float, color:Int=0xFFFFFFFF)
 	{
 		var u1 = _rect.x / _parent.width;
 		var v1 = _rect.y / _parent.height;
@@ -137,7 +137,7 @@ class AtlasRegion
 		var v3 = (_rect.y + _rect.height) / _parent.height;
 		var u4 = u1;
 		var v4 = v3;
-		_parent.prepareTriangles(x1,y1,x2,y2,x3,y3,x4,y4,u1,v1,u2,v2,u3,v3,u4,v4);
+		_parent.prepareTriangles(x1,y1,x2,y2,x3,y3,x4,y4,u1,v1,u2,v2,u3,v3,u4,v4,color);
 	}
 
 	public function destroy():Void

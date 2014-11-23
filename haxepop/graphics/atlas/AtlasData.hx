@@ -59,7 +59,8 @@ class AtlasData
 		_vertices = new Array<Float>();
 		_indices = new Array<Int>();
 		_uvtData = new Array<Float>();
-		_dataIndex = _smoothDataIndex = _uvtDataIndex = _verticesIndex = _indicesIndex = 0;
+		_colors = new Array<Int>();
+		_dataIndex = _smoothDataIndex = _uvtDataIndex = _verticesIndex = _indicesIndex = _colorsIndex = 0;
 
 		_source = bd;
 		_tilesheet = new Tilesheet(bd);
@@ -220,15 +221,17 @@ class AtlasData
 			_vertices.splice(_verticesIndex, _vertices.length - _verticesIndex);
 			_indices.splice(_indicesIndex, _indices.length - _indicesIndex);
 			_uvtData.splice(_uvtDataIndex, _uvtData.length - _uvtDataIndex);
+			_uvtData.splice(_colorsIndex, _colors.length - _colorsIndex);
 #else
 			untyped _vertices.length = _verticesIndex;
 			untyped _indices.length = _indicesIndex;
 			untyped _uvtData.length = _uvtDataIndex;
+			untyped _colors.length = _colorsIndex;
 #end
-			_uvtDataIndex = _verticesIndex = _indicesIndex = 0;
+			_uvtDataIndex = _verticesIndex = _indicesIndex = _colorsIndex = 0;
 
 			_scene.sprite.graphics.beginBitmapFill(_source);
-			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData);
+			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null, _colors);
 			_scene.sprite.graphics.endFill();
 		}
 	}
@@ -361,7 +364,7 @@ class AtlasData
 	}
 
 	public inline function prepareTriangles(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float,
-		u1:Float, v1:Float, u2:Float, v2:Float, u3:Float, v3:Float, u4:Float, v4:Float)
+		u1:Float, v1:Float, u2:Float, v2:Float, u3:Float, v3:Float, u4:Float, v4:Float, color:Int=0xFFFFFFFF)
 	{
 		active = this;
 		var indexStart = Std.int(_verticesIndex / 2);
@@ -387,6 +390,12 @@ class AtlasData
 		_uvtData[_uvtDataIndex++] = v3;
 		_uvtData[_uvtDataIndex++] = u4;
 		_uvtData[_uvtDataIndex++] = v4;
+		_colors[_colorsIndex++] = color;
+		_colors[_colorsIndex++] = color;
+		_colors[_colorsIndex++] = color;
+		_colors[_colorsIndex++] = color;
+		_colors[_colorsIndex++] = color;
+		_colors[_colorsIndex++] = color;
 	}
 
 	/**
@@ -475,9 +484,11 @@ class AtlasData
 	private var _vertices:Array<Float>;
 	private var _indices:Array<Int>;
 	private var _uvtData:Array<Float>;
+	private var _colors:Array<Int>;
 	private var _uvtDataIndex:Int;
 	private var _verticesIndex:Int;
 	private var _indicesIndex:Int;
+	private var _colorsIndex:Int;
 
 	private static var _scene:Scene;
 	private static var _dataPool:Map<String, AtlasData> = new Map<String, AtlasData>();
