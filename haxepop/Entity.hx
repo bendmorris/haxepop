@@ -481,26 +481,30 @@ class Entity extends Tweener
 	/**
 	 * The leftmost position of the Entity's hitbox.
 	 */
-	public var left(get, null):Float;
-	private inline function get_left():Float { return x - originX; }
+	public var left(get, set):Float;
+	private function get_left():Float { return x - originX; }
+	private function set_left(x:Float):Float { return this.x = x + originX; }
 
 	/**
 	 * The rightmost position of the Entity's hitbox.
 	 */
-	public var right(get, null):Float;
-	private inline function get_right():Float { return x - originX + width; }
+	public var right(get, set):Float;
+	private function get_right():Float { return x - originX + width; }
+	private function set_right(x:Float):Float { return this.x = x + originX - width; }
 
 	/**
 	 * The topmost position of the Entity's hitbox.
 	 */
-	public var top(get, null):Float;
-	private inline function get_top():Float { return y - originY; }
+	public var top(get, set):Float;
+	private function get_top():Float { return y - originY; }
+	private function set_top(y:Float):Float { return this.y = y + originY; }
 
 	/**
 	 * The bottommost position of the Entity's hitbox.
 	 */
-	public var bottom(get, null):Float;
-	private inline function get_bottom():Float { return y - originY + height; }
+	public var bottom(get, set):Float;
+	private function get_bottom():Float { return y - originY + height; }
+	private function set_bottom(y:Float):Float { return this.y = y + originY - height; }
 
 	/**
 	 * The rendering layer of this Entity. Higher layers are rendered first.
