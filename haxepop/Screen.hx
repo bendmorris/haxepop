@@ -152,10 +152,10 @@ class Screen
 		{
 			var sx:Int = Std.random(_shakeMagnitude*2+1) - _shakeMagnitude;
 			var sy:Int = Std.random(_shakeMagnitude*2+1) - _shakeMagnitude;
-			var sa:Int = Std.random(_shakeMagnitude*2+1) - _shakeMagnitude;
+			var sa:Int = Std.random(_shakeAngularMagnitude*2+1) - _shakeAngularMagnitude;
 
-			x += sx - _shakeX;
-			y += sy - _shakeY;
+			HXP.camera.x += sx - _shakeX;
+			HXP.camera.y += sy - _shakeY;
 			HXP.camera.angle += sa - _shakeAngle;
 
 			_shakeX = sx;
@@ -167,8 +167,8 @@ class Screen
 		}
 		else if (_shakeX != 0 || _shakeY != 0 || _shakeAngle != 0)
 		{
-			x -= _shakeX;
-			y -= _shakeY;
+			HXP.camera.x -= _shakeX;
+			HXP.camera.y -= _shakeY;
 			HXP.camera.angle -= _shakeAngle;
 			HXP.camera.scale /= _shakeZoom;
 			_shakeX = _shakeY = _shakeAngle = 0;
@@ -390,10 +390,11 @@ class Screen
 	 * @param	magnitude	Number of pixels to shake in any direction.
 	 * @param	duration	Duration of shake effect, in seconds.
 	 */
-	public function shake(magnitude:Int, duration:Float)
+	public function shake(magnitude:Int, duration:Float, angularMagnitude:Int=0)
 	{
 		if (_shakeTime < duration) _shakeTime = duration;
 		_shakeMagnitude = magnitude;
+		_shakeAngularMagnitude = angularMagnitude;
 	}
 
 	/**
@@ -422,6 +423,7 @@ class Screen
 	private var _angle:Float;
 	private var _shakeTime:Float=0;
 	private var _shakeMagnitude:Int=0;
+	private var _shakeAngularMagnitude:Int=0;
 	private var _shakeX:Int=0;
 	private var _shakeY:Int=0;
 	private var _shakeAngle:Int=0;
