@@ -221,7 +221,7 @@ class AtlasData
 			_vertices.splice(_verticesIndex, _vertices.length - _verticesIndex);
 			_indices.splice(_indicesIndex, _indices.length - _indicesIndex);
 			_uvtData.splice(_uvtDataIndex, _uvtData.length - _uvtDataIndex);
-			_uvtData.splice(_colorsIndex, _colors.length - _colorsIndex);
+			_colors.splice(_colorsIndex, _colors.length - _colorsIndex);
 #else
 			untyped _vertices.length = _verticesIndex;
 			untyped _indices.length = _indicesIndex;

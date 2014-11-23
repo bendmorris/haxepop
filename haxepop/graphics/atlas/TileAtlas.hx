@@ -36,11 +36,13 @@ class TileAtlas extends Atlas
 	 * @param	tileMarginWidth		Tile horizontal margin.
 	 * @param	tileMarginHeight	Tile vertical margin.
 	 */
-	public function prepare(tileWidth:Int, tileHeight:Int, tileMarginWidth:Int=0, tileMarginHeight:Int=0)
+	public function prepare(tileWidth:Int, tileHeight:Int, tileMarginWidth:Int=0, tileMarginHeight:Int=0, tileOffsetX:Int=0, tileOffsetY:Int=0)
 	{
 		if (_regions.length > 0) return; // only prepare once
-		var cols:Int = Math.floor(_data.width / tileWidth);
-		var rows:Int = Math.floor(_data.height / tileHeight);
+		var fullTileWidth = tileWidth + tileMarginWidth,
+			fullTileHeight = tileHeight + tileMarginHeight;
+		var cols:Int = Math.floor(_data.width / fullTileWidth);
+		var rows:Int = Math.floor(_data.height / fullTileHeight);
 
 		HXP.rect.width = tileWidth;
 		HXP.rect.height = tileHeight;
@@ -49,11 +51,11 @@ class TileAtlas extends Atlas
 
 		for (y in 0...rows)
 		{
-			HXP.rect.y = y * (tileHeight+tileMarginHeight);
+			HXP.rect.y = y * fullTileHeight + tileOffsetY;
 
 			for (x in 0...cols)
 			{
-				HXP.rect.x = x * (tileWidth+tileMarginWidth);
+				HXP.rect.x = x * fullTileWidth + tileOffsetX;
 
 				_regions.push(_data.createRegion(HXP.rect, HXP.point));
 			}

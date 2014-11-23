@@ -61,11 +61,14 @@ class Tilemap extends Graphic
 	 * @param	tileSpacingWidth	Tile horizontal spacing.
 	 * @param	tileSpacingHeight	Tile vertical spacing.
 	 */
-	public function new(tileset:TileType, width:Int, height:Int, tileWidth:Int, tileHeight:Int, ?tileSpacingWidth:Int=0, ?tileSpacingHeight:Int=0)
+	public function new(tileset:TileType, width:Int, height:Int, tileWidth:Int, tileHeight:Int, ?tileSpacingWidth:Int=0, ?tileSpacingHeight:Int=0, ?tileOffsetX:Int=0, ?tileOffsetY:Int=0)
 	{
 		super();
 
 		_rect = HXP.rect;
+
+		var fullTileWidth = tileWidth + tileSpacingWidth,
+			fullTileHeight = tileHeight + tileSpacingHeight;
 
 		// set some tilemap information
 		_width = width - (width % tileWidth);
@@ -75,6 +78,8 @@ class Tilemap extends Graphic
 
 		this.tileSpacingWidth = tileSpacingWidth;
 		this.tileSpacingHeight = tileSpacingHeight;
+		this.tileOffsetX = tileOffsetX;
+		this.tileOffsetY = tileOffsetY;
 
 		if (_columns == 0 || _rows == 0)
 			throw "Cannot create a bitmapdata of width/height = 0";
@@ -128,7 +133,7 @@ class Tilemap extends Graphic
 			case Right(atlas):
 				blit = false;
 				_atlas = atlas;
-				atlas.prepare(tileWidth, tileHeight, tileSpacingWidth, tileSpacingHeight);
+				atlas.prepare(tileWidth, tileHeight, tileSpacingWidth, tileSpacingHeight, tileOffsetX, tileOffsetY);
 		}
 
 		if (_set == null && _atlas == null)
@@ -136,13 +141,13 @@ class Tilemap extends Graphic
 
 		if (blit)
 		{
-			_setColumns = Std.int(_set.width / tileWidth);
-			_setRows = Std.int(_set.height / tileHeight);
+			_setColumns = Std.int(_set.width / fullTileWidth);
+			_setRows = Std.int(_set.height / fullTileHeight);
 		}
 		else
 		{
-			_setColumns = Std.int(_atlas.width / tileWidth);
-			_setRows = Std.int(_atlas.height / tileHeight);
+			_setColumns = Std.int(_atlas.width / fullTileWidth);
+			_setRows = Std.int(_atlas.height / fullTileHeight);
 		}
 		_setCount = _setColumns * _setRows;
 	}
@@ -189,8 +194,8 @@ class Tilemap extends Graphic
 		row %= _rows;
 		_map[row][column] = index;
 #if buffer
-		_tile.x = (index % _setColumns) * (_tile.width + tileSpacingWidth);
-		_tile.y = Std.int(index / _setColumns) * (_tile.height + tileSpacingHeight);
+		_tile.x = (index % _setColumns) * (_tile.width + tileSpacingWidth) + tileOffsetX;
+		_tile.y = Std.int(index / _setColumns) * (_tile.height + tileSpacingHeight) + tileOffsetY;
 		draw(column * _tile.width, row * _tile.height, _set, _tile);
 #end
 	}
@@ -724,6 +729,10 @@ class Tilemap extends Graphic
 	 * The tile vertical spacing of tile.
 	 */
 	public var tileSpacingHeight(default, null):Int;
+
+
+	public var tileOffsetX(default, null):Int;
+	public var tileOffsetY(default, null):Int;
 
 	/**
 	 * How many tiles the tilemap has.
