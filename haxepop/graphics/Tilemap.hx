@@ -104,26 +104,7 @@ class Tilemap extends Graphic
 		_height = height;
 
 #if buffer
-		_refWidth = Math.ceil(width / _maxWidth);
-		_refHeight = Math.ceil(height / _maxHeight);
-		_ref = Assets.createBitmap(_refWidth, _refHeight);
-		var x:Int = 0, y:Int = 0, w:Int, h:Int, i:Int = 0,
-			ww:Int = _width % _maxWidth,
-			hh:Int = _height % _maxHeight;
-		if (ww == 0) ww = _maxWidth;
-		if (hh == 0) hh = _maxHeight;
-		while (y < _refHeight)
-		{
-			h = y < _refHeight - 1 ? _maxHeight : hh;
-			while (x < _refWidth)
-			{
-				w = x < _refWidth - 1 ? _maxWidth : ww;
-				_ref.setPixel(x, y, i);
-				_buffers[i] = Assets.createBitmap(w, h, true);
-				i ++; x ++;
-			}
-			x = 0; y ++;
-		}
+		initBuffers();
 #end
 
 		// initialize map
@@ -164,6 +145,30 @@ class Tilemap extends Graphic
 			_setRows = Std.int(_atlas.height / tileHeight);
 		}
 		_setCount = _setColumns * _setRows;
+	}
+
+	function initBuffers()
+	{
+		_refWidth = Math.ceil(width / _maxWidth);
+		_refHeight = Math.ceil(height / _maxHeight);
+		_ref = Assets.createBitmap(_refWidth, _refHeight);
+		var x:Int = 0, y:Int = 0, w:Int, h:Int, i:Int = 0,
+			ww:Int = _width % _maxWidth,
+			hh:Int = _height % _maxHeight;
+		if (ww == 0) ww = _maxWidth;
+		if (hh == 0) hh = _maxHeight;
+		while (y < _refHeight)
+		{
+			h = y < _refHeight - 1 ? _maxHeight : hh;
+			while (x < _refWidth)
+			{
+				w = x < _refWidth - 1 ? _maxWidth : ww;
+				_ref.setPixel(x, y, i);
+				_buffers[i] = Assets.createBitmap(w, h, true);
+				i ++; x ++;
+			}
+			x = 0; y ++;
+		}
 	}
 
 	/**

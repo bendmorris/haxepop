@@ -231,7 +231,14 @@ class AtlasData
 			_uvtDataIndex = _verticesIndex = _indicesIndex = _colorsIndex = 0;
 
 			_scene.sprite.graphics.beginBitmapFill(_source);
+#if flash
+			var _vertices = flash.Vector.ofArray(_vertices);
+			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null);
+#elseif html5
+			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null);
+#else
 			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null, _colors);
+#end
 			_scene.sprite.graphics.endFill();
 		}
 	}
