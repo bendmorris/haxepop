@@ -119,10 +119,10 @@ class Camera
 		var cos = Math.abs(Math.cos(rads));
 		var sin = Math.abs(Math.sin(rads));
 
-		_rect.width = w * cos + h * sin;
-		_rect.height = w * sin + h * cos;
-		_rect.top = (y + h/2) - _rect.height / 2;
-		_rect.left = (x + w/2) - _rect.width / 2;
+		_rect.width = Math.ceil(w * cos + h * sin);
+		_rect.height = Math.ceil(w * sin + h * cos);
+		_rect.top = Math.floor((y + h/2) - _rect.height / 2);
+		_rect.left = Math.floor((x + w/2) - _rect.width / 2);
 
 		return _rect;
 	}
