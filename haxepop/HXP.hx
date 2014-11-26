@@ -47,27 +47,27 @@ class HXP
 	/**
 	 * Width of the game.
 	 */
-	public static var width:Int;
+	public static var width:Int = 0;
 
 	/**
 	 * Height of the game.
 	 */
-	public static var height:Int;
+	public static var height:Int = 0;
 
 	/**
 	 * Width of the window.
 	 */
-	public static var windowWidth:Int;
+	public static var windowWidth:Int = 0;
 
 	/**
 	 * Height of the window.
 	 */
-	public static var windowHeight:Int;
+	public static var windowHeight:Int = 0;
 
 	/**
 	 * If the game is running at a fixed framerate.
 	 */
-	public static var fixed:Bool;
+	public static var fixed:Bool = false;
 
 	/**
 	 * The framerate assigned to the stage.
@@ -77,7 +77,7 @@ class HXP
 	/**
 	 * The framerate assigned to the stage.
 	 */
-	public static var assignedFrameRate:Float;
+	public static var assignedFrameRate:Float = 0;
 
 	/**
 	 * Time elapsed since the last frame (non-fixed framerate only).
@@ -235,10 +235,15 @@ class HXP
 	{
 		// resize scene to scale
 		camera.resize(width, height, w, h);
-		width = Std.int(w / HXP.screen.fullScaleX);
-		height = Std.int(h / HXP.screen.fullScaleY);
-		halfWidth = w / 2;
-		halfHeight = h / 2;
+		switch (screen.scaling.mode)
+		{
+			case Default:
+				width = Std.int(w / HXP.screen.fullScaleX);
+				height = Std.int(h / HXP.screen.fullScaleY);
+            default: {}
+		}
+		halfWidth = width / 2;
+		halfHeight = height / 2;
 		bounds.width = w;
 		bounds.height = h;
 		screen.resize();

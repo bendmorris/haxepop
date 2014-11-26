@@ -13,6 +13,7 @@ import flash.geom.Rectangle;
 import flash.Lib;
 import haxe.EnumFlags;
 import haxe.Timer;
+import haxepop.Screen;
 import haxepop.graphics.Image;
 import haxepop.utils.Draw;
 import haxepop.utils.Input;
@@ -59,7 +60,7 @@ class Engine extends Sprite
 	 * @param	frameRate		The game framerate, in frames per second.
 	 * @param	fixed			If a fixed-framerate should be used.
 	 */
-	public function new(width:Int = 0, height:Int = 0, frameRate:Float = 60, fixed:Bool = false)
+	public function new(width:Int = 0, height:Int = 0, frameRate:Float = 60, fixed:Bool = false, ?scaling:ScalingSettings = null)
 	{
 		super();
 
@@ -73,6 +74,9 @@ class Engine extends Sprite
 		HXP.width = width;
 		HXP.height = height;
 		HXP.screen = new Screen();
+		if (scaling == null)
+			scaling = {mode: Default, integer: false};
+		HXP.screen.scaling = scaling;
 
 		HXP.entity = new Entity();
 		HXP.time = Lib.getTimer();
@@ -172,6 +176,29 @@ class Engine extends Sprite
 		for (overlay in HXP.screen.overlays) overlay.update();
 		for (overlay in HXP.screen.overlays) overlay.render();
 
+		switch (HXP.screen.scaling.mode)
+		{
+			case Letterbox:
+				// draw letterboxes
+				if (HXP.screen.x > 0)
+				{
+					Draw.rect(0, 0, Std.int(HXP.screen.x), HXP.stage.stageHeight, HXP.screen.color, 1, true);
+				}
+				if (HXP.screen.x + HXP.screen.width < HXP.stage.stageWidth)
+				{
+					Draw.rect(HXP.screen.x + HXP.screen.width, 0, HXP.stage.stageWidth, HXP.stage.stageHeight, HXP.screen.color, 1, true);
+				}
+				if (HXP.screen.y > 0)
+				{
+					Draw.rect(0, 0, HXP.stage.stageWidth, Std.int(HXP.screen.y), HXP.screen.color, 1, true);
+				}
+				if (HXP.screen.y + HXP.screen.height < HXP.stage.stageHeight)
+				{
+					Draw.rect(0, HXP.screen.y + HXP.screen.height, HXP.stage.stageWidth, HXP.stage.stageHeight, HXP.screen.color, 1, true);
+				}
+			default: {}
+		}
+
 		// more timing stuff
 		t = Lib.getTimer();
 		_frameListSum += (_frameList[_frameList.length] = Std.int(t - _frameLast));
@@ -239,11 +266,10 @@ class Engine extends Sprite
 		// calculate scale from width/height values
 		HXP.windowWidth = HXP.stage.stageWidth;
 		HXP.windowHeight = HXP.stage.stageHeight;
-		HXP.screen.scaleX = HXP.stage.stageWidth / HXP.width;
-		HXP.screen.scaleY = HXP.stage.stageHeight / HXP.height;
+
 		HXP.resize(HXP.stage.stageWidth, HXP.stage.stageHeight);
 
-		createPauseOverlay();
+		if (HXP.autoPause) createPauseOverlay();
 	}
 
 	/** @private Event handler for stage entry. */

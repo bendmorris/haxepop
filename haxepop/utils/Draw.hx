@@ -212,15 +212,18 @@ class Draw
 	 * @param	height		Height of the rectangle.
 	 * @param	color		Color of the rectangle.
 	 * @param	alpha		Alpha of the rectangle.
+	 * @param	absPos		If true, positions are absolute and camera is ignored.
 	 */
-	public static function rect(x:Int, y:Int, width:Int, height:Int, color:Int = 0xFFFFFF, alpha:Float = 1)
+	public static function rect(x:Int, y:Int, width:Int, height:Int, color:Int = 0xFFFFFF, alpha:Float = 1, ?absPos:Bool = false)
 	{
+		var offsetX = absPos ? 0 : _camera.x,
+			offsetY = absPos ? 0 : _camera.y;
 #if buffer
 		if (alpha >= 1 && blend == null)
 		{
 			color = 0xFF000000 | (0xFFFFFF & color);
-			_rect.x = x - _camera.x;
-			_rect.y = y - _camera.y;
+			_rect.x = x - offsetX;
+			_rect.y = y - offsetY;
 			_rect.width = width;
 			_rect.height = height;
 			_target.fillRect(_rect, color);
@@ -228,11 +231,11 @@ class Draw
 		}
 		_graphics.clear();
 		_graphics.beginFill(color, alpha);
-		_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
+		_graphics.drawRect(x - offsetX, y - offsetY, width, height);
 		drawToScreen();
 #else
 		_graphics.beginFill(color, alpha);
-		_graphics.drawRect(x - _camera.x, y - _camera.y, width, height);
+		_graphics.drawRect(x - offsetX, y - offsetY, width, height);
 		_graphics.endFill();
 #end
 	}

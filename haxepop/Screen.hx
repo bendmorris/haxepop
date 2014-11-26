@@ -13,12 +13,32 @@ import flash.geom.Matrix;
 import flash.utils.ByteArray;
 import flash.Lib;
 
+
+@:enum
+abstract ScalingMode(Int)
+{
+	// default scaling: scale to fill the entire window, may be non-uniform
+	var Default = 0;
+	// uniform scaling: scaleX = scaleY, may make more screen area visible
+	var Uniform = 1;
+	// letterbox: even scaling with areas outside of viewport blacked out
+	var Letterbox = 2;
+}
+
+typedef ScalingSettings =
+{
+	var mode:ScalingMode;
+	var integer:Bool;
+}
+
 /**
  * Container for the main screen buffer. Can be used to transform the screen.
  */
 @:allow(haxepop.HXP)
 class Screen
 {
+	public var scaling:ScalingSettings;
+
 	public var overlays:Array<Overlay>;
 
 	/**
@@ -63,8 +83,8 @@ class Screen
 	 */
 	public function resize()
 	{
-		width = HXP.width;
-		height = HXP.height;
+		var width = HXP.width;
+		var height = HXP.height;
 #if buffer
 		disposeBitmap(_bitmap[0]);
 		disposeBitmap(_bitmap[1]);
@@ -79,8 +99,32 @@ class Screen
 		HXP.buffer = _bitmap[0].bitmapData;
 #end
 
+		// adjust screen scale based on scaling mode
+		switch (scaling.mode)
+		{
+			case Default:
+				scaleX = HXP.stage.stageWidth / width;
+				scaleY = HXP.stage.stageHeight / height;
+			case Uniform, Letterbox:
+				var newScale = Math.max(Math.min(
+					HXP.stage.stageWidth / width,
+					HXP.stage.stageHeight / height
+				), 1);
+				if (scaling.integer) newScale = Std.int(newScale);
+				scaleX = scaleY = newScale;
+
+				// center screen
+				var dx = HXP.stage.stageWidth - (width * scaleX);
+				var dy = HXP.stage.stageHeight - (height * scaleY);
+				x = Std.int(dx / 2);
+				y = Std.int(dy / 2);
+		}
+
 		_current = 0;
 		needsResize = false;
+
+		this.width = Std.int(width * scaleX);
+		this.height = Std.int(height * scaleY);
 
 		for (overlay in overlays) overlay.resize();
 	}
