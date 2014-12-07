@@ -82,12 +82,10 @@ class BitmapFontAtlas extends TextureAtlas
 
 
 			var glyph:String = null;
-			if (char.has.letter)
-			{
-				glyph = char.att.letter;
-			} else if (char.has.id) {
+			if (char.has.id)
 				glyph = String.fromCharCode(Std.parseInt(char.att.id));
-			}
+			else if (char.has.letter)
+				glyph = char.att.letter;
 			if (glyph == null) throw '"$file" is not a valid .fnt file!';
 
 			glyph = switch(glyph) {
