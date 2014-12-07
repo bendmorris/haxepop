@@ -1,5 +1,6 @@
 package haxepop.graphics;
 
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -56,7 +57,7 @@ class BitmapText extends Graphic
 	 * 						align		Alignment ("left", "center" or "right"). (Currently ignored.)
 	 * 						resizable	If the text field can automatically resize if its contents grow. (Currently ignored.)
 	 * 						leading		Vertical space between lines. (Currently ignored.)
-	 *						richText	If the text field uses a rich text string. (Currently ignored.) 
+	 *						richText	If the text field uses a rich text string. (Currently ignored.)
 	 */
 	public function new(text:String, x:Float = 0, y:Float = 0, width:Float = 0, height:Float = 0, ?options:BitmapTextOptions)
 	{
@@ -79,7 +80,7 @@ class BitmapText extends Graphic
 		// failure to load
 		if (_font == null)
 			throw "Invalid font glyphs provided.";
-		
+
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -91,9 +92,10 @@ class BitmapText extends Graphic
 		autoHeight = (height == 0);
 
 		_matrix = HXP.matrix;
+		_rect = HXP.rect;
 		if (blit)
 		{
-			_set = HXP.getBitmap(StringTools.replace(options.font, ".fnt", ".png"));
+			_set = new Bitmap(HXP.getBitmap(StringTools.replace(options.font, ".fnt", ".png")));
 			_colorTransform = new ColorTransform();
 		}
 
@@ -125,6 +127,19 @@ class BitmapText extends Graphic
 
 		return value;
 	}
+
+	public var lineHeight(get, never):Int;
+	inline function get_lineHeight()
+	{
+		return Math.ceil(_font.lineHeight + lineSpacing);
+	}
+
+	public var fontScale(get, never):Float;
+	inline function get_fontScale()
+	{
+		return size / _font.fontSize;
+	}
+
 
 	/*
 	 * Called automatically to update the ColorTransform object whenever color
@@ -175,7 +190,6 @@ class BitmapText extends Graphic
 	{
 		// subdivide lines
 		var newLines:Array<String> = [];
-		var fontScale = size / _font.fontSize;
 		var spaceWidth = _font.glyphData.get(' ').xAdvance * fontScale;
 		for (line in lines)
 		{
@@ -260,8 +274,6 @@ class BitmapText extends Graphic
 
 		if (text == null) return;
 
-		var fontScale = size / _font.fontSize;
-
 		var fsx = HXP.screen.fullScaleX,
 			fsy = HXP.screen.fullScaleY;
 
@@ -296,28 +308,30 @@ class BitmapText extends Graphic
 		}
 
 		// make a pass through each character, copying it onto the buffer
-		renderFont(function(region:AtlasRegion,gd:GlyphData,x:Float,y:Float) {
-			_point.x = x;
-			_point.y = y;
+		renderFont(drawToBuffer);
+	}
 
-			_buffer.copyPixels(_set, gd.rect, _point, null, null, true);
-		});
+	function drawToBuffer(region:AtlasRegion,gd:GlyphData,x:Float,y:Float) {
+		_matrix.b = _matrix.c = 0;
+		_matrix.a = _matrix.d = 1;
+		_matrix.tx = x - gd.rect.x;
+		_matrix.ty = y - gd.rect.y;
+		_rect.x = x;
+		_rect.y = y;
+		_rect.width = gd.rect.width;
+		_rect.height = gd.rect.height;
+
+		_buffer.draw(_set, _matrix, _colorTransform, null, _rect, false);
 	}
 
 	/*
 	 * Loops through the text, drawing each character on each line.
 	 * @param renderFunction    Function to render each character.
 	 */
-	private inline function renderFont(?renderFunction:RenderFunction)
+	function renderFont(?renderFunction:RenderFunction)
 	{
-		// loop through the text one character at a time, calling the supplied
-		// rendering function for each character
-		var fontScale = size/_font.fontSize;
-
-		var lineHeight:Int = Std.int(_font.lineHeight + lineSpacing);
-
 		var rx:Int = 0, ry:Int = 0;
-		var sx:Float = scale * scaleX * fontScale, 
+		var sx:Float = scale * scaleX * fontScale,
 			sy:Float = scale * scaleY * fontScale;
 		for (y in 0 ... lines.length)
 		{
@@ -329,7 +343,7 @@ class BitmapText extends Graphic
 				var region = _font.getChar(letter);
 				var gd = _font.glyphData.get(letter);
 				// if a character isn't in this font, display a space
-				if (gd == null) 
+				if (gd == null)
 				{
 					letter = ' ';
 					gd = _font.glyphData.get(' ');
@@ -373,8 +387,6 @@ class BitmapText extends Graphic
 	override public function render(target:BitmapData, point:Point, camera:Camera)
 	{
 		// determine drawing location
-		var fontScale = size / _font.fontSize;
-
 		var sx = scale * scaleX * fontScale,
 			sy = scale * scaleY * fontScale;
 
@@ -395,8 +407,6 @@ class BitmapText extends Graphic
 	override public function renderAtlas(layer:Int, point:Point, camera:Camera)
 	{
 		// determine drawing location
-		var fontScale = size / _font.fontSize;
-
 		var sx = scale * scaleX * fontScale,
 			sy = scale * scaleY * fontScale,
 			fsx = HXP.screen.fullScaleX,
@@ -406,7 +416,7 @@ class BitmapText extends Graphic
 		_point.y = Math.floor(point.y + y - camera.y * scrollY);
 
 		// use hardware accelerated rendering
-		renderFont(function(region:AtlasRegion, gd:GlyphData, x:Float, y:Float) {
+		renderFont(function (region:AtlasRegion, gd:GlyphData, x:Float, y:Float) {
 			_matrix.b = _matrix.c = 0;
 			_matrix.a = sx;
 			_matrix.d = sy;
@@ -421,9 +431,10 @@ class BitmapText extends Graphic
 	public var smooth:Bool = true;
 
 	private var _buffer:BitmapData;
-	private var _set:BitmapData;
+	private var _set:Bitmap;
 	private var _font:BitmapFontAtlas;
 	private var _matrix:Matrix;
+	private var _rect:Rectangle;
 	private var _colorTransform:ColorTransform;
 
 }
