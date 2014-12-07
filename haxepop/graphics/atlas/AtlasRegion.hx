@@ -31,10 +31,9 @@ class AtlasRegion
 	 * @param  tileIndex The tile index to use for drawTiles
 	 * @param  rect      Rectangle to set for width/height
 	 */
-	public function new(parent:AtlasData, tileIndex:Int, rect:Rectangle)
+	public function new(parent:AtlasData, rect:Rectangle)
 	{
 		this._parent = parent;
-		this.tileIndex = tileIndex;
 		this._rect = rect;
 		this.rotate = 0;
 	}
@@ -90,7 +89,7 @@ class AtlasRegion
 			x += height * scaleX;
 		}
 
-		_parent.prepareTile(tileIndex, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
+		_parent.prepareTile(_rect, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
 	}
 
 	/**
@@ -117,13 +116,13 @@ class AtlasRegion
 			var matrix = new Matrix(a, b, c, d, tx, ty);
 			matrix.rotate(rotate * HXP.RAD);
 			//matrix.tx += height * scaleX;
-			_parent.prepareTileMatrix(tileIndex, layer,
+			_parent.prepareTileMatrix(_rect, layer,
 				matrix.tx, matrix.ty, matrix.a, matrix.b, matrix.c, matrix.d,
 				red, green, blue, alpha, smooth);
 		}
 		else
 		{
-			_parent.prepareTileMatrix(tileIndex, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
+			_parent.prepareTileMatrix(_rect, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
 		}
 	}
 
@@ -172,7 +171,7 @@ class AtlasRegion
 	 */
 	public function toString():String
 	{
-		return "[AtlasRegion " + width + ", " + height + " " + tileIndex + "]";
+		return '[AtlasRegion ${_rect.x},${_rect.y} ${_rect.width}x${_rect.height}';
 	}
 
 	private inline function get_width():Float { return _rect.width; }

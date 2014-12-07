@@ -80,7 +80,7 @@ class AtlasData
 			_dataPool.set(_name, this);
 		}
 
-		_renderFlags = Tilesheet.TILE_TRANS_2x2 | Tilesheet.TILE_ALPHA | Tilesheet.TILE_BLEND_NORMAL | Tilesheet.TILE_RGB;
+		_renderFlags = Tilesheet.TILE_TRANS_2x2 | Tilesheet.TILE_ALPHA | Tilesheet.TILE_BLEND_NORMAL | Tilesheet.TILE_RGB | Tilesheet.TILE_RECT;
 		_flagAlpha = true;
 		_flagRGB = true;
 
@@ -192,8 +192,7 @@ class AtlasData
 	{
 		var r = rect.clone();
 		_rects.push(r);
-		var tileIndex = _tilesheet.addTileRect(r, null);
-		var region = new AtlasRegion(this, tileIndex, r);
+		var region = new AtlasRegion(this, r);
 		region.rotate = rotate;
 		return region;
 	}
@@ -232,8 +231,7 @@ class AtlasData
 
 			_scene.sprite.graphics.beginBitmapFill(_source);
 #if flash
-			var _vertices = flash.Vector.ofArray(_vertices);
-			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null);
+			_scene.sprite.graphics.drawTriangles(flash.Vector.ofArray(_vertices), flash.Vector.ofArray(_indices), flash.Vector.ofArray(_uvtData), null);
 #elseif html5
 			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null);
 #else
@@ -258,7 +256,7 @@ class AtlasData
 	 * @param  blue  Blue color value
 	 * @param  alpha Alpha value
 	 */
-	public inline function prepareTileMatrix(tile:Int, layer:Int,
+	public inline function prepareTileMatrix(tile:Rectangle, layer:Int,
 		tx:Float, ty:Float, a:Float, b:Float, c:Float, d:Float,
 		red:Float, green:Float, blue:Float, alpha:Float, ?smooth:Bool)
 	{
@@ -271,7 +269,10 @@ class AtlasData
 
 		_data[_dataIndex++] = tx;
 		_data[_dataIndex++] = ty;
-		_data[_dataIndex++] = tile;
+		_data[_dataIndex++] = tile.x;
+		_data[_dataIndex++] = tile.y;
+		_data[_dataIndex++] = tile.width;
+		_data[_dataIndex++] = tile.height;
 
 		// matrix transformation
 		_data[_dataIndex++] = a; // m00
@@ -315,7 +316,7 @@ class AtlasData
 	 * @param  blue   Blue color value
 	 * @param  alpha  Alpha value
 	 */
-	public inline function prepareTile(tile:Int, x:Float, y:Float, layer:Int,
+	public inline function prepareTile(tile:Rectangle, x:Float, y:Float, layer:Int,
 		scaleX:Float, scaleY:Float, angle:Float,
 		red:Float, green:Float, blue:Float, alpha:Float, ?smooth:Bool)
 	{
@@ -328,7 +329,10 @@ class AtlasData
 
 		_data[_dataIndex++] = x;
 		_data[_dataIndex++] = y;
-		_data[_dataIndex++] = tile;
+		_data[_dataIndex++] = tile.x;
+		_data[_dataIndex++] = tile.y;
+		_data[_dataIndex++] = tile.width;
+		_data[_dataIndex++] = tile.height;
 
 		// matrix transformation
 		if (angle == 0)

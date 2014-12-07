@@ -1,5 +1,6 @@
 package haxepop.graphics;
 
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.geom.ColorTransform;
@@ -129,7 +130,7 @@ class Tilemap extends Graphic
 		{
 			case Left(bd):
 				blit = true;
-				_set = bd;
+				_set = new Bitmap(bd);
 			case Right(atlas):
 				blit = false;
 				_atlas = atlas;
@@ -196,7 +197,7 @@ class Tilemap extends Graphic
 #if buffer
 		_tile.x = (index % _setColumns) * (_tile.width + tileSpacingWidth) + tileOffsetX;
 		_tile.y = Std.int(index / _setColumns) * (_tile.height + tileSpacingHeight) + tileOffsetY;
-		draw(column * _tile.width, row * _tile.height, _set, _tile);
+		draw(column * _tile.width, row * _tile.height, _set.bitmapData, _tile);
 #end
 	}
 
@@ -558,7 +559,7 @@ class Tilemap extends Graphic
 					if (angle + (rotateWithCamera ? camera.angle : 0) == 0)
 					{
 						// draw the tile
-						_atlas.prepareTile(tile, Math.floor(wx * fsx), Math.floor(wy * fsy), layer, scx, scy, 0, _red, _green, _blue, alpha, smooth);
+						_atlas.getRegion(tile).draw(Math.floor(wx * fsx), Math.floor(wy * fsy), layer, scx, scy, 0, _red, _green, _blue, alpha, smooth);
 					}
 					else
 					{
@@ -571,9 +572,9 @@ class Tilemap extends Graphic
 						camera.applyToMatrix(_matrix, rotateWithCamera, scaleWithCamera);
 						HXP.screen.applyToMatrix(_matrix);
 
-						_atlas.prepareTileMatrix(tile, layer,
+						_atlas.getRegion(tile).drawMatrix(
 							_matrix.tx, _matrix.ty, _matrix.a, _matrix.b, _matrix.c, _matrix.d,
-							_red, _green, _blue, alpha, smooth);
+							layer, _red, _green, _blue, alpha, smooth);
 					}
 				}
 				wx += stepx;
@@ -789,7 +790,7 @@ class Tilemap extends Graphic
 	private var _rows:Int;
 
 	// Tileset information.
-	private var _set:BitmapData;
+	private var _set:Bitmap;
 	private var _atlas:TileAtlas;
 	private var _setColumns:Int;
 	private var _setRows:Int;

@@ -51,7 +51,7 @@ class Atlas
 
 	/**
 	 * Prepares tile data for rendering
-	 * @param	tile	The tile index of the tilesheet
+	 * @param	rect	The rectangle in the atlas to be rendered
 	 * @param	x		The x-axis location to draw the tile
 	 * @param	y		The y-axis location to draw the tile
 	 * @param	layer	The layer to draw on
@@ -63,16 +63,16 @@ class Atlas
 	 * @param	blue	A blue tint value
 	 * @param	alpha	The tile's opacity
 	 */
-	public inline function prepareTile(tile:Int, x:Float, y:Float, layer:Int,
+	public inline function prepareTile(rect:Rectangle, x:Float, y:Float, layer:Int,
 		scaleX:Float, scaleY:Float, angle:Float,
 		red:Float, green:Float, blue:Float, alpha:Float, ?smooth:Bool)
 	{
-		_data.prepareTile(tile, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
+		_data.prepareTile(rect, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
 	}
 
 	/**
 	 * Prepares tile data for rendering using a matrix
-	 * @param  tile  The tile index of the tilesheet
+	 * @param  rect  The rectangle in the atlas to be rendered
 	 * @param  layer The layer to draw on
 	 * @param  tx    X-Axis translation
 	 * @param  ty    Y-Axis translation
@@ -85,12 +85,12 @@ class Atlas
 	 * @param  blue  Blue color value
 	 * @param  alpha Alpha value
 	 */
-	public inline function prepareTileMatrix(tile:Int, layer:Int, tx:Float, ty:Float, a:Float, b:Float, c:Float, d:Float,
+	public inline function prepareTileMatrix(rect:Rectangle, layer:Int, tx:Float, ty:Float, a:Float, b:Float, c:Float, d:Float,
 		red:Float=1, green:Float=1, blue:Float=1, alpha:Float=1, ?smooth:Bool)
 	{
 		if (smooth == null) smooth = Atlas.smooth;
 
-		_data.prepareTileMatrix(tile, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
+		_data.prepareTileMatrix(rect, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
 	}
 
 	public function prepareTriangles(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float,

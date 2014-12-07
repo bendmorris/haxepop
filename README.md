@@ -19,6 +19,8 @@ Some of the changes that have been made in HaxePop:
 * Flash is rendered in full resolution for more consistent appearance between targets
 * Built-in screen overlays such as scanlines and RGB noise
 * A camera with rotation/zooming
+* Screen scaling modes (letterboxing, uniform scaling, integer scaling)
+* Flexible, easy keyboard input
 
 # HaxePunk
 
