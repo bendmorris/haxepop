@@ -8,6 +8,9 @@ import flash.geom.Matrix;
 class AtlasRegion
 {
 
+	public var parent:AtlasData;
+	public var rect:Rectangle;
+
 	/**
 	 * Amount to rotate the image, in degrees (used for sprite packing)
 	 */
@@ -33,8 +36,8 @@ class AtlasRegion
 	 */
 	public function new(parent:AtlasData, rect:Rectangle)
 	{
-		this._parent = parent;
-		this._rect = rect;
+		this.parent = parent;
+		this.rect = rect;
 		this.rotate = 0;
 	}
 
@@ -50,19 +53,19 @@ class AtlasRegion
 		var clipRectCopy = new Rectangle( clipRect.x, clipRect.y, clipRect.width, clipRect.height );
 
 		// only clip within the current region
-		if (clipRectCopy.x + clipRectCopy.width > _rect.width)
-			clipRectCopy.width = _rect.width - clipRectCopy.x;
-		if (clipRectCopy.y + clipRectCopy.height > _rect.height)
-			clipRectCopy.height = _rect.height - clipRectCopy.y;
+		if (clipRectCopy.x + clipRectCopy.width > rect.width)
+			clipRectCopy.width = rect.width - clipRectCopy.x;
+		if (clipRectCopy.y + clipRectCopy.height > rect.height)
+			clipRectCopy.height = rect.height - clipRectCopy.y;
 
 		// do not allow negative width/height
 		if (clipRectCopy.width < 0) clipRectCopy.width = 0;
 		if (clipRectCopy.height < 0) clipRectCopy.height = 0;
 
 		// position clip rect where the last image was
-		clipRectCopy.x += _rect.x;
-		clipRectCopy.y += _rect.y;
-		return _parent.createRegion(clipRectCopy, center);
+		clipRectCopy.x += rect.x;
+		clipRectCopy.y += rect.y;
+		return parent.createRegion(clipRectCopy, center);
 	}
 
 	/**
@@ -89,7 +92,7 @@ class AtlasRegion
 			x += height * scaleX;
 		}
 
-		_parent.prepareTile(_rect, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
+		parent.prepareTile(rect, x, y, layer, scaleX, scaleY, angle, red, green, blue, alpha, smooth);
 	}
 
 	/**
@@ -116,42 +119,42 @@ class AtlasRegion
 			var matrix = new Matrix(a, b, c, d, tx, ty);
 			matrix.rotate(rotate * HXP.RAD);
 			//matrix.tx += height * scaleX;
-			_parent.prepareTileMatrix(_rect, layer,
+			parent.prepareTileMatrix(rect, layer,
 				matrix.tx, matrix.ty, matrix.a, matrix.b, matrix.c, matrix.d,
 				red, green, blue, alpha, smooth);
 		}
 		else
 		{
-			_parent.prepareTileMatrix(_rect, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
+			parent.prepareTileMatrix(rect, layer, tx, ty, a, b, c, d, red, green, blue, alpha, smooth);
 		}
 	}
 
 	public inline function drawTriangles(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float, x4:Float, y4:Float, color:Int=0xFFFFFFFF)
 	{
-		var u1 = _rect.x / _parent.width;
-		var v1 = _rect.y / _parent.height;
-		var u2 = (_rect.x + _rect.width) / _parent.width;
+		var u1 = rect.x / parent.width;
+		var v1 = rect.y / parent.height;
+		var u2 = (rect.x + rect.width) / parent.width;
 		var v2 = v1;
 		var u3 = u2;
-		var v3 = (_rect.y + _rect.height) / _parent.height;
+		var v3 = (rect.y + rect.height) / parent.height;
 		var u4 = u1;
 		var v4 = v3;
-		_parent.prepareTriangles(x1,y1,x2,y2,x3,y3,x4,y4,u1,v1,u2,v2,u3,v3,u4,v4,color);
+		parent.prepareTriangles(x1,y1,x2,y2,x3,y3,x4,y4,u1,v1,u2,v2,u3,v3,u4,v4,color);
 	}
 
 	public function destroy():Void
 	{
-		if (_parent != null)
+		if (parent != null)
 		{
-			_parent.destroy();
-			_parent = null;
+			parent.destroy();
+			parent = null;
 		}
 	}
 
 	public function getBitmapData():BitmapData
 	{
 		var bd:BitmapData = new BitmapData(Std.int(width), Std.int(height), true, 0);
-		bd.copyPixels(_parent._source, _rect, new Point());
+		bd.copyPixels(parent._source, rect, new Point());
 		if (rotate != 0)
 		{
 			var newBd:BitmapData = new BitmapData(Std.int(height), Std.int(width), true, 0);
@@ -171,12 +174,9 @@ class AtlasRegion
 	 */
 	public function toString():String
 	{
-		return '[AtlasRegion ${_rect.x},${_rect.y} ${_rect.width}x${_rect.height}';
+		return '[AtlasRegion ${rect.x},${rect.y} ${rect.width}x${rect.height}';
 	}
 
-	private inline function get_width():Float { return _rect.width; }
-	private inline function get_height():Float { return _rect.height; }
-
-	private var _rect:Rectangle;
-	private var _parent:AtlasData;
+	private inline function get_width():Float { return rect.width; }
+	private inline function get_height():Float { return rect.height; }
 }
