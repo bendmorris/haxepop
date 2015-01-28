@@ -327,6 +327,23 @@ class Math
 		}
 	}
 
+	public static function iclamp(value:Int, min:Int, max:Int):Int
+	{
+		if (max > min)
+		{
+			if (value < min) return min;
+			else if (value > max) return max;
+			else return value;
+		}
+		else
+		{
+			// Min/max swapped
+			if (value < max) return max;
+			else if (value > min) return min;
+			else return value;
+		}
+	}
+
 	/**
 	 * Clamps the object inside the rectangle.
 	 * @param	object		The object to clamp (must have an x and y property).
