@@ -170,8 +170,8 @@ class Image extends Graphic
 		{
 			if (angle + (rotateWithCamera ? camera.angle : 0) == 0 && scale * scaleX * HXP.screen.fullScaleX == 1 && scale * scaleY * HXP.screen.fullScaleY == 1 && blend == null)
 			{
-			_point.x = point.x + x - originX - camera.x * scrollX;
-			_point.y = point.y + y - originY - camera.y * scrollY;
+				_point.x = point.x + x - originX - camera.x * scrollX;
+				_point.y = point.y + y - originY - camera.y * scrollY;
 				// render without transformation
 				target.copyPixels(_buffer, _bufferRect, _point, null, null, true);
 			}
@@ -264,20 +264,20 @@ class Image extends Graphic
 	{
 		var graphics:Graphics = HXP.sprite.graphics;
 		var points:Array<Vector> = polygon.points;
-		
+
 		var minX:Float;
 		var maxX:Float;
 		var minY:Float;
 		var maxY:Float;
-		
+
 		var p:Point;
 		var originalAngle:Float = polygon.angle;
-		
+
 		polygon.angle = 0;	// set temporarily angle to 0 so we can sync with image angle later
-		
+
 		minX = minY = Math.NUMBER_MAX_VALUE;
 		maxX = maxY = -Math.NUMBER_MAX_VALUE;
-		
+
 		// find polygon bounds
 		for (p in points)
 		{
@@ -286,39 +286,39 @@ class Image extends Graphic
 			if (p.y < minY) minY = p.y;
 			if (p.y > maxY) maxY = p.y;
 		}
-		
+
 		var w:Int = Math.ceil(maxX - minX);
 		var h:Int = Math.ceil(maxY - minY);
-		
+
 		if (color > 0xFFFFFF) color = 0xFFFFFF & color;
 		graphics.clear();
-		
+
 		if (fill)
 			graphics.beginFill(color, alpha);
 		else
 			graphics.lineStyle(thick, color, alpha, false, LineScaleMode.NORMAL, null, JointStyle.MITER);
-			
-		
-		graphics.moveTo(points[points.length - 1].x, points[points.length - 1].y);		
+
+
+		graphics.moveTo(points[points.length - 1].x, points[points.length - 1].y);
 		for (p in points)
 		{
 			graphics.lineTo(p.x, p.y);
 		}
 		graphics.endFill();
-		
+
 		HXP.matrix.identity();
 		HXP.matrix.translate( -minX, -minY);
 
 		var data:BitmapData = Assets.createBitmap(w, h, true, 0);
 		data.draw(HXP.sprite, HXP.matrix);
-		
+
 		var image:Image;
 #if hardware
 		image = new Image(Atlas.loadImageAsRegion(data));
 #else
 		image = new Image(data);
 #end
-		
+
 		// adjust position, origin and angle
 		image.x = polygon.x + polygon.origin.x;
 		image.y = polygon.y + polygon.origin.y;
@@ -326,7 +326,7 @@ class Image extends Graphic
 		image.originY = image.y - polygon.minY;
 		image.angle = originalAngle;
 		polygon.angle = originalAngle;
-		
+
 		return image;
 	}
 
