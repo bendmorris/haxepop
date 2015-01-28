@@ -61,6 +61,7 @@ class AtlasData
 		_uvtData = new Array<Float>();
 		_colors = new Array<Int>();
 		_dataIndex = _smoothDataIndex = _uvtDataIndex = _verticesIndex = _indicesIndex = _colorsIndex = 0;
+		_hasColors = false;
 
 		_source = bd;
 		_tilesheet = new Tilesheet(bd);
@@ -235,7 +236,7 @@ class AtlasData
 #elseif html5
 			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null);
 #else
-			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null, _colors);
+			_scene.sprite.graphics.drawTriangles(_vertices, _indices, _uvtData, null, _hasColors ? _colors : null);
 #end
 			_scene.sprite.graphics.endFill();
 		}
@@ -407,6 +408,7 @@ class AtlasData
 		_colors[_colorsIndex++] = color;
 		_colors[_colorsIndex++] = color;
 		_colors[_colorsIndex++] = color;
+		if (color != 0xFFFFFFFF) _hasColors = true;
 	}
 
 	/**
@@ -500,6 +502,7 @@ class AtlasData
 	private var _verticesIndex:Int;
 	private var _indicesIndex:Int;
 	private var _colorsIndex:Int;
+	private var _hasColors:Bool;
 
 	private static var _scene:Scene;
 	private static var _dataPool:Map<String, AtlasData> = new Map<String, AtlasData>();
