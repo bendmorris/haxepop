@@ -321,7 +321,7 @@ class BitmapText extends Graphic
 		_rect.width = gd.rect.width;
 		_rect.height = gd.rect.height;
 
-		_buffer.draw(_set, _matrix, _colorTransform, null, _rect, false);
+		_buffer.draw(_set, _matrix, null, null, _rect, false);
 	}
 
 	/*
