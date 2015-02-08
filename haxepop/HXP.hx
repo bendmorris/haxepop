@@ -235,13 +235,6 @@ class HXP
 	{
 		// resize scene to scale
 		camera.resize(width, height, w, h);
-		switch (screen.scaling.mode)
-		{
-			case Default:
-				width = Std.int(w / HXP.screen.fullScaleX);
-				height = Std.int(h / HXP.screen.fullScaleY);
-            default: {}
-		}
 		halfWidth = width / 2;
 		halfHeight = height / 2;
 		bounds.width = w;

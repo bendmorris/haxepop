@@ -87,8 +87,8 @@ class Tilemap extends Graphic
 
 		// create the canvas
 #if neko
-		_maxWidth = 4000 - 4000 % tileWidth;
-		_maxHeight = 4000 - 4000 % tileHeight;
+		_maxWidth = _maxWidth - _maxWidth % tileWidth;
+		_maxHeight = _maxHeight - _maxHeight % tileHeight;
 #else
 		_maxWidth -= _maxWidth % tileWidth;
 		_maxHeight -= _maxHeight % tileHeight;
@@ -422,51 +422,12 @@ class Tilemap extends Graphic
 			{
 				buffer = _buffers[_ref.getPixel(xx, yy)];
 
-				if (false)//angle + (rotateWithCamera ? camera.angle : 0) == 0)
+				if (sx * fsx == 1 && sy * fsy == 1 && angle + camera.angle == 0)
 				{
-					if (sx*fsx == 1 && sy*fsy == 1 && _tint == null)
-					{
-						// copy the pixels directly onto the buffer
-						_rect.width = buffer.width;
-						_rect.height = buffer.height;
-						target.copyPixels(buffer, _rect, _point, null, null, true);
-					}
-					else
-					{
-						// rescale first onto an intermediate buffer, then copy
-						var i = Std.int(_ref.getPixel(xx, yy));
-						var w = Std.int(buffer.width * sx * fsx);
-						var h = Std.int(buffer.height * sy * fsy);
-						var wrongSize = i >= _midBuffers.length ||
-							_midBuffers[i].width != w ||
-							_midBuffers[i].height != h;
-						if (_redrawBuffers || wrongSize)
-						{
-							if (wrongSize)
-							{
-								if (i < _midBuffers.length)
-								{
-									_midBuffers[i].dispose();
-								}
-								_midBuffers[i] = Assets.createBitmap(w, h, true);
-							}
-							else
-							{
-								_midBuffers[i].fillRect(_midBuffers[i].rect, 0);
-							}
-							_matrix.b = _matrix.c = 0;
-							_matrix.a = fsx * sx;
-							_matrix.d = fsy * sy;
-							_matrix.tx = _point.x;
-							_matrix.ty = _point.y;
-
-							_midBuffers[i].draw(buffer, _matrix, _tint);
-						}
-
-						_rect.width = w;
-						_rect.height = h;
-						target.copyPixels(_midBuffers[i], _rect, _point, null, null, true);
-					}
+					// copy the pixels directly onto the buffer
+					_rect.width = buffer.width;
+					_rect.height = buffer.height;
+					target.copyPixels(buffer, _rect, _point, null, null, true);
 				}
 				else
 				{
@@ -484,11 +445,11 @@ class Tilemap extends Graphic
 					target.draw(buffer, _matrix, _tint);
 				}
 
-				_point.x += _maxWidth * sx * fsx;
+				_point.x += Std.int(_maxWidth * sx);
 				xx ++;
 			}
 			_point.x = px;
-			_point.y += _maxHeight * sy * fsy;
+			_point.y += Std.int(_maxHeight * sy);
 			xx = 0;
 			yy ++;
 		}
