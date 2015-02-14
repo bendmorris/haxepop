@@ -8,8 +8,6 @@
 	"releasenote": "See CHANGELOG",
 	"contributors": ["bendmorris"],
 	"dependencies": {
-		"lime": "",
-		"lime-tools": "",
 		"openfl": ""
 	}
 }
