@@ -27,7 +27,9 @@ class Entity extends Tweener
 	/**
 	 * If the Entity should render.
 	 */
-	public var visible:Bool;
+	@:isVar public var visible(get, set):Bool = true;
+	private function get_visible():Bool return visible;
+	private function set_visible(v:Bool) return visible = v;
 
 	/**
 	 * If the Entity should respond to collision checks.

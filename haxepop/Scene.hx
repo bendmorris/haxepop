@@ -19,7 +19,9 @@ class Scene extends Tweener
 	/**
 	 * If the render() loop is performed.
 	 */
-	public var visible:Bool;
+	@:isVar public var visible(get, set):Bool = true;
+	private function get_visible():Bool return visible;
+	private function set_visible(v:Bool) return visible = v;
 
 	/**
 	 * Used to determine drawing offset in the render loop.
