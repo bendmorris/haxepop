@@ -65,6 +65,26 @@ abstract ImageType(Either<BitmapData, AtlasRegion>)
 			return new ImageType(Left(bd));
 #end
 	}
+
+	public var width(get, never):Int;
+	function get_width()
+	{
+		return Std.int(switch(this)
+		{
+			case Left(b): b.width;
+			case Right(a): a.width;
+		});
+	}
+
+	public var height(get, never):Int;
+	function get_height()
+	{
+		return Std.int(switch(this)
+		{
+			case Left(b): b.height;
+			case Right(a): a.height;
+		});
+	}
 }
 
 class Graphic
