@@ -23,6 +23,7 @@ abstract Platform(String) from String to String
 		"neko",
 		"ouya",
 		"tizen",
+		"web",
 		"windows",
 	];
 
