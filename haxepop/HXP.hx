@@ -634,6 +634,6 @@ class HXP
 	public static var zero:Point = new Point();
 	public static var rect:Rectangle = new Rectangle();
 	public static var matrix:Matrix = new Matrix();
-	public static var sprite:Sprite = new Sprite();
+	public static var sprite:Sprite#if !headless = new Sprite()#end;
 	public static var entity:Entity;
 }
