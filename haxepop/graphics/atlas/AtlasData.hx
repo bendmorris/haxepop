@@ -36,6 +36,7 @@ class AtlasData
 
 	public static inline var BLEND_NONE:Int = 0;
 	public static inline var BLEND_ADD:Int = Tilesheet.TILE_BLEND_ADD;
+	public static inline var BLEND_SUBTRACT:Int = Tilesheet.TILE_BLEND_SUBTRACT;
 	public static inline var BLEND_NORMAL:Int = Tilesheet.TILE_BLEND_NORMAL;
 #if flash
 	public static inline var BLEND_MULTIPLY:Int = BLEND_NONE;
@@ -454,6 +455,8 @@ class AtlasData
 			return BLEND_MULTIPLY;
 		else if (_renderFlags & Tilesheet.TILE_BLEND_SCREEN != 0)
 			return BLEND_SCREEN;
+		else if (_renderFlags & Tilesheet.TILE_BLEND_SUBTRACT != 0)
+			return BLEND_SUBTRACT;
 #end
 		else
 			return BLEND_NONE;
@@ -461,12 +464,13 @@ class AtlasData
 	private function set_blend(value:Int):Int
 	{
 		// unset blend flags
-		_renderFlags &= ~(BLEND_ADD | BLEND_SCREEN | BLEND_MULTIPLY | BLEND_NORMAL);
+		_renderFlags &= ~(BLEND_ADD | BLEND_SCREEN | BLEND_MULTIPLY | BLEND_SUBTRACT | BLEND_NORMAL);
 
 		// check that value is actually a blend flag
 		if (value == BLEND_ADD ||
 			value == BLEND_MULTIPLY ||
 			value == BLEND_SCREEN ||
+			value == BLEND_SUBTRACT ||
 			value == BLEND_NORMAL)
 		{
 			// set the blend flag
