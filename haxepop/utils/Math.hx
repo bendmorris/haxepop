@@ -404,20 +404,21 @@ class Math
 	public static inline function imax(a:Int, b:Int):Int return a < b ? b : a;
 	public static inline function imin(a:Int, b:Int):Int return a > b ? b : a;
 
-	public static inline function sin(theta:Float):Float { return std.Math.sin(theta); }
-	public static inline function cos(theta:Float):Float { return std.Math.cos(theta); }
-	public static inline function tan(theta:Float):Float { return std.Math.tan(theta); }
-	public static inline function acos(theta:Float):Float { return std.Math.acos(theta); }
-	public static inline function asin(theta:Float):Float { return std.Math.asin(theta); }
-	public static inline function atan(theta:Float):Float { return std.Math.atan(theta); }
-	public static inline function atan2(dy:Float, dx:Float):Float { return std.Math.atan2(dy, dx); }
+	public static inline function sin(theta:Float):Float return std.Math.sin(theta);
+	public static inline function cos(theta:Float):Float return std.Math.cos(theta);
+	public static inline function tan(theta:Float):Float return std.Math.tan(theta);
+	public static inline function acos(theta:Float):Float return std.Math.acos(theta);
+	public static inline function asin(theta:Float):Float return std.Math.asin(theta);
+	public static inline function atan(theta:Float):Float return std.Math.atan(theta);
+	public static inline function atan2(dy:Float, dx:Float):Float return std.Math.atan2(dy, dx);
 
-	public static inline function sqrt(f:Float) { return std.Math.sqrt(f); }
-	public static inline function floor(f:Float) { return std.Math.floor(f); }
-	public static inline function ceil(f:Float) { return std.Math.ceil(f); }
-	public static inline function random() { return std.Math.random(); }
-	public static inline function round(f:Float) { return std.Math.round(f); }
-	public static inline function pow(v:Float, p:Float) { return std.Math.pow(v, p); }
+	public static inline function sqrt(f:Float) return std.Math.sqrt(f);
+	public static inline function floor(f:Float) return std.Math.floor(f);
+	public static inline function ceil(f:Float) return std.Math.ceil(f);
+	public static inline function random() return std.Math.random();
+	public static inline function round(f:Float) return std.Math.round(f);
+	public static inline function pow(v:Float, p:Float) return std.Math.pow(v, p);
+	public static inline function log(v:Float) return std.Math.log(v);
 
 	public static var point:Point = new Point();
 }
