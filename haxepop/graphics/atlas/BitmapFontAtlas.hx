@@ -46,8 +46,9 @@ class BitmapFontAtlas extends TextureAtlas
 		if (!_fonts.exists(fontName))
 		{
 			_fonts[fontName] = switch(format) {
-				case XML: BitmapFontAtlas.loadXMLFont(fontName);
-				case XNA: BitmapFontAtlas.loadXNAFont(fontName, extraParams);
+				case BitmapFontFormat.XML: BitmapFontAtlas.loadXMLFont(fontName);
+				case BitmapFontFormat.XNA: BitmapFontAtlas.loadXNAFont(fontName, extraParams);
+				default: throw "Unrecognized font format: " + format;
 			}
 		}
 
